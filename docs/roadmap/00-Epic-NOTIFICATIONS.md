@@ -1,7 +1,7 @@
 # Epic: Notifications
 
 **Epic ID:** NTF
-**Status:** TODO
+**Status:** ⬜ Not Started
 
 ---
 

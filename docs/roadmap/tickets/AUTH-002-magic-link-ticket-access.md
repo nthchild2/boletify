@@ -17,13 +17,13 @@ Phase 2 refs: B3 (guest checkout), B9 (My Tickets page), Phase 4 § 7.4 (guest c
 
 ## Acceptance Criteria
 
-- [x] **AC1:** After guest checkout, buyer receives an email with a magic link: `boletify.com/auth/magic-link?token=<one_time_token>`
-- [x] **AC2:** Clicking the magic link validates the token server-side. If valid and unused, creates a temporary session scoped to the buyer's own tickets only.
-- [x] **AC3:** The temporary session grants read-only access to the buyer's tickets (My Tickets page). No password set, no full account created.
-- [x] **AC4:** The magic link token is single-use. After first click, it is invalidated.
-- [x] **AC5:** If the buyer later creates an account with the same email, their existing guest orders are linked to the new account.
-- [x] **AC6:** Magic link tokens expire after 7 days.
-- [x] **AC7:** My Tickets page is accessible via magic link session on both web and mobile.
+- [ ] **AC1:** After guest checkout, buyer receives an email with a magic link: `boletify.com/auth/magic-link?token=<one_time_token>`
+- [ ] **AC2:** Clicking the magic link validates the token server-side. If valid and unused, creates a temporary session scoped to the buyer's own tickets only.
+- [ ] **AC3:** The temporary session grants read-only access to the buyer's tickets (My Tickets page). No password set, no full account created.
+- [ ] **AC4:** The magic link token is single-use. After first click, it is invalidated.
+- [ ] **AC5:** If the buyer later creates an account with the same email, their existing guest orders are linked to the new account.
+- [ ] **AC6:** Magic link tokens expire after 7 days.
+- [ ] **AC7:** My Tickets page is accessible via magic link session on both web and mobile.
 
 ---
 

@@ -3,7 +3,7 @@
 **Epic:** Authentication
 **Ticket ID:** AUTH-003
 **Type:** feature
-**Status:** ✅ Done
+**Status:** ⬜ Not Started
 
 ---
 

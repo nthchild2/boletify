@@ -17,44 +17,44 @@ Phase 2 refs: B4 (account creation / login), Phase 4 § 7 (Auth.js).
 
 ## Acceptance Criteria
 
-- [x] **AC1:** User can register with email + password (min 8 chars). Account created in `users` table with bcrypt-hashed password.
+- [ ] **AC1:** User can register with email + password (min 8 chars). Account created in `users` table with bcrypt-hashed password.
   - **Evidence:** `packages/api/src/routers/auth.ts` → `register` mutation hashes password with `hashPassword()` (bcrypt cost 12) and stores in `users.passwordHash`
   - **Evidence:** `packages/db/src/schema/users.ts` → `passwordHash` column exists, `users.role` defaults to `'buyer'`
   - **Evidence:** `packages/shared/src/validators/auth.ts` → `registerSchema` validates email, password min 8 chars, name required
 
-- [x] **AC2:** User can log in with email + password. Returns session cookie (web) or Bearer token (mobile) on success.
+- [ ] **AC2:** User can log in with email + password. Returns session cookie (web) or Bearer token (mobile) on success.
   - **Evidence:** Web: `apps/web/lib/auth.config.ts` → Credentials provider calls `validateCredentials()`, Auth.js sets secure HttpOnly cookie
   - **Evidence:** Mobile: `apps/mobile/app/(auth)/login.tsx` → calls `trpc.auth.login.mutateAsync()`, stores token in SecureStore via `useAuth().signIn(token, user)`
   - **Evidence:** `packages/api/src/routers/auth.ts` → `login` mutation validates credentials and creates session token + stores in `sessions` table
 
-- [x] **AC3:** Login page shows appropriate error messages for: invalid email format, wrong password, non-existent account.
+- [ ] **AC3:** Login page shows appropriate error messages for: invalid email format, wrong password, non-existent account.
   - **Evidence:** `apps/web/components/auth/login-form.tsx` → catches `signIn` errors, displays `setError('Email o contrasena incorrectos')`
   - **Evidence:** `apps/mobile/app/(auth)/login.tsx` → catches mutation errors, sets error message
   - **Evidence:** `packages/api/src/routers/auth.ts` → `login` throws `TRPCError` with code `UNAUTHORIZED` + message 'Invalid email or password'
   - **Evidence:** `packages/shared/src/validators/auth.ts` → `loginSchema` validates email format, min password length
 
-- [x] **AC4:** Registration page shows error for: email already registered, password too short.
+- [ ] **AC4:** Registration page shows error for: email already registered, password too short.
   - **Evidence:** `apps/web/components/auth/register-form.tsx` → catches mutation errors, displays error message
   - **Evidence:** `packages/api/src/routers/auth.ts` → `register` throws `TRPCError` with code `CONFLICT` for duplicate email
   - **Evidence:** `packages/shared/src/validators/auth.ts` → validates email format, password min 8 chars
 
-- [x] **AC5:** On successful login/registration, user is redirected to appropriate page (web: dashboard or return URL; mobile: tab navigator home).
+- [ ] **AC5:** On successful login/registration, user is redirected to appropriate page (web: dashboard or return URL; mobile: tab navigator home).
   - **Evidence:** Web login: `apps/web/components/auth/login-form.tsx` → `router.push(result.url ?? callbackUrl)` with callback preservation
   - **Evidence:** Web register: `apps/web/components/auth/register-form.tsx` → redirects to `/org/dashboard` (organiser) or `/` (buyer)
   - **Evidence:** Mobile: `apps/mobile/app/(auth)/login.tsx` → `router.replace('/')`, register → `router.replace('/')`
 
-- [x] **AC6:** Both platforms render the shared `LoginScreen` and `RegisterScreen` from `@boletify/screens/src/auth`.
+- [ ] **AC6:** Both platforms render the shared `LoginScreen` and `RegisterScreen` from `@boletify/screens/src/auth`.
   - **Evidence:** Web: `apps/web/components/auth/login-form.tsx` imports and renders `<LoginScreen {...props} />`
   - **Evidence:** Web: `apps/web/components/auth/register-form.tsx` imports and renders `<RegisterScreen {...props} />`
   - **Evidence:** Mobile: `apps/mobile/app/(auth)/login.tsx` imports and renders `<LoginScreen {...props} />`
   - **Evidence:** Mobile: `apps/mobile/app/(auth)/register.tsx` imports and renders `<RegisterScreen {...props} />`
 
-- [x] **AC7:** Protected routes redirect unauthenticated users to login with `callbackUrl` preserved for post-login redirect.
+- [ ] **AC7:** Protected routes redirect unauthenticated users to login with `callbackUrl` preserved for post-login redirect.
   - **Evidence:** `apps/web/middleware.ts` → uses `guards.authenticated()` and `guards.role()` to check auth before accessing protected routes
   - **Evidence:** `apps/web/middleware.ts` → redirects to login if not authenticated (via `routes.login.path()`)
   - **Evidence:** Web login form preserves `callbackUrl` from search params: `const callbackUrl = useMemo(() => searchParams.get('callbackUrl') ?? '/', [searchParams])`
 
-- [x] **AC8:** Password field is masked with show/hide toggle on both platforms.
+- [ ] **AC8:** Password field is masked with show/hide toggle on both platforms.
   - **Evidence:** `packages/screens/src/auth/LoginScreen.tsx` → `<TextInput ... secureTextEntry ... />` masks password by default
   - **Evidence:** `packages/screens/src/auth/RegisterScreen.tsx` → `<TextInput ... secureTextEntry ... />` masks password by default
   - **Note:** Show/hide toggle is not explicitly implemented in current UI component, but `secureTextEntry` prop provides masking. Enhancement for toggle is a nice-to-have for future iteration.
@@ -92,13 +92,13 @@ Phase 2 refs: B4 (account creation / login), Phase 4 § 7 (Auth.js).
 - `NEXTAUTH_URL` — Set to `http://localhost:3000` (configurable per environment)
 
 ### Packages Touched ✅
-- [x] `@boletify/auth` — credential helpers exist
-- [x] `@boletify/api` — `authRouter` implemented with register/login/logout
-- [x] `@boletify/screens` — `LoginScreen`, `RegisterScreen` exist and wired to tRPC
-- [x] `@boletify/features` — `useAuth` hook exists (not strictly required for AC, but available)
-- [x] `@boletify/navigation` — `guards.requireAuth()` exists and used in middleware
-- [x] `apps/web` — auth adapter setup complete (Auth.js + NextAuth)
-- [x] `apps/mobile` — token storage setup complete (SecureStore)
+- [ ] `@boletify/auth` — credential helpers exist
+- [ ] `@boletify/api` — `authRouter` implemented with register/login/logout
+- [ ] `@boletify/screens` — `LoginScreen`, `RegisterScreen` exist and wired to tRPC
+- [ ] `@boletify/features` — `useAuth` hook exists (not strictly required for AC, but available)
+- [ ] `@boletify/navigation` — `guards.requireAuth()` exists and used in middleware
+- [ ] `apps/web` — auth adapter setup complete (Auth.js + NextAuth)
+- [ ] `apps/mobile` — token storage setup complete (SecureStore)
 
 ---
 
@@ -133,15 +133,15 @@ Phase 2 refs: B4 (account creation / login), Phase 4 § 7 (Auth.js).
 
 ## Verification Checklist
 
-- [x] Schemas validate email format and password strength
-- [x] API creates user with bcrypt-hashed password
-- [x] Web: Auth.js cookie-based session works
-- [x] Mobile: Bearer token + SecureStore works
-- [x] Forms render shared UI components
-- [x] Protected routes redirect to login
-- [x] Error messages displayed appropriately
-- [x] Build passes: `npm run build` ✅
-- [x] No TypeScript errors in critical paths
+- [ ] Schemas validate email format and password strength
+- [ ] API creates user with bcrypt-hashed password
+- [ ] Web: Auth.js cookie-based session works
+- [ ] Mobile: Bearer token + SecureStore works
+- [ ] Forms render shared UI components
+- [ ] Protected routes redirect to login
+- [ ] Error messages displayed appropriately
+- [ ] Build passes: `npm run build` ✅
+- [ ] No TypeScript errors in critical paths
 
 ---
 
@@ -158,4 +158,4 @@ Phase 2 refs: B4 (account creation / login), Phase 4 § 7 (Auth.js).
 
 ✅ Automated verification of all acceptance criteria  
 **Date:** April 11, 2026  
-**Status:** Ready for testing
+**Status:** ⬜ Not Started

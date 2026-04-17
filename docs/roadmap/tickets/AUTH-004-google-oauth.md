@@ -3,7 +3,7 @@
 **Epic:** Authentication
 **Ticket ID:** AUTH-004
 **Type:** feature
-**Status:** ✅ Done — implemented for both web and mobile
+**Status:** ⬜ Not Started
 
 ---
 
@@ -33,14 +33,14 @@ Phase 2 refs: B4 (Google OAuth), Phase 4 § 7.1 (Auth provider table).
 
 ## Acceptance Criteria
 
-- [x] **AC1:** Login page on both web and mobile shows "Continuar con Google" button.
-- [x] **AC2:** Clicking "Continuar con Google" initiates OAuth flow (web: redirect; mobile: in-app browser / AuthSession).
-- [x] **AC3:** On successful OAuth callback, a user account is created (if first time) or existing account is matched (by Google ID or email).
-- [x] **AC4:** User is logged in after OAuth flow completes — same as email/password login.
-- [x] **AC5:** If an existing account has the same email but no Google ID linked, the user is prompted to link Google (with password verification first).
-- [x] **AC6:** Google OAuth is available for both buyer and organiser registration flows.
-- [x] **AC7:** Web uses Auth.js Google provider (already configured in ADR-006).
-- [x] **AC8:** Mobile uses `expo-auth-session` with Google provider.
+- [ ] **AC1:** Login page on both web and mobile shows "Continuar con Google" button.
+- [ ] **AC2:** Clicking "Continuar con Google" initiates OAuth flow (web: redirect; mobile: in-app browser / AuthSession).
+- [ ] **AC3:** On successful OAuth callback, a user account is created (if first time) or existing account is matched (by Google ID or email).
+- [ ] **AC4:** User is logged in after OAuth flow completes — same as email/password login.
+- [ ] **AC5:** If an existing account has the same email but no Google ID linked, the user is prompted to link Google (with password verification first).
+- [ ] **AC6:** Google OAuth is available for both buyer and organiser registration flows.
+- [ ] **AC7:** Web uses Auth.js Google provider (already configured in ADR-006).
+- [ ] **AC8:** Mobile uses `expo-auth-session` with Google provider.
 
 ---
 
