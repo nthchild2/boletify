@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boletify — Competitive Battlecard</title>
+<style>
+  :root {
+    --bg-primary: #0a0a14;
+    --bg-elevated: #0f0f1e;
+    --bg-surface: #161628;
+    --bg-hover: #1e1e36;
+    --bg-card: #13132280;
+    --border: rgba(255,255,255,0.08);
+    --border-accent: rgba(123,47,247,0.4);
+    --text-primary: #f0eeff;
+    --text-secondary: rgba(240,238,255,0.65);
+    --text-muted: rgba(240,238,255,0.38);
+    --purple: #7B2FF7;
+    --purple-light: #9D5CFF;
+    --coral: #FF3B5C;
+    --coral-light: #FF6B6B;
+    --green: #00C896;
+    --amber: #FFB800;
+    --red: #FF4444;
+    --gradient: linear-gradient(135deg, #7B2FF7 0%, #FF3B5C 100%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--gradient);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+  .brand-name { font-size: 18px; font-weight: 700; }
+  .brand-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+  .header-meta { font-size: 11px; color: var(--text-muted); text-align: right; }
+  .header-meta strong { color: var(--coral); }
+
+  /* NAV TABS */
+  .nav {
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 14px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 150ms ease;
+  }
+  .tab-btn:hover { color: var(--text-primary); }
+  .tab-btn.active {
+    color: var(--purple-light);
+    border-bottom-color: var(--purple);
+  }
+  .tab-btn.you { color: var(--coral-light); }
+  .tab-btn.you.active { border-bottom-color: var(--coral); color: var(--coral); }
+
+  /* CONTENT */
+  .content { padding: 32px; max-width: 1100px; margin: 0 auto; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    margin-top: 32px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* COMPARISON MATRIX */
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-elevated);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .matrix-table th {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .matrix-table th.you-col {
+    background: linear-gradient(135deg, rgba(123,47,247,0.15) 0%, rgba(255,59,92,0.15) 100%);
+    color: var(--purple-light);
+  }
+  .matrix-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .matrix-table tr:last-child td { border-bottom: none; }
+  .matrix-table tr:hover td { background: var(--bg-hover); }
+  .matrix-table td:first-child { color: var(--text-secondary); font-size: 12px; }
+  .matrix-table td.you-col { background: rgba(123,47,247,0.04); }
+
+  .win  { color: var(--green); font-weight: 600; font-size: 13px; }
+  .lose { color: var(--red);   font-weight: 500; font-size: 13px; }
+  .tie  { color: var(--amber); font-weight: 500; font-size: 13px; }
+  .na   { color: var(--text-muted); font-size: 12px; }
+
+  .dot-win  { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green);  margin-right: 6px; }
+  .dot-lose { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--red);    margin-right: 6px; }
+  .dot-tie  { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--amber);  margin-right: 6px; }
+
+  /* WIN/LOSS GRID */
+  .wl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .wl-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .wl-card-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .wl-section { margin-bottom: 10px; }
+  .wl-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .wl-label.green { color: var(--green); }
+  .wl-label.red   { color: var(--red); }
+  .wl-item {
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 3px 0;
+    padding-left: 12px;
+    position: relative;
+  }
+  .wl-item::before { content: '→'; position: absolute; left: 0; color: var(--text-muted); font-size: 10px; top: 4px; }
+
+  /* COMPETITOR CARD */
+  .comp-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .comp-profile {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .comp-name {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .comp-tagline { color: var(--text-secondary); font-size: 13px; margin-bottom: 16px; font-style: italic; }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .meta-item { }
+  .meta-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+  .meta-value { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .meta-value.highlight { color: var(--coral); font-weight: 600; }
+
+  .comp-pricing {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .pricing-title { font-size: 13px; font-weight: 700; margin-bottom: 14px; color: var(--text-primary); }
+  .pricing-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .pricing-row:last-child { border-bottom: none; }
+  .pricing-label { color: var(--text-secondary); }
+  .pricing-value { font-weight: 600; }
+  .pricing-value.bad  { color: var(--red); }
+  .pricing-value.good { color: var(--green); }
+  .pricing-value.mid  { color: var(--amber); }
+
+  /* CARDS ROW */
+  .cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 14px;
+  }
+  .card-title.green { color: var(--green); }
+  .card-title.red   { color: var(--red); }
+  .card-title.purple { color: var(--purple-light); }
+  .card-title.amber  { color: var(--amber); }
+
+  .pill-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .pill.green  { background: rgba(0,200,150,0.12); color: var(--green); border: 1px solid rgba(0,200,150,0.25); }
+  .pill.red    { background: rgba(255,68,68,0.12);  color: var(--red);   border: 1px solid rgba(255,68,68,0.25); }
+  .pill.purple { background: rgba(123,47,247,0.12); color: var(--purple-light); border: 1px solid rgba(123,47,247,0.25); }
+  .pill.amber  { background: rgba(255,184,0,0.12);  color: var(--amber); border: 1px solid rgba(255,184,0,0.25); }
+
+  .talk-track {
+    background: var(--bg-surface);
+    border-left: 3px solid var(--purple);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 12px;
+  }
+  .talk-track-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple-light); margin-bottom: 6px; }
+  .talk-track p { color: var(--text-secondary); line-height: 1.6; }
+
+  .landmine {
+    background: var(--bg-surface);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .landmine::before { content: '💣 '; }
+
+  .objection-item {
+    background: var(--bg-surface);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .objection-q { font-size: 12px; font-weight: 600; color: var(--coral-light); margin-bottom: 6px; }
+  .objection-a { font-size: 12px; color: var(--text-secondary); }
+
+  /* BOLETIFY CARD */
+  .you-header {
+    background: linear-gradient(135deg, rgba(123,47,247,0.15) 0%, rgba(255,59,92,0.15) 100%);
+    border: 1px solid rgba(123,47,247,0.3);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .you-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(255,59,92,0.15), transparent);
+    border-radius: 50%;
+  }
+  .you-name { font-size: 28px; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .you-tagline { color: var(--text-secondary); font-size: 14px; margin-top: 6px; }
+  .differentiators { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .diff-pill {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-primary);
+  }
+
+  /* ALERTS */
+  .alert {
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    border-left: 3px solid;
+  }
+  .alert.red    { background: rgba(255,68,68,0.08);  border-color: var(--red);   color: var(--text-secondary); }
+  .alert.green  { background: rgba(0,200,150,0.08);  border-color: var(--green); color: var(--text-secondary); }
+  .alert.amber  { background: rgba(255,184,0,0.08);  border-color: var(--amber); color: var(--text-secondary); }
+  .alert strong { color: var(--text-primary); }
+
+  /* UTILS */
+  .full-card { grid-column: 1 / -1; }
+  .mt8 { margin-top: 8px; }
+  .mt16 { margin-top: 16px; }
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge.danger { background: rgba(255,68,68,0.15); color: var(--red); }
+  .badge.caution { background: rgba(255,184,0,0.15); color: var(--amber); }
+  .badge.safe { background: rgba(0,200,150,0.15); color: var(--green); }
+
+  @media (max-width: 700px) {
+    .comp-header, .cards-row { grid-template-columns: 1fr; }
+    .content { padding: 20px 16px; }
+    .header { padding: 16px; }
+    .nav { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="logo-mark">B</div>
+    <div>
+      <div class="brand-name">Boletify</div>
+      <div class="brand-sub">Competitive Battlecard</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    Generated April 2026<br>
+    <strong>6 competitors analyzed</strong>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="tab-btn you active" data-tab="you">⚡ Boletify</button>
+  <button class="tab-btn" data-tab="matrix">📊 Matrix</button>
+  <button class="tab-btn" data-tab="boletia">Boletia</button>
+  <button class="tab-btn" data-tab="ticketmaster">Ticketmaster MX</button>
+  <button class="tab-btn" data-tab="eventbrite">Eventbrite</button>
+  <button class="tab-btn" data-tab="dice">Dice / Fever</button>
+  <button class="tab-btn" data-tab="passline">Passline</button>
+  <button class="tab-btn" data-tab="superboletos">SuperBoletos</button>
+</nav>
+
+<div class="content">
+
+  <!-- ======== BOLETIFY ======== -->
+  <div class="tab-panel active" id="tab-you">
+    <div class="you-header">
+      <div class="you-name">Boletify</div>
+      <div class="you-tagline">The honest ticketing platform — built for Mexico, owned by organizers.</div>
+      <div class="differentiators">
+        <span class="diff-pill">✓ All-in transparent pricing</span>
+        <span class="diff-pill">✓ OXXO · SPEI · Mercado Pago</span>
+        <span class="diff-pill">✓ Organizer owns their data</span>
+        <span class="diff-pill">✓ Fast payouts</span>
+        <span class="diff-pill">✓ Spanish-first UX</span>
+        <span class="diff-pill">✓ Mobile-native</span>
+        <span class="diff-pill">✓ Indie-scene roots</span>
+      </div>
+    </div>
+
+    <p class="section-title">Target Market</p>
+    <div class="card mt8">
+      <p style="color:var(--text-secondary); font-size:13px; line-height:1.7;">
+        Independent music promoters and event organizers in Mexico City running 50–2,000 capacity events.
+        Buyers aged 18–40, mobile-first, may not have a credit card. Built for the indie music scene first —
+        the segment every major platform underserves.
+      </p>
+    </div>
+
+    <p class="section-title" style="margin-top:24px;">Our Pricing</p>
+    <div class="card mt8">
+      <div class="pricing-row"><span class="pricing-label">Buyer service fee</span><span class="pricing-value good">5% + MXN 10 — shown all-in</span></div>
+      <div class="pricing-row"><span class="pricing-label">Organizer free tier</span><span class="pricing-value good">MXN 0/mo</span></div>
+      <div class="pricing-row"><span class="pricing-label">Organizer Pro tier</span><span class="pricing-value good">~MXN 500/mo</span></div>
+      <div class="pricing-row"><span class="pricing-label">Payout speed</span><span class="pricing-value mid">T+5 (T+2 on Pro)</span></div>
+      <div class="pricing-row"><span class="pricing-label">Payment processing margin</span><span class="pricing-value">~1% spread</span></div>
+    </div>
+
+    <p class="section-title" style="margin-top:24px;">Our Unfair Advantages</p>
+    <div class="cards-row mt8">
+      <div class="card">
+        <div class="card-title purple">Structural Moats</div>
+        <div class="wl-item">Founder insider access to CDMX indie music scene — cold start is solved before day one</div>
+        <div class="wl-item">Incumbents cannot offer organizer data ownership without cannibalizing their own ad revenue</div>
+        <div class="wl-item">Local-first payments baked in from day one — not bolted on later</div>
+      </div>
+      <div class="card">
+        <div class="card-title green">Market Timing</div>
+        <div class="wl-item">Ticketmaster Mexico just raised fees to 24% and was fined MXN 5M by PROFECO — trust is at a low</div>
+        <div class="wl-item">PROFECO drafting new transparency mandates — all-in pricing puts us on the right side of regulation</div>
+        <div class="wl-item">Dice acquired by Fever — no longer independent, weakens their "fan-first" brand story</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== MATRIX ======== -->
+  <div class="tab-panel" id="tab-matrix">
+    <p class="section-title">Feature Comparison Matrix</p>
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th style="width:200px;">Feature</th>
+          <th class="you-col">⚡ Boletify</th>
+          <th>Boletia</th>
+          <th>Ticketmaster MX</th>
+          <th>Eventbrite</th>
+          <th>Dice/Fever</th>
+          <th>Passline</th>
+          <th>SuperBoletos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>All-in transparent pricing</td>
+          <td class="you-col"><span class="win">✓ Yes</span></td>
+          <td><span class="lose">✗ Drip fees</span></td>
+          <td><span class="lose">✗ +24% fees</span></td>
+          <td><span class="tie">~ Partial</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="lose">✗ Varies</span></td>
+          <td><span class="lose">✗ Unclear</span></td>
+        </tr>
+        <tr>
+          <td>OXXO cash payments</td>
+          <td class="you-col"><span class="win">✓ Native</span></td>
+          <td><span class="tie">~ Limited</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="lose">✗ No</span></td>
+          <td><span class="lose">✗ No</span></td>
+          <td><span class="tie">~ Partial</span></td>
+          <td><span class="win">✓ Yes</span></td>
+        </tr>
+        <tr>
+          <td>SPEI bank transfer</td>
+          <td class="you-col"><span class="win">✓ Native</span></td>
+          <td><span class="tie">~ Limited</span></td>
+          <td><span class="tie">~ Partial</span></td>
+          <td><span class="lose">✗ No</span></td>
+          <td><span class="lose">✗ No</span></td>
+          <td><span class="tie">~ Unknown</span></td>
+          <td><span class="tie">~ Partial</span></td>
+        </tr>
+        <tr>
+          <td>Organizer owns buyer data</td>
+          <td class="you-col"><span class="win">✓ Full export</span></td>
+          <td><span class="lose">✗ Limited</span></td>
+          <td><span class="lose">✗ Platform owns</span></td>
+          <td><span class="lose">✗ Platform owns</span></td>
+          <td><span class="lose">✗ Platform owns</span></td>
+          <td><span class="lose">✗ Unknown</span></td>
+          <td><span class="lose">✗ Platform owns</span></td>
+        </tr>
+        <tr>
+          <td>Buyer-facing fee</td>
+          <td class="you-col"><span class="win">~5%</span></td>
+          <td><span class="tie">~10%</span></td>
+          <td><span class="lose">24%</span></td>
+          <td><span class="tie">~8%</span></td>
+          <td><span class="tie">~10%</span></td>
+          <td><span class="tie">~8-12%</span></td>
+          <td><span class="tie">~8-10%</span></td>
+        </tr>
+        <tr>
+          <td>Payout speed</td>
+          <td class="you-col"><span class="win">T+2–5</span></td>
+          <td><span class="lose">T+7–10</span></td>
+          <td><span class="lose">Post-event</span></td>
+          <td><span class="lose">T+4–5</span></td>
+          <td><span class="lose">Post-event</span></td>
+          <td><span class="tie">Variable</span></td>
+          <td><span class="lose">Post-event</span></td>
+        </tr>
+        <tr>
+          <td>Spanish-first UX</td>
+          <td class="you-col"><span class="win">✓ Native</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="lose">✗ EN primary</span></td>
+          <td><span class="lose">✗ EN primary</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="win">✓ Yes</span></td>
+        </tr>
+        <tr>
+          <td>Self-service for small organizers</td>
+          <td class="you-col"><span class="win">✓ Core feature</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="lose">✗ Enterprise-only</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="tie">~ Partial</span></td>
+          <td><span class="lose">✗ Limited</span></td>
+        </tr>
+        <tr>
+          <td>PROFECO compliance / trust</td>
+          <td class="you-col"><span class="win">✓ Compliant</span></td>
+          <td><span class="tie">~ Unknown</span></td>
+          <td><span class="lose">✗ Fined MXN 5M</span></td>
+          <td><span class="tie">~ Partial</span></td>
+          <td><span class="na">N/A (not MX)</span></td>
+          <td><span class="tie">~ Unknown</span></td>
+          <td><span class="tie">~ Unknown</span></td>
+        </tr>
+        <tr>
+          <td>Mobile-native app</td>
+          <td class="you-col"><span class="win">✓ iOS + Android</span></td>
+          <td><span class="tie">~ Web + app</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="win">✓ SuperFan app</span></td>
+        </tr>
+        <tr>
+          <td>Anti-scalp / queue system</td>
+          <td class="you-col"><span class="win">✓ Planned</span></td>
+          <td><span class="lose">✗ No</span></td>
+          <td><span class="tie">~ Basic</span></td>
+          <td><span class="tie">~ Basic</span></td>
+          <td><span class="win">✓ Waitlist model</span></td>
+          <td><span class="lose">✗ No</span></td>
+          <td><span class="lose">✗ No</span></td>
+        </tr>
+        <tr>
+          <td>BNPL / installments</td>
+          <td class="you-col"><span class="win">✓ Planned</span></td>
+          <td><span class="win">✓ Meses s/i</span></td>
+          <td><span class="win">✓ Yes</span></td>
+          <td><span class="lose">✗ No</span></td>
+          <td><span class="lose">✗ No</span></td>
+          <td><span class="lose">✗ Unknown</span></td>
+          <td><span class="tie">~ Promotions</span></td>
+        </tr>
+        <tr>
+          <td>LatAm expansion ready</td>
+          <td class="you-col"><span class="win">✓ By design</span></td>
+          <td><span class="tie">~ MX only</span></td>
+          <td><span class="win">✓ Global</span></td>
+          <td><span class="win">✓ Global</span></td>
+          <td><span class="win">✓ via Fever</span></td>
+          <td><span class="win">✓ LatAm</span></td>
+          <td><span class="lose">✗ MX regional</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="section-title" style="margin-top:32px;">Quick Win / Loss Guide</p>
+    <div class="wl-grid mt8">
+      <div class="wl-card">
+        <div class="wl-card-name">vs. Boletia</div>
+        <div class="wl-section">
+          <div class="wl-label green">You Win When</div>
+          <div class="wl-item">Organizer cares about payout speed (Boletia T+7–10)</div>
+          <div class="wl-item">Organizer wants full buyer data ownership</div>
+          <div class="wl-item">Organizer is frustrated by opaque fees</div>
+          <div class="wl-item">They want a modern, mobile-first experience</div>
+        </div>
+        <div class="wl-section">
+          <div class="wl-label red">Watch Out For</div>
+          <div class="wl-item">Boletia has brand recognition; you don't yet</div>
+          <div class="wl-item">Existing long-term relationships with Boletia</div>
+        </div>
+      </div>
+      <div class="wl-card">
+        <div class="wl-card-name">vs. Ticketmaster MX</div>
+        <div class="wl-section">
+          <div class="wl-label green">You Win When</div>
+          <div class="wl-item">Organizer is an independent promoter (Ticketmaster ignores them)</div>
+          <div class="wl-item">Buyer anger over 24% fees is fresh — use it</div>
+          <div class="wl-item">Organizer values data ownership over Ticketmaster's monopoly reach</div>
+          <div class="wl-item">PROFECO fine makes them look untrustworthy</div>
+        </div>
+        <div class="wl-section">
+          <div class="wl-label red">Watch Out For</div>
+          <div class="wl-item">Exclusive venue contracts — you can't compete for Auditorio Nacional</div>
+          <div class="wl-item">Brand recognition for high-demand events</div>
+        </div>
+      </div>
+      <div class="wl-card">
+        <div class="wl-card-name">vs. Eventbrite</div>
+        <div class="wl-section">
+          <div class="wl-label green">You Win When</div>
+          <div class="wl-item">Organizer sells to unbanked / OXXO buyers (Eventbrite has zero support)</div>
+          <div class="wl-item">Organizer wants Spanish-first support and UX</div>
+          <div class="wl-item">Organizer frustrated by Eventbrite's recent price increases</div>
+        </div>
+        <div class="wl-section">
+          <div class="wl-label red">Watch Out For</div>
+          <div class="wl-item">Eventbrite's global brand and integrations ecosystem</div>
+          <div class="wl-item">Tech-savvy organizers already deep in Eventbrite's workflows</div>
+        </div>
+      </div>
+      <div class="wl-card">
+        <div class="wl-card-name">vs. Dice / Fever</div>
+        <div class="wl-section">
+          <div class="wl-label green">You Win When</div>
+          <div class="wl-item">Organizer is in Mexico — Dice isn't here</div>
+          <div class="wl-item">Buyer needs OXXO — Dice is card-only</div>
+          <div class="wl-item">Organizer prefers local support over remote UK team</div>
+          <div class="wl-item">Organizer wary of Dice post-Fever acquisition (now corporate)</div>
+        </div>
+        <div class="wl-section">
+          <div class="wl-label red">Watch Out For</div>
+          <div class="wl-item">Dice's anti-scalp and waitlist UX is best-in-class — we need to match it</div>
+        </div>
+      </div>
+      <div class="wl-card">
+        <div class="wl-card-name">vs. Passline</div>
+        <div class="wl-section">
+          <div class="wl-label green">You Win When</div>
+          <div class="wl-item">Organizer runs music concerts, not just club nights</div>
+          <div class="wl-item">Organizer wants self-service — Passline requires managed setup</div>
+          <div class="wl-item">Organizer cares about analytics and buyer data</div>
+        </div>
+        <div class="wl-section">
+          <div class="wl-label red">Watch Out For</div>
+          <div class="wl-item">Passline owns the nightlife niche — don't fight that directly early on</div>
+        </div>
+      </div>
+      <div class="wl-card">
+        <div class="wl-card-name">vs. SuperBoletos</div>
+        <div class="wl-section">
+          <div class="wl-label green">You Win When</div>
+          <div class="wl-item">Organizer is CDMX-based (SuperBoletos is Monterrey / regional)</div>
+          <div class="wl-item">Organizer is indie / small-mid size (SuperBoletos targets larger events)</div>
+          <div class="wl-item">Organizer wants transparent fees over promotional discounts</div>
+        </div>
+        <div class="wl-section">
+          <div class="wl-label red">Watch Out For</div>
+          <div class="wl-item">SuperBoletos has 40% Mexico market share and 14M tickets/year — massive distribution</div>
+          <div class="wl-item">Their SuperFan loyalty + 2x1 promos drive buyer retention</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== BOLETIA ======== -->
+  <div class="tab-panel" id="tab-boletia">
+    <div class="comp-header">
+      <div class="comp-profile">
+        <div class="comp-name">Boletia</div>
+        <div class="comp-tagline">"La plataforma de ticketing para México"</div>
+        <div class="meta-grid">
+          <div class="meta-item"><div class="meta-label">Founded</div><div class="meta-value">2012</div></div>
+          <div class="meta-item"><div class="meta-label">HQ</div><div class="meta-value">Mexico City</div></div>
+          <div class="meta-item"><div class="meta-label">Market</div><div class="meta-value">Mexico (primary)</div></div>
+          <div class="meta-item"><div class="meta-label">Position</div><div class="meta-value">Local challenger</div></div>
+          <div class="meta-item"><div class="meta-label">Founders</div><div class="meta-value">Joshua Francia Torres, Alfredo Canales</div></div>
+          <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Operating, limited growth</div></div>
+        </div>
+      </div>
+      <div class="comp-pricing">
+        <div class="pricing-title">Pricing Intelligence</div>
+        <div class="pricing-row"><span class="pricing-label">Service fee (organizer)</span><span class="pricing-value bad">10% of face value</span></div>
+        <div class="pricing-row"><span class="pricing-label">Physical ticket add-on</span><span class="pricing-value bad">MXN 3 + IVA print + MXN 10/ticket</span></div>
+        <div class="pricing-row"><span class="pricing-label">Payout speed</span><span class="pricing-value bad">T+7–10 business days</span></div>
+        <div class="pricing-row"><span class="pricing-label">Data export</span><span class="pricing-value bad">Limited / restricted</span></div>
+        <div class="pricing-row"><span class="pricing-label">Free organizer tier</span><span class="pricing-value mid">Free trial only</span></div>
+        <div class="pricing-row"><span class="pricing-label">Installments (meses s/i)</span><span class="pricing-value good">✓ Available</span></div>
+      </div>
+    </div>
+
+    <div class="alert amber"><strong>Key intel:</strong> Boletia's 10% organizer fee is already 2× Boletify's proposed rate. Their payout speed (T+7–10) is the #1 complaint among indie promoters. They have been in the market since 2012 with limited product innovation — the UX is dated.</div>
+
+    <div class="cards-row">
+      <div class="card">
+        <div class="card-title green">Where Boletia Wins</div>
+        <div class="wl-item">Local brand recognition — organizers know the name</div>
+        <div class="wl-item">Established organizer relationships since 2012</div>
+        <div class="wl-item">Spanish-first support</div>
+        <div class="wl-item">OXXO payments available (albeit limited)</div>
+        <div class="wl-item">Installment plans (meses sin intereses)</div>
+      </div>
+      <div class="card">
+        <div class="card-title red">Where Boletia Loses</div>
+        <div class="wl-item">10% fee — twice Boletify's rate</div>
+        <div class="wl-item">Slow payouts T+7–10 hurt cash-flow for indie promoters</div>
+        <div class="wl-item">Organizers don't own buyer data — platform does</div>
+        <div class="wl-item">Dated UI/UX — not mobile-first</div>
+        <div class="wl-item">Limited analytics dashboard</div>
+        <div class="wl-item">No meaningful product updates in recent memory</div>
+      </div>
+    </div>
+
+    <p class="section-title">Talk Tracks</p>
+    <div class="talk-track">
+      <div class="talk-track-label">When Organizer Uses Boletia Today</div>
+      <p>"I know Boletia — they've been around a long time. But I want to ask you something: after your last event, how long did it take to get your money? And did you get a full list of everyone who bought a ticket, with their emails, that you could actually use for your next event? Those are two things Boletify does differently from day one — faster payouts and you own your audience data. Let me show you what that looks like."</p>
+    </div>
+    <div class="talk-track">
+      <div class="talk-track-label">On Fees</div>
+      <p>"Boletia charges 10% off your ticket revenue. On a 300-person show at MXN 350 average, that's MXN 10,500 going to the platform. With Boletify at 5%, you keep MXN 5,250 more — per event. If you do 4 events a month, that's MXN 21,000 back in your pocket every month."</p>
+    </div>
+
+    <p class="section-title">Landmine Questions</p>
+    <div class="landmine">After your last event on Boletia, could you download a full CSV of every attendee with email addresses — and actually email them directly for your next show?</div>
+    <div class="landmine">How many days after your last event did you receive your payout? Was that before or after you had to pay the venue?</div>
+    <div class="landmine">When a buyer pays with OXXO on Boletia, do you see their contact details in your dashboard?</div>
+
+    <p class="section-title">Common Objections</p>
+    <div class="objection-item">
+      <div class="objection-q">"I've been with Boletia for years, it works fine."</div>
+      <div class="objection-a">"That makes sense — switching has a cost. But I'd ask: when did you last get a payout in under 5 days? When did you last download your audience list and run your own email campaign? You're leaving money and audience on the table every event. We'll migrate your existing event setup — it takes under an hour."</div>
+    </div>
+    <div class="objection-item">
+      <div class="objection-q">"My buyers know to find tickets on Boletia."</div>
+      <div class="objection-a">"Your buyers follow you, not the platform — they're coming because of the event you create. We'll set up your Boletify page so it looks and feels like your brand. Most organizers see zero drop in sales when they switch."</div>
+    </div>
+  </div>
+
+  <!-- ======== TICKETMASTER ======== -->
+  <div class="tab-panel" id="tab-ticketmaster">
+    <div class="comp-header">
+      <div class="comp-profile">
+        <div class="comp-name">Ticketmaster MX <span class="badge danger">FINED</span></div>
+        <div class="comp-tagline">"Boletos para conciertos, deportes, arte y más"</div>
+        <div class="meta-grid">
+          <div class="meta-item"><div class="meta-label">Parent</div><div class="meta-value">Live Nation Entertainment</div></div>
+          <div class="meta-item"><div class="meta-label">Mexico op via</div><div class="meta-value">OCESA / CIE</div></div>
+          <div class="meta-item"><div class="meta-label">Market position</div><div class="meta-value highlight">Dominant monopoly</div></div>
+          <div class="meta-item"><div class="meta-label">Strategy</div><div class="meta-value">Exclusive venue contracts</div></div>
+          <div class="meta-item"><div class="meta-label">Regulatory status</div><div class="meta-value highlight">PROFECO fine MXN 5M (Feb 2026)</div></div>
+          <div class="meta-item"><div class="meta-label">Consumer sentiment</div><div class="meta-value highlight">Boycott calls, mass complaints</div></div>
+        </div>
+      </div>
+      <div class="comp-pricing">
+        <div class="pricing-title">Pricing Intelligence</div>
+        <div class="pricing-row"><span class="pricing-label">Buyer service fee</span><span class="pricing-value bad">~24% of face value (up from 22% in 2026)</span></div>
+        <div class="pricing-row"><span class="pricing-label">Additional order fee</span><span class="pricing-value bad">Separate charge on top</span></div>
+        <div class="pricing-row"><span class="pricing-label">Dynamic pricing</span><span class="pricing-value bad">Yes — "Official Platinum"</span></div>
+        <div class="pricing-row"><span class="pricing-label">Organizer fee</span><span class="pricing-value mid">Negotiated per deal (exclusive contracts)</span></div>
+        <div class="pricing-row"><span class="pricing-label">Payout speed</span><span class="pricing-value bad">Post-event, negotiated</span></div>
+        <div class="pricing-row"><span class="pricing-label">Self-service</span><span class="pricing-value bad">Not available for small organizers</span></div>
+      </div>
+    </div>
+
+    <div class="alert red"><strong>🚨 Live opportunity:</strong> PROFECO fined Ticketmaster Mexico MXN 5M in February 2026 over BTS ticket sale chaos — unclear pricing, reseller exploitation, site crashes. Fees rose to 24% in 2026. Social media boycott campaigns are active. Consumer trust is at a documented low. Any organizer feeling embarrassed to be associated with Ticketmaster is a warm lead.</div>
+
+    <div class="cards-row">
+      <div class="card">
+        <div class="card-title green">Where Ticketmaster Wins</div>
+        <div class="wl-item">Exclusive contracts with major venues (Auditorio Nacional, Foro Sol, GNP Seguros)</div>
+        <div class="wl-item">Brand recognition for high-demand events</div>
+        <div class="wl-item">Live Nation vertical integration (promotion + venue + ticketing)</div>
+        <div class="wl-item">Global infrastructure for mega-acts</div>
+      </div>
+      <div class="card">
+        <div class="card-title red">Where Ticketmaster Loses</div>
+        <div class="wl-item">24% buyer fees — the highest in the market</div>
+        <div class="wl-item">PROFECO fine and regulatory scrutiny (Feb 2026)</div>
+        <div class="wl-item">Frequent site crashes during high-demand on-sales</div>
+        <div class="wl-item">Completely inaccessible to small/indie organizers</div>
+        <div class="wl-item">Organizer data owned entirely by Live Nation</div>
+        <div class="wl-item">Active consumer boycott sentiment</div>
+      </div>
+    </div>
+
+    <p class="section-title">Talk Tracks</p>
+    <div class="talk-track">
+      <div class="talk-track-label">General Positioning</div>
+      <p>"Ticketmaster isn't even an option for you — they only work with venues they have exclusive contracts with. We're built specifically for independent promoters like you. And if your audience is asking why they're paying 24% in fees with a site that crashes, that's also a story you don't have to be part of anymore."</p>
+    </div>
+    <div class="talk-track">
+      <div class="talk-track-label">If Buyer Complaints Come Up</div>
+      <p>"This is exactly why we built Boletify. With us, buyers see the total price before they click buy — no surprises at checkout. That trust becomes your reputation. When your fans know they're buying from a platform that doesn't hide fees, they come back."</p>
+    </div>
+
+    <p class="section-title">Landmine Questions</p>
+    <div class="landmine">Have any of your buyers complained about the fees they paid on their last ticket purchase? What did they say?</div>
+    <div class="landmine">When Ticketmaster's site crashes during an on-sale for an event you're promoting, how does that reflect on your brand as a promoter?</div>
+    <div class="landmine">Do you currently have any say in how Ticketmaster prices the service fees on your events?</div>
+  </div>
+
+  <!-- ======== EVENTBRITE ======== -->
+  <div class="tab-panel" id="tab-eventbrite">
+    <div class="comp-header">
+      <div class="comp-profile">
+        <div class="comp-name">Eventbrite</div>
+        <div class="comp-tagline">"Bring the world together through live experiences"</div>
+        <div class="meta-grid">
+          <div class="meta-item"><div class="meta-label">Founded</div><div class="meta-value">2006, San Francisco</div></div>
+          <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Public (EB)</div></div>
+          <div class="meta-item"><div class="meta-label">Market</div><div class="meta-value">Global, US-primary</div></div>
+          <div class="meta-item"><div class="meta-label">LatAm status</div><div class="meta-value highlight">Afterthought — minimal localization</div></div>
+          <div class="meta-item"><div class="meta-label">Language</div><div class="meta-value highlight">English-first</div></div>
+          <div class="meta-item"><div class="meta-label">Local payments</div><div class="meta-value highlight">No OXXO / No SPEI</div></div>
+        </div>
+      </div>
+      <div class="comp-pricing">
+        <div class="pricing-title">Pricing Intelligence</div>
+        <div class="pricing-row"><span class="pricing-label">Service fee (Essentials)</span><span class="pricing-value bad">3.7% + USD 1.79/ticket to organizer</span></div>
+        <div class="pricing-row"><span class="pricing-label">Service fee (Professional)</span><span class="pricing-value bad">6.2% + USD 1.59/ticket to organizer</span></div>
+        <div class="pricing-row"><span class="pricing-label">Buyer-facing fee</span><span class="pricing-value mid">~7–8% added at checkout</span></div>
+        <div class="pricing-row"><span class="pricing-label">Payment processing</span><span class="pricing-value bad">2.9% + USD 0.79 extra</span></div>
+        <div class="pricing-row"><span class="pricing-label">OXXO support</span><span class="pricing-value bad">None</span></div>
+        <div class="pricing-row"><span class="pricing-label">Payout speed</span><span class="pricing-value bad">T+4–5 business days</span></div>
+      </div>
+    </div>
+
+    <div class="alert amber"><strong>Key gap:</strong> Eventbrite has zero native OXXO or SPEI support. In a market where ~35% of Mexicans are unbanked and OXXO Pay processes USD 17B annually, this is a structural exclusion of a huge buyer segment. Any organizer whose audience skews working-class or cash-preferring is losing revenue on Eventbrite.</div>
+
+    <div class="cards-row">
+      <div class="card">
+        <div class="card-title green">Where Eventbrite Wins</div>
+        <div class="wl-item">Strong global brand — international organizers already know it</div>
+        <div class="wl-item">Rich ecosystem of integrations (Mailchimp, Salesforce, Zoom, etc.)</div>
+        <div class="wl-item">Good self-service UX for simple events</div>
+        <div class="wl-item">Discovery layer with organic event traffic</div>
+      </div>
+      <div class="card">
+        <div class="card-title red">Where Eventbrite Loses</div>
+        <div class="wl-item">No OXXO, SPEI, or Mercado Pago — excludes unbanked buyers</div>
+        <div class="wl-item">English-first — Spanish support is secondary</div>
+        <div class="wl-item">Fees have increased significantly — organizer backlash</div>
+        <div class="wl-item">LatAm is not a strategic priority for them</div>
+        <div class="wl-item">Organizer data owned by Eventbrite platform</div>
+        <div class="wl-item">USD pricing feels foreign to MX organizers</div>
+      </div>
+    </div>
+
+    <p class="section-title">Talk Tracks</p>
+    <div class="talk-track">
+      <div class="talk-track-label">On Payment Methods</div>
+      <p>"If you're using Eventbrite today, ask yourself: how many people at your last event tried to buy a ticket and couldn't because they don't have a card? OXXO Pay processes billions annually in Mexico — that's your audience. Boletify accepts OXXO, SPEI, and Mercado Pago out of the box. You're not leaving those buyers behind."</p>
+    </div>
+    <div class="talk-track">
+      <div class="talk-track-label">On Language and Local UX</div>
+      <p>"Eventbrite is a great product — for English-speaking markets. Your buyers are in Spanish. Your promoter workflows are in Spanish. Your payment methods are Mexican. Why use a platform that treats Mexico like an edge case?"</p>
+    </div>
+
+    <p class="section-title">Landmine Questions</p>
+    <div class="landmine">What percentage of your ticket buyers prefer to pay with OXXO or bank transfer? Have you ever measured how many people abandoned checkout because there was no cash payment option?</div>
+    <div class="landmine">When your buyers need support, are they getting help in Spanish — or navigating an English-language help center?</div>
+    <div class="landmine">Are your Eventbrite fees quoted in USD or MXN? How does that affect your event budgeting?</div>
+  </div>
+
+  <!-- ======== DICE ======== -->
+  <div class="tab-panel" id="tab-dice">
+    <div class="comp-header">
+      <div class="comp-profile">
+        <div class="comp-name">Dice / Fever <span class="badge caution">ACQUIRED</span></div>
+        <div class="comp-tagline">"The best way to discover and buy tickets to live events"</div>
+        <div class="meta-grid">
+          <div class="meta-item"><div class="meta-label">Founded</div><div class="meta-value">2014, London</div></div>
+          <div class="meta-item"><div class="meta-label">Acquired by</div><div class="meta-value highlight">Fever (June 2025)</div></div>
+          <div class="meta-item"><div class="meta-label">Market</div><div class="meta-value">US, UK, EU — not LatAm</div></div>
+          <div class="meta-item"><div class="meta-label">Focus</div><div class="meta-value">Music, nightlife, culture</div></div>
+          <div class="meta-item"><div class="meta-label">Anti-scalp</div><div class="meta-value">✓ Waitlist-only returns</div></div>
+          <div class="meta-item"><div class="meta-label">OXXO/SPEI</div><div class="meta-value highlight">None</div></div>
+        </div>
+      </div>
+      <div class="comp-pricing">
+        <div class="pricing-title">Pricing Intelligence</div>
+        <div class="pricing-row"><span class="pricing-label">Commission to organizer</span><span class="pricing-value bad">~10% of face value</span></div>
+        <div class="pricing-row"><span class="pricing-label">Buyer-facing pricing</span><span class="pricing-value good">All-in (no drip fees)</span></div>
+        <div class="pricing-row"><span class="pricing-label">Booking fee split</span><span class="pricing-value mid">Between Dice and organizer</span></div>
+        <div class="pricing-row"><span class="pricing-label">Payout speed</span><span class="pricing-value bad">Post-event + 2–5 days</span></div>
+        <div class="pricing-row"><span class="pricing-label">OXXO/SPEI</span><span class="pricing-value bad">Not supported</span></div>
+        <div class="pricing-row"><span class="pricing-label">LatAm availability</span><span class="pricing-value bad">Not available</span></div>
+      </div>
+    </div>
+
+    <div class="alert green"><strong>Strategic note:</strong> Dice's acquisition by Fever in June 2025 is an opportunity. Dice built its brand on being independent and fan-first. Now it's owned by a large corporate entertainment platform. Organizers and fans who loved Dice for its independence are potentially looking for an alternative that still has that ethos — and Boletify can fill that space in Mexico.</div>
+
+    <div class="cards-row">
+      <div class="card">
+        <div class="card-title green">Where Dice Wins (Globally)</div>
+        <div class="wl-item">Best-in-class anti-scalp: waitlist-only returns, non-transferable tickets</div>
+        <div class="wl-item">All-in transparent pricing — pioneered the model</div>
+        <div class="wl-item">Strong music-industry relationships and brand cachet</div>
+        <div class="wl-item">Beautiful mobile app and discovery UX</div>
+        <div class="wl-item">Now backed by Fever's global distribution</div>
+      </div>
+      <div class="card">
+        <div class="card-title red">Where Dice Loses (for Mexico)</div>
+        <div class="wl-item">Not available in Mexico — zero local presence</div>
+        <div class="wl-item">No OXXO, SPEI, or Mexican payment methods</div>
+        <div class="wl-item">English-only platform</div>
+        <div class="wl-item">Post-Fever acquisition: brand independence narrative is weakened</div>
+        <div class="wl-item">10% commission — double Boletify's rate</div>
+        <div class="wl-item">Payout post-event — hurts indie promoter cash flow</div>
+      </div>
+    </div>
+
+    <p class="section-title">Talk Tracks</p>
+    <div class="talk-track">
+      <div class="talk-track-label">If Organizer Mentions Admiring Dice</div>
+      <p>"Dice built something great — all-in pricing, fan-first approach. We took that philosophy and built it for Mexico. OXXO payments, Spanish UX, local support, and we're not owned by a global entertainment conglomerate. Dice's acquisition by Fever means they're now part of the same corporate machinery as the platforms they were disrupting. We're still independent, still local."</p>
+    </div>
+
+    <p class="section-title">Landmine Questions</p>
+    <div class="landmine">Have you tried to use Dice for a Mexico City event? What happened when your buyers tried to pay?</div>
+    <div class="landmine">Now that Dice is owned by Fever, do you think their priorities will stay the same for independent promoters?</div>
+  </div>
+
+  <!-- ======== PASSLINE ======== -->
+  <div class="tab-panel" id="tab-passline">
+    <div class="comp-header">
+      <div class="comp-profile">
+        <div class="comp-name">Passline</div>
+        <div class="comp-tagline">"Líder en venta de tickets para eventos en línea"</div>
+        <div class="meta-grid">
+          <div class="meta-item"><div class="meta-label">HQ</div><div class="meta-value">Mexico City</div></div>
+          <div class="meta-item"><div class="meta-label">Market</div><div class="meta-value">Mexico + LatAm</div></div>
+          <div class="meta-item"><div class="meta-label">Niche</div><div class="meta-value highlight">Nightlife, clubs, electronic</div></div>
+          <div class="meta-item"><div class="meta-label">Self-service</div><div class="meta-value highlight">Limited — managed setup</div></div>
+          <div class="meta-item"><div class="meta-label">App</div><div class="meta-value">✓ iOS + Android</div></div>
+          <div class="meta-item"><div class="meta-label">2025-26 Activity</div><div class="meta-value">Active CDMX events</div></div>
+        </div>
+      </div>
+      <div class="comp-pricing">
+        <div class="pricing-title">Pricing Intelligence</div>
+        <div class="pricing-row"><span class="pricing-label">Service fee</span><span class="pricing-value bad">~8–12% (negotiated)</span></div>
+        <div class="pricing-row"><span class="pricing-label">Self-service</span><span class="pricing-value bad">Not true self-service — managed</span></div>
+        <div class="pricing-row"><span class="pricing-label">Organizer data</span><span class="pricing-value bad">Platform-owned</span></div>
+        <div class="pricing-row"><span class="pricing-label">Analytics</span><span class="pricing-value mid">Basic</span></div>
+        <div class="pricing-row"><span class="pricing-label">Payout speed</span><span class="pricing-value mid">Variable</span></div>
+        <div class="pricing-row"><span class="pricing-label">Vertical focus</span><span class="pricing-value mid">Nightlife / clubs only</span></div>
+      </div>
+    </div>
+
+    <div class="alert amber"><strong>Strategy:</strong> Don't fight Passline in the nightclub niche — they own it. Win the music concert segment first (indie gigs, small festivals, emerging artists). If a promoter runs both club nights AND concerts, lead with the concert use case and let them discover Boletify works better for all their events.</div>
+
+    <div class="cards-row">
+      <div class="card">
+        <div class="card-title green">Where Passline Wins</div>
+        <div class="wl-item">Dominant in CDMX nightlife / club circuit — strong relationships</div>
+        <div class="wl-item">Local Spanish-first platform</div>
+        <div class="wl-item">LatAm presence beyond Mexico</div>
+        <div class="wl-item">Known in the Resident Advisor / electronic music community</div>
+      </div>
+      <div class="card">
+        <div class="card-title red">Where Passline Loses</div>
+        <div class="wl-item">Not true self-service — new organizers need to be onboarded manually</div>
+        <div class="wl-item">Narrow vertical — poor fit for concerts, theatre, or conferences</div>
+        <div class="wl-item">Limited analytics and data ownership for organizers</div>
+        <div class="wl-item">Pricing is opaque and negotiated case-by-case</div>
+        <div class="wl-item">No meaningful self-service product innovation</div>
+      </div>
+    </div>
+
+    <p class="section-title">Landmine Questions</p>
+    <div class="landmine">If you want to create a new event page on Passline tonight for a show next month, can you do that yourself — or do you have to contact their team first?</div>
+    <div class="landmine">Do you use Passline for your concerts as well as your club nights? How does the experience compare?</div>
+  </div>
+
+  <!-- ======== SUPERBOLETOS ======== -->
+  <div class="tab-panel" id="tab-superboletos">
+    <div class="comp-header">
+      <div class="comp-profile">
+        <div class="comp-name">SuperBoletos</div>
+        <div class="comp-tagline">"No hagas filas, compra en línea"</div>
+        <div class="meta-grid">
+          <div class="meta-item"><div class="meta-label">Founded</div><div class="meta-value">2003</div></div>
+          <div class="meta-item"><div class="meta-label">Market share</div><div class="meta-value highlight">~40% Mexico (2nd largest)</div></div>
+          <div class="meta-item"><div class="meta-label">Annual tickets</div><div class="meta-value highlight">14M+ per year</div></div>
+          <div class="meta-item"><div class="meta-label">Primary region</div><div class="meta-value">Monterrey + northern MX</div></div>
+          <div class="meta-item"><div class="meta-label">Tech investment</div><div class="meta-value">Oracle-powered infrastructure</div></div>
+          <div class="meta-item"><div class="meta-label">App</div><div class="meta-value">✓ SuperFan app + AI chatbot</div></div>
+        </div>
+      </div>
+      <div class="comp-pricing">
+        <div class="pricing-title">Pricing Intelligence</div>
+        <div class="pricing-row"><span class="pricing-label">Service fee</span><span class="pricing-value bad">~8–10% (estimated)</span></div>
+        <div class="pricing-row"><span class="pricing-label">Self-service</span><span class="pricing-value bad">Limited — enterprise focus</span></div>
+        <div class="pricing-row"><span class="pricing-label">Promotions</div><span class="pricing-value mid">Supermiércoles 2×1 deals</span></div>
+        <div class="pricing-row"><span class="pricing-label">Loyalty</span><span class="pricing-value good">✓ SuperFan loyalty program</span></div>
+        <div class="pricing-row"><span class="pricing-label">Payout speed</span><span class="pricing-value bad">Post-event</span></div>
+        <div class="pricing-row"><span class="pricing-label">Indie organizer access</span><span class="pricing-value bad">Not their target</span></div>
+      </div>
+    </div>
+
+    <div class="alert amber"><strong>Key context:</strong> SuperBoletos is powerful in Monterrey and regional markets, but CDMX indie promoters are not their focus. They're built for large-scale events, not the 200-500 capacity concerts that are Boletify's bread and butter. Their distribution advantage (14M tickets/year) doesn't help a promoter who needs a self-service tool they can use tonight.</div>
+
+    <div class="cards-row">
+      <div class="card">
+        <div class="card-title green">Where SuperBoletos Wins</div>
+        <div class="wl-item">Massive scale — 14M tickets/year, 40% market share</div>
+        <div class="wl-item">Oracle-powered infrastructure = reliability at scale</div>
+        <div class="wl-item">SuperFan loyalty app + AI chatbot (Facebook Messenger)</div>
+        <div class="wl-item">Supermiércoles 2×1 promos drive buyer acquisition</div>
+        <div class="wl-item">Strong regional presence in Monterrey and northern Mexico</div>
+      </div>
+      <div class="card">
+        <div class="card-title red">Where SuperBoletos Loses</div>
+        <div class="wl-item">Not built for indie / small organizers — enterprise-focused</div>
+        <div class="wl-item">CDMX indie scene is not their market or focus</div>
+        <div class="wl-item">No true self-service — organizers can't create events themselves</div>
+        <div class="wl-item">Post-event payouts hurt small promoter cash flow</div>
+        <div class="wl-item">Limited organizer data ownership</div>
+        <div class="wl-item">Legacy infrastructure — not mobile-first for organizers</div>
+      </div>
+    </div>
+
+    <p class="section-title">Talk Tracks</p>
+    <div class="talk-track">
+      <div class="talk-track-label">General</div>
+      <p>"SuperBoletos is built for arena-level events in Monterrey. They're not going to take a meeting with you for a 300-person show in Roma Norte. We are. Boletify is built specifically for promoters at your scale — you can create your event, set up your tickets, and go live in under 30 minutes, without talking to anyone."</p>
+    </div>
+
+    <p class="section-title">Landmine Questions</p>
+    <div class="landmine">Have you ever tried to list a small-to-mid size event on SuperBoletos? What was the process like — could you do it yourself?</div>
+    <div class="landmine">SuperBoletos has a lot of promotions like 2x1 deals — who absorbs that cost, you or them? How does that affect your revenue per ticket?</div>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

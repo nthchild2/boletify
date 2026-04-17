@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Boletify — Brutal-Glass v2.0 Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300..900&family=JetBrains+Mono:wght@300..800&display=swap" />
+<style>
+:root {
+  /* ————————— Ánima Nocturna palette ————————— */
+  --ink-1000:#000000; --ink-950:#08080C; --ink-900:#0F0F15; --ink-850:#161620;
+  --ink-800:#1F1F2B; --ink-700:#2E2E3E; --ink-500:#55556A; --ink-400:#787891;
+  --ink-300:#9B9BB3; --ink-200:#C2C2D0; --ink-100:#E4E4EB;
+  --bone-50:#F6F2EA; --bone-100:#EFE9DC;
+  --signal-400:#D7FF3A; --signal-500:#C6FF2E; --signal-600:#9FE600; --signal-900:#2B3300;
+  --rosa-400:#FF6AA9; --rosa-500:#FF2E88; --rosa-600:#D6005F;
+  --oxblood-400:#A32438; --oxblood-500:#7A1020;
+  --leaf-500:#20D987; --sun-500:#FF9E00; --cenote-500:#00B3C7;
+
+  /* ————————— Shadows ————————— */
+  --brick-sm: 3px 3px 0 0 var(--ink-1000);
+  --brick-md: 6px 6px 0 0 var(--ink-1000);
+  --brick-lg: 10px 10px 0 0 var(--ink-1000);
+  --brick-signal: 6px 6px 0 0 var(--signal-500);
+  --brick-rosa: 6px 6px 0 0 var(--rosa-500);
+  --glass-sm: 0 1px 1px 0 rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+  --glass-md: 0 8px 24px -4px rgba(0,0,0,0.35), 0 2px 8px -2px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.10);
+  --glass-lg: 0 24px 64px -12px rgba(0,0,0,0.45), 0 8px 20px -4px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.12);
+  --glow-signal: 0 0 32px rgba(198,255,46,0.35), 0 0 64px rgba(198,255,46,0.15);
+  --glow-rosa:   0 0 32px rgba(255,46,136,0.35), 0 0 64px rgba(255,46,136,0.15);
+  --glow-focus:  0 0 0 2px var(--signal-500), 0 0 16px rgba(198,255,46,0.45);
+
+  /* ————————— Fonts ————————— */
+  --f-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --f-body: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: #fff;
+  background: var(--ink-950);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img { max-width: 100%; display: block; }
+
+/* ————————— Utility: font families ————————— */
+.f-display { font-family: var(--f-display); font-weight: 800; letter-spacing: -0.025em; }
+.f-body { font-family: var(--f-body); }
+.f-mono { font-family: var(--f-mono); font-feature-settings: "tnum", "ss01"; font-weight: 500; }
+
+/* ————————— Mesh hero background ————————— */
+.mesh-hero {
+  background:
+    radial-gradient(1200px 600px at 15% 10%, rgba(198,255,46,0.18), transparent 60%),
+    radial-gradient(900px 700px at 85% 20%, rgba(255,46,136,0.22), transparent 55%),
+    radial-gradient(800px 800px at 50% 110%, rgba(122,16,32,0.35), transparent 60%),
+    var(--ink-950);
+}
+.mesh-ambient {
+  background:
+    radial-gradient(900px 500px at 20% 0%, rgba(198,255,46,0.08), transparent 55%),
+    radial-gradient(700px 600px at 90% 30%, rgba(255,46,136,0.10), transparent 55%),
+    var(--ink-900);
+}
+
+/* ————————— Layout ————————— */
+.container { width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 48px; }
+@media (max-width: 768px) { .container { padding: 0 20px; } }
+
+.section { padding: 96px 0; border-top: 1.5px solid var(--ink-800); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 48px; gap: 24px; flex-wrap: wrap; }
+.section-kicker { font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-300); }
+.section-title { font-family: var(--f-display); font-size: clamp(40px, 6vw, 72px); font-weight: 850; line-height: 0.95; letter-spacing: -0.03em; margin: 12px 0 0; }
+
+/* ————————— Nav ————————— */
+.nav {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 48px;
+  background: rgba(8,8,12,0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1.5px solid var(--ink-800);
+}
+@media (max-width: 768px) { .nav { padding: 12px 20px; } }
+.logo { font-family: var(--f-display); font-weight: 900; font-size: 22px; letter-spacing: -0.03em; }
+.logo em { font-style: normal; color: var(--signal-500); }
+.nav-meta { font-family: var(--f-mono); font-size: 12px; color: var(--ink-300); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ————————— Hero ————————— */
+.hero { padding: 96px 0 64px; }
+.hero-kicker {
+  font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-300);
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 8px 14px; border: 1px solid var(--ink-700); border-radius: 2px;
+}
+.hero-kicker .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--signal-500); box-shadow: var(--glow-signal); }
+.hero h1 {
+  font-family: var(--f-display);
+  font-size: clamp(64px, 11vw, 156px);
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  margin: 32px 0 32px;
+}
+.hero h1 .rosa { color: var(--rosa-500); }
+.hero h1 .signal { color: var(--signal-500); }
+.hero h1 .outline { -webkit-text-stroke: 2px var(--ink-200); color: transparent; font-weight: 900; }
+.hero p { max-width: 640px; font-size: 20px; line-height: 1.5; color: var(--ink-200); margin: 0 0 40px; }
+.hero-ctas { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.hero-meta { display: flex; gap: 40px; margin-top: 80px; border-top: 1.5px solid var(--ink-800); padding-top: 24px; flex-wrap: wrap; }
+.hero-meta dt { font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-400); margin: 0 0 8px; }
+.hero-meta dd { font-family: var(--f-mono); font-size: 28px; font-weight: 500; color: var(--signal-500); margin: 0; }
+
+/* ————————— Buttons ————————— */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 0 24px; height: 52px;
+  font-family: var(--f-body); font-weight: 600; font-size: 13px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  border: 1.5px solid var(--ink-1000); border-radius: 8px;
+  cursor: pointer; user-select: none; text-decoration: none;
+  transition: transform 80ms linear, box-shadow 80ms linear, background-color 120ms ease-out, font-variation-settings 120ms ease-out;
+}
+.btn:focus-visible { outline: none; box-shadow: var(--glow-focus); }
+.btn--primary { background: var(--signal-500); color: var(--ink-950); box-shadow: var(--brick-md); }
+.btn--primary:hover { background: var(--signal-400); font-variation-settings: "wght" 800; }
+.btn--primary:active { transform: translate(6px, 6px); box-shadow: none; }
+.btn--accent { background: var(--rosa-500); color: var(--ink-950); box-shadow: var(--brick-md); }
+.btn--accent:hover { background: var(--rosa-400); }
+.btn--accent:active { transform: translate(6px, 6px); box-shadow: none; }
+.btn--secondary { background: transparent; color: #fff; border-color: var(--ink-700); }
+.btn--secondary:hover { border-color: var(--signal-500); color: var(--signal-500); }
+.btn--ghost { background: transparent; color: #fff; border-color: transparent; }
+.btn--glass { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(20px); box-shadow: var(--glass-md); border-radius: 22px; }
+.btn--danger { background: var(--oxblood-500); color: #fff; box-shadow: var(--brick-md); }
+.btn--sm { height: 36px; padding: 0 14px; font-size: 12px; }
+.btn--xl { height: 64px; padding: 0 32px; font-size: 18px; text-transform: none; letter-spacing: -0.01em; font-family: var(--f-display); font-weight: 700; }
+
+/* ————————— Marquee ————————— */
+.marquee { border-top: 1.5px solid var(--ink-800); border-bottom: 1.5px solid var(--ink-800); background: var(--ink-950); overflow: hidden; padding: 24px 0; }
+.marquee-track { display: flex; width: max-content; white-space: nowrap; animation: marquee 28s linear infinite; will-change: transform; }
+.marquee-track:hover { animation-play-state: paused; }
+.marquee span {
+  font-family: var(--f-display); font-weight: 850; font-size: clamp(48px, 7vw, 96px);
+  letter-spacing: -0.03em; text-transform: uppercase;
+  padding-right: 48px;
+}
+.marquee-dot { color: var(--signal-500); }
+@keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
+/* ————————— Palette ————————— */
+.palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+.swatch { border-radius: 14px; padding: 20px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; border: 1.5px solid var(--ink-800); box-shadow: var(--brick-sm); }
+.swatch .name { font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+.swatch .hex { font-family: var(--f-mono); font-size: 14px; font-weight: 500; }
+.swatch--dark .name, .swatch--dark .hex { color: #fff; }
+.swatch--light .name, .swatch--light .hex { color: var(--ink-950); }
+
+/* ————————— Type specimens ————————— */
+.type-row { display: grid; grid-template-columns: 200px 1fr; gap: 32px; padding: 32px 0; border-bottom: 1px solid var(--ink-800); align-items: baseline; }
+@media (max-width: 768px) { .type-row { grid-template-columns: 1fr; gap: 12px; } }
+.type-spec { font-family: var(--f-mono); font-size: 12px; color: var(--ink-300); text-transform: uppercase; letter-spacing: 0.08em; }
+.type-spec strong { color: var(--signal-500); font-weight: 500; }
+.type-sample { overflow-wrap: break-word; }
+
+/* ————————— Event cards ————————— */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 32px; }
+.event-card {
+  position: relative;
+  background: var(--ink-900);
+  border: 1.5px solid var(--ink-800);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--brick-md);
+  transition: transform 120ms cubic-bezier(0.2,0,0,1), box-shadow 120ms cubic-bezier(0.2,0,0,1);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.event-card:hover { transform: translate(-2px, -2px); box-shadow: var(--brick-lg); }
+.event-card:active { transform: translate(6px, 6px); box-shadow: none; }
+.event-card .poster { aspect-ratio: 4 / 5; position: relative; overflow: hidden; background: var(--ink-850); }
+.event-card .poster::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(8,8,12,0.72) 100%); }
+.event-card .overline-strip { position: absolute; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; z-index: 2; }
+.event-card .tag { font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; padding: 6px 10px; border-radius: 2px; background: rgba(8,8,12,0.72); backdrop-filter: blur(12px); color: var(--ink-100); border: 1px solid rgba(255,255,255,0.12); }
+.event-card .tag--signal { background: var(--signal-500); color: var(--ink-950); border-color: var(--ink-950); }
+.event-card .body { padding: 20px; display: grid; gap: 8px; }
+.event-card .overline { font-family: var(--f-mono); font-size: 12px; color: var(--ink-300); text-transform: uppercase; letter-spacing: 0.08em; }
+.event-card h3 { font-family: var(--f-display); font-size: 24px; font-weight: 700; line-height: 1.125; letter-spacing: -0.01em; margin: 0; }
+.event-card .meta { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; }
+.event-card .venue { font-family: var(--f-body); font-size: 14px; color: var(--ink-300); }
+.event-card .price { font-family: var(--f-mono); font-size: 14px; font-weight: 500; color: var(--signal-500); }
+
+/* Poster SVGs (inline, gradient + type) */
+.poster-bg-1 { background: radial-gradient(600px 300px at 30% 80%, rgba(255,46,136,0.55), transparent 60%), radial-gradient(400px 500px at 80% 20%, rgba(198,255,46,0.35), transparent 55%), #1A0A1E; }
+.poster-bg-2 { background: radial-gradient(500px 400px at 50% 100%, rgba(122,16,32,0.7), transparent 55%), radial-gradient(600px 600px at 20% 10%, rgba(255,158,0,0.25), transparent 60%), #170A0A; }
+.poster-bg-3 { background: radial-gradient(400px 400px at 70% 30%, rgba(0,179,199,0.35), transparent 60%), radial-gradient(600px 500px at 20% 80%, rgba(198,255,46,0.30), transparent 55%), #08151A; }
+.poster-bg-4 { background: radial-gradient(500px 500px at 50% 50%, rgba(255,46,136,0.45), transparent 60%), #1A0F0F; }
+.poster-type { position: absolute; inset: 0; padding: 16px; display: flex; align-items: flex-end; z-index: 1; pointer-events: none; }
+.poster-type span { font-family: var(--f-display); font-weight: 900; font-size: 56px; line-height: 0.9; letter-spacing: -0.035em; color: #fff; text-transform: uppercase; opacity: 0.92; }
+
+/* ————————— Ticket artifact ————————— */
+.ticket-stage {
+  position: relative;
+  padding: 80px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 720px;
+}
+.ticket-bg-glow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(400px 400px at 50% 50%, rgba(198,255,46,0.12), transparent 60%), radial-gradient(500px 500px at 50% 50%, rgba(255,46,136,0.14), transparent 65%); }
+
+.ticket {
+  position: relative;
+  width: 360px; max-width: 90%;
+  aspect-ratio: 9 / 16;
+  border-radius: 22px;
+  background:
+    radial-gradient(600px 300px at 50% 0%, rgba(255,46,136,0.18), transparent 60%),
+    radial-gradient(600px 400px at 50% 100%, rgba(198,255,46,0.14), transparent 60%),
+    rgba(22,22,32,0.72);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: var(--glass-lg);
+  overflow: hidden;
+  /* Die-cut notches via radial mask. Two semicircles, mid-height, both sides. */
+  -webkit-mask:
+    radial-gradient(circle 12px at 0% 62%, transparent 98%, #000 100%),
+    radial-gradient(circle 12px at 100% 62%, transparent 98%, #000 100%),
+    linear-gradient(#000, #000);
+  -webkit-mask-composite: source-in;
+          mask:
+    radial-gradient(circle 12px at 0% 62%, transparent 98%, #000 100%),
+    radial-gradient(circle 12px at 100% 62%, transparent 98%, #000 100%),
+    linear-gradient(#000, #000);
+          mask-composite: intersect;
+  animation: ticket-reveal 600ms cubic-bezier(0.34, 1.3, 0.64, 1) 200ms both;
+}
+@keyframes ticket-reveal { from { opacity: 0; transform: translateY(20px) scale(0.94); } to { opacity: 1; transform: none; } }
+
+.ticket::before {
+  /* paper grain noise */
+  content: ""; position: absolute; inset: 0; opacity: 0.04; pointer-events: none; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.ticket-inner { position: relative; height: 100%; display: flex; flex-direction: column; padding: 28px; color: #fff; }
+
+.ticket .venue-line { font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-200); }
+.ticket .venue-line em { font-style: normal; color: var(--signal-500); }
+.ticket h2 { font-family: var(--f-display); font-weight: 900; font-size: 44px; line-height: 0.92; letter-spacing: -0.03em; margin: 16px 0 8px; }
+.ticket .act { font-family: var(--f-body); font-size: 14px; color: var(--ink-200); }
+
+.ticket .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+.ticket .grid dt { font-family: var(--f-body); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-300); margin: 0 0 6px; }
+.ticket .grid dd { font-family: var(--f-mono); font-weight: 500; font-size: 16px; color: #fff; margin: 0; }
+
+.ticket .perforation {
+  position: absolute; left: 0; right: 0; top: 62%; transform: translateY(-50%);
+  border-top: 1px dashed rgba(255,255,255,0.18);
+  pointer-events: none;
+}
+.ticket .qr-stage {
+  margin-top: auto; padding-top: 32px; display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.ticket .qr {
+  width: 128px; height: 128px; background: #fff; border-radius: 6px; padding: 8px;
+  box-shadow: var(--glow-signal);
+}
+.ticket .qr svg { width: 100%; height: 100%; }
+.ticket .code { font-family: var(--f-mono); font-size: 14px; letter-spacing: 0.08em; color: var(--ink-200); }
+
+/* ————————— Radii showcase ————————— */
+.radii { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 20px; }
+.radii .cell { background: var(--ink-900); border: 1.5px solid var(--ink-800); padding: 24px; text-align: center; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--brick-sm); }
+.radii .cell .shape { height: 56px; background: var(--signal-500); margin: 0 auto; width: 100%; }
+.radii .cell .name { font-family: var(--f-mono); font-size: 12px; color: var(--ink-200); letter-spacing: 0.08em; }
+
+/* ————————— Shadows showcase ————————— */
+.shadows { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 32px; padding: 32px 0; }
+.shadows .cell { padding: 48px 32px; background: var(--ink-900); border: 1.5px solid var(--ink-800); border-radius: 14px; text-align: center; }
+.shadows .cell .name { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.16em; color: var(--ink-300); text-transform: uppercase; }
+.shadows .box { height: 80px; background: var(--ink-850); border: 1.5px solid var(--ink-700); border-radius: 8px; margin-bottom: 24px; }
+.shadows .brick-sm { box-shadow: var(--brick-sm); }
+.shadows .brick-md { box-shadow: var(--brick-md); }
+.shadows .brick-lg { box-shadow: var(--brick-lg); }
+.shadows .brick-signal { box-shadow: var(--brick-signal); border-color: var(--signal-500); }
+.shadows .brick-rosa { box-shadow: var(--brick-rosa); border-color: var(--rosa-500); }
+.shadows .glass-md { box-shadow: var(--glass-md); backdrop-filter: blur(32px); background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+.shadows .glow-signal { box-shadow: var(--glow-signal); border-color: var(--signal-500); }
+.shadows .glow-rosa { box-shadow: var(--glow-rosa); border-color: var(--rosa-500); }
+
+/* ————————— Inputs showcase ————————— */
+.form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+.input-group label { display: block; font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-300); margin-bottom: 8px; }
+.input-group .hint { font-family: var(--f-body); font-size: 12px; letter-spacing: 0.02em; color: var(--ink-400); margin-top: 8px; }
+.input-group .hint.error { color: var(--oxblood-400); }
+.input {
+  width: 100%; height: 48px; padding: 0 16px;
+  font-family: var(--f-body); font-size: 16px;
+  background: var(--ink-850); color: #fff;
+  border: 1.5px solid var(--ink-700); border-radius: 8px;
+  transition: border-color 120ms ease-out, box-shadow 120ms ease-out;
+}
+.input::placeholder { color: var(--ink-400); }
+.input:focus { outline: none; border-color: var(--signal-500); box-shadow: var(--glow-focus); }
+.input.error { border-color: var(--oxblood-500); }
+.input.glass { background: rgba(255,255,255,0.04); backdrop-filter: blur(20px); border-color: rgba(255,255,255,0.10); box-shadow: var(--glass-sm); }
+
+/* ————————— Data strip (organizer dashboard teaser) ————————— */
+.data-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; padding: 32px 0; border-top: 1.5px solid var(--ink-800); border-bottom: 1.5px solid var(--ink-800); }
+.data-strip .stat { padding: 0 24px; border-left: 1.5px solid var(--ink-800); }
+.data-strip .stat:first-child { border-left: none; }
+.data-strip dt { font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-300); margin: 0 0 12px; }
+.data-strip dd { font-family: var(--f-mono); font-weight: 500; font-size: 36px; color: #fff; margin: 0; letter-spacing: -0.02em; }
+.data-strip dd small { font-size: 14px; color: var(--signal-500); margin-left: 8px; vertical-align: top; letter-spacing: 0; }
+
+/* ————————— Footer ————————— */
+footer { padding: 64px 0; border-top: 1.5px solid var(--ink-800); }
+footer .meta { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; color: var(--ink-300); font-family: var(--f-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Legend helper */
+.legend { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-400); margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<!-- ———————————————————————————————————— NAV ———————————————————————————————————— -->
+<nav class="nav">
+  <div class="logo">bolet<em>ify</em></div>
+  <div class="nav-meta">v2.0 · Brutal-Glass · 2026</div>
+</nav>
+
+<!-- ———————————————————————————————————— HERO ———————————————————————————————————— -->
+<section class="mesh-hero">
+  <div class="container hero">
+    <span class="hero-kicker"><span class="dot"></span>DESCUBRE · NOCHES · SONIDOS · CDMX</span>
+    <h1>
+      <span>La noche</span><br/>
+      <span class="rosa">es de</span> <span class="signal">quien</span><br/>
+      <span class="outline">la vive.</span>
+    </h1>
+    <p>El mejor feed de eventos de música en vivo en la Ciudad de México. Sin cargos ocultos, sin letras chiquitas, sin mamadas.</p>
+    <div class="hero-ctas">
+      <a href="#" class="btn btn--primary btn--xl">Encontrar boletos</a>
+      <a href="#" class="btn btn--secondary">Soy organizador →</a>
+    </div>
+    <dl class="hero-meta">
+      <div><dt>Eventos esta semana</dt><dd>284</dd></div>
+      <div><dt>Recintos activos</dt><dd>147</dd></div>
+      <div><dt>Asistentes 2026</dt><dd>1.2M</dd></div>
+      <div><dt>Pago organizador</dt><dd>T+3 días</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ———————————————————————————————————— MARQUEE ———————————————————————————————————— -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>DESCUBRE <em class="marquee-dot">·</em> NOCHES <em class="marquee-dot">·</em> SONIDOS <em class="marquee-dot">·</em> CDMX <em class="marquee-dot">·</em> 2026 <em class="marquee-dot">·</em> </span>
+    <span>DESCUBRE <em class="marquee-dot">·</em> NOCHES <em class="marquee-dot">·</em> SONIDOS <em class="marquee-dot">·</em> CDMX <em class="marquee-dot">·</em> 2026 <em class="marquee-dot">·</em> </span>
+  </div>
+</div>
+
+<!-- ———————————————————————————————————— EVENTS ———————————————————————————————————— -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">01 · ESTA SEMANA</div>
+        <h2 class="section-title">Event card<br/>grid.</h2>
+      </div>
+      <div style="max-width: 360px; color: var(--ink-300);">Poster-ratio (4:5) imagery. Brutalist card with 1.5px ink-800 border and <code class="f-mono" style="color: var(--signal-500);">brick-md</code> shadow. On hover: lifts toward camera. On press: absorbs the brick.</div>
+    </div>
+
+    <div class="card-grid">
+      <a href="#" class="event-card">
+        <div class="poster poster-bg-1">
+          <div class="overline-strip"><span class="tag tag--signal">EN VENTA</span><span class="tag">INDIE</span></div>
+          <div class="poster-type"><span>Nubes<br/>Oscuras</span></div>
+        </div>
+        <div class="body">
+          <div class="overline">FORO INDIE ROCK</div>
+          <h3>Noche de Indie Rock · CDMX</h3>
+          <div class="meta"><span class="venue">Foro Puebla · Roma Nte</span><span class="price">$450 MXN</span></div>
+        </div>
+      </a>
+      <a href="#" class="event-card">
+        <div class="poster poster-bg-2">
+          <div class="overline-strip"><span class="tag tag--signal">ÚLTIMOS</span><span class="tag">CUMBIA</span></div>
+          <div class="poster-type"><span>Sonido<br/>del Valle</span></div>
+        </div>
+        <div class="body">
+          <div class="overline">CUMBIA SONIDERA</div>
+          <h3>Sonido Gallo Negro · Tributo</h3>
+          <div class="meta"><span class="venue">Salón Los Ángeles</span><span class="price">$350 MXN</span></div>
+        </div>
+      </a>
+      <a href="#" class="event-card">
+        <div class="poster poster-bg-3">
+          <div class="overline-strip"><span class="tag">GRATIS</span><span class="tag">ELECTRÓNICA</span></div>
+          <div class="poster-type"><span>Cenote<br/>Club</span></div>
+        </div>
+        <div class="body">
+          <div class="overline">FIESTA ELECTRÓNICA</div>
+          <h3>Cenote Club · Full Moon</h3>
+          <div class="meta"><span class="venue">Terraza Condesa</span><span class="price">GRATIS</span></div>
+        </div>
+      </a>
+      <a href="#" class="event-card">
+        <div class="poster poster-bg-4">
+          <div class="overline-strip"><span class="tag tag--signal">ESTRENO</span><span class="tag">ROCK</span></div>
+          <div class="poster-type"><span>Gris &<br/>Eléctrico</span></div>
+        </div>
+        <div class="body">
+          <div class="overline">RESIDENCIA</div>
+          <h3>Gris Eléctrico · En Vivo</h3>
+          <div class="meta"><span class="venue">El Plaza Condesa</span><span class="price">$680 MXN</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ———————————————————————————————————— TICKET ———————————————————————————————————— -->
+<section class="section mesh-ambient">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">02 · THE ARTIFACT</div>
+        <h2 class="section-title">El boleto<br/>es un objeto.</h2>
+      </div>
+      <div style="max-width: 420px; color: var(--ink-300);">Die-cut silhouette with semicircle notches at 62%. Glass body (radius-xl + glass-lg + backdrop-blur-32). Perforation dotted line. Signal-lime glow on the QR stamp. Paper grain at 4% opacity. This is the only place the system allows skeuomorphism.</div>
+    </div>
+  </div>
+  <div class="ticket-stage">
+    <div class="ticket-bg-glow"></div>
+    <div class="ticket">
+      <div class="ticket-inner">
+        <div class="venue-line">FORO PUEBLA <em>·</em> ROMA NTE</div>
+        <h2>Noche de<br/>Indie Rock</h2>
+        <div class="act">Triplete · Las Nubes · Fuente de Juventud</div>
+        <dl class="grid">
+          <div><dt>FECHA</dt><dd>SÁB 17 MAY</dd></div>
+          <div><dt>ACCESO</dt><dd>21:00 HRS</dd></div>
+          <div><dt>SECCIÓN</dt><dd>GRAL A</dd></div>
+          <div><dt>PRECIO</dt><dd style="color: var(--signal-500)">$450.00</dd></div>
+        </dl>
+        <div class="perforation"></div>
+        <div class="qr-stage">
+          <div class="qr">
+            <!-- Mock QR as an SVG grid -->
+            <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
+              <rect width="21" height="21" fill="#fff"/>
+              <!-- position markers -->
+              <rect x="0" y="0" width="7" height="7" fill="#08080C"/><rect x="1" y="1" width="5" height="5" fill="#fff"/><rect x="2" y="2" width="3" height="3" fill="#08080C"/>
+              <rect x="14" y="0" width="7" height="7" fill="#08080C"/><rect x="15" y="1" width="5" height="5" fill="#fff"/><rect x="16" y="2" width="3" height="3" fill="#08080C"/>
+              <rect x="0" y="14" width="7" height="7" fill="#08080C"/><rect x="1" y="15" width="5" height="5" fill="#fff"/><rect x="2" y="16" width="3" height="3" fill="#08080C"/>
+              <!-- random data cells -->
+              <g fill="#08080C">
+                <rect x="8" y="0" width="1" height="1"/><rect x="10" y="0" width="1" height="1"/><rect x="12" y="0" width="1" height="1"/>
+                <rect x="8" y="2" width="1" height="1"/><rect x="9" y="3" width="1" height="1"/><rect x="11" y="1" width="1" height="1"/><rect x="13" y="2" width="1" height="1"/>
+                <rect x="8" y="5" width="1" height="1"/><rect x="10" y="5" width="1" height="1"/><rect x="11" y="6" width="1" height="1"/>
+                <rect x="0" y="8" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="6" y="8" width="1" height="1"/>
+                <rect x="8" y="8" width="1" height="1"/><rect x="10" y="8" width="1" height="1"/><rect x="12" y="8" width="1" height="1"/><rect x="14" y="8" width="1" height="1"/><rect x="16" y="8" width="1" height="1"/><rect x="18" y="8" width="1" height="1"/><rect x="20" y="8" width="1" height="1"/>
+                <rect x="9" y="9" width="1" height="1"/><rect x="11" y="9" width="1" height="1"/><rect x="13" y="9" width="1" height="1"/><rect x="15" y="9" width="1" height="1"/><rect x="17" y="9" width="1" height="1"/><rect x="19" y="9" width="1" height="1"/>
+                <rect x="8" y="10" width="1" height="1"/><rect x="10" y="10" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/><rect x="14" y="10" width="1" height="1"/><rect x="16" y="10" width="1" height="1"/><rect x="18" y="10" width="1" height="1"/>
+                <rect x="9" y="11" width="1" height="1"/><rect x="11" y="11" width="1" height="1"/><rect x="13" y="11" width="1" height="1"/><rect x="15" y="11" width="1" height="1"/><rect x="17" y="11" width="1" height="1"/><rect x="19" y="11" width="1" height="1"/>
+                <rect x="8" y="12" width="1" height="1"/><rect x="10" y="12" width="1" height="1"/><rect x="12" y="12" width="1" height="1"/><rect x="14" y="12" width="1" height="1"/><rect x="16" y="12" width="1" height="1"/><rect x="18" y="12" width="1" height="1"/><rect x="20" y="12" width="1" height="1"/>
+                <rect x="8" y="14" width="1" height="1"/><rect x="10" y="14" width="1" height="1"/><rect x="12" y="15" width="1" height="1"/><rect x="14" y="14" width="1" height="1"/><rect x="16" y="14" width="1" height="1"/><rect x="18" y="14" width="1" height="1"/>
+                <rect x="9" y="16" width="1" height="1"/><rect x="11" y="16" width="1" height="1"/><rect x="13" y="16" width="1" height="1"/><rect x="15" y="17" width="1" height="1"/><rect x="17" y="16" width="1" height="1"/><rect x="19" y="16" width="1" height="1"/>
+                <rect x="8" y="18" width="1" height="1"/><rect x="10" y="18" width="1" height="1"/><rect x="12" y="19" width="1" height="1"/><rect x="14" y="18" width="1" height="1"/><rect x="16" y="19" width="1" height="1"/><rect x="18" y="18" width="1" height="1"/><rect x="20" y="18" width="1" height="1"/>
+              </g>
+            </svg>
+          </div>
+          <div class="code">TCK · 0412 · 0091</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ———————————————————————————————————— BUTTONS ———————————————————————————————————— -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">03 · COMPONENTS</div>
+        <h2 class="section-title">Buttons.</h2>
+      </div>
+      <div style="max-width: 420px; color: var(--ink-300);">Hover animates font weight (600→800) via variable-font settings, not color. Press collapses the brick. Focus ring is always signal-lime.</div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; padding: 32px 0; align-items: center;">
+      <button class="btn btn--primary">Obtener boletos</button>
+      <button class="btn btn--accent">Guardar evento</button>
+      <button class="btn btn--secondary">Soy organizador</button>
+      <button class="btn btn--ghost">Ver más</button>
+      <button class="btn btn--danger">Cancelar compra</button>
+      <button class="btn btn--glass">Comparte en WhatsApp</button>
+    </div>
+    <div class="legend">SIZES · SM · MD · LG · XL</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; padding: 16px 0; align-items: center;">
+      <button class="btn btn--primary btn--sm">SM</button>
+      <button class="btn btn--primary">MD</button>
+      <button class="btn btn--primary" style="height: 52px;">LG</button>
+      <button class="btn btn--primary btn--xl">Obtener boletos</button>
+    </div>
+  </div>
+</section>
+
+<!-- ———————————————————————————————————— INPUTS ———————————————————————————————————— -->
+<section class="section mesh-ambient">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">04 · COMPONENTS</div>
+        <h2 class="section-title">Forms.</h2>
+      </div>
+      <div style="max-width: 420px; color: var(--ink-300);">48px tall, 1.5px ink-700 border, 16px body. Focus paints a signal-lime ring + glow. Error paints oxblood. Labels are overline style.</div>
+    </div>
+    <div class="form-grid">
+      <div class="input-group">
+        <label>Correo electrónico</label>
+        <input class="input" type="email" placeholder="tu@correo.com" value="maria@example.mx" />
+        <div class="hint">Te mandamos el boleto aquí.</div>
+      </div>
+      <div class="input-group">
+        <label>Código de promoción</label>
+        <input class="input" type="text" placeholder="INSERTA CÓDIGO" />
+        <div class="hint">Opcional. Los códigos se aplican al final.</div>
+      </div>
+      <div class="input-group">
+        <label>Número de boletos</label>
+        <input class="input error" type="number" value="11" />
+        <div class="hint error">Máximo 10 por compra.</div>
+      </div>
+      <div class="input-group">
+        <label>Búsqueda</label>
+        <input class="input glass" type="search" placeholder="¿Qué vas a ver esta noche?" />
+        <div class="hint">Glass surface variant (sobre hero).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ———————————————————————————————————— PALETTE ———————————————————————————————————— -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">05 · FOUNDATION</div>
+        <h2 class="section-title">Ánima<br/>Nocturna.</h2>
+      </div>
+      <div style="max-width: 420px; color: var(--ink-300);">Full reset from v1.0. Signal-lime is primary action (one per screen). Rosa Mexicano is cultural accent. Ink/Bone are the chassis. Oxblood is danger/sold-out.</div>
+    </div>
+
+    <div class="legend">INK · BRUTALIST CHASSIS</div>
+    <div class="palette" style="margin-top: 16px;">
+      <div class="swatch swatch--dark" style="background: #000000"><div class="name">ink-1000</div><div class="hex">#000000</div></div>
+      <div class="swatch swatch--dark" style="background: #08080C"><div class="name">ink-950 · PAGE</div><div class="hex">#08080C</div></div>
+      <div class="swatch swatch--dark" style="background: #0F0F15"><div class="name">ink-900</div><div class="hex">#0F0F15</div></div>
+      <div class="swatch swatch--dark" style="background: #161620"><div class="name">ink-850</div><div class="hex">#161620</div></div>
+      <div class="swatch swatch--dark" style="background: #1F1F2B"><div class="name">ink-800</div><div class="hex">#1F1F2B</div></div>
+      <div class="swatch swatch--dark" style="background: #2E2E3E"><div class="name">ink-700</div><div class="hex">#2E2E3E</div></div>
+      <div class="swatch swatch--dark" style="background: #55556A"><div class="name">ink-500</div><div class="hex">#55556A</div></div>
+      <div class="swatch swatch--light" style="background: #C2C2D0"><div class="name">ink-200</div><div class="hex">#C2C2D0</div></div>
+      <div class="swatch swatch--light" style="background: #F6F2EA"><div class="name">bone-50 · PAPER</div><div class="hex">#F6F2EA</div></div>
+    </div>
+
+    <div class="legend" style="margin-top: 48px;">SIGNAL · PRIMARY ACTION</div>
+    <div class="palette" style="margin-top: 16px;">
+      <div class="swatch swatch--light" style="background: #D7FF3A"><div class="name">signal-400</div><div class="hex">#D7FF3A</div></div>
+      <div class="swatch swatch--light" style="background: #C6FF2E; box-shadow: var(--glow-signal);"><div class="name">signal-500 · CTA</div><div class="hex">#C6FF2E</div></div>
+      <div class="swatch swatch--light" style="background: #9FE600"><div class="name">signal-600</div><div class="hex">#9FE600</div></div>
+      <div class="swatch swatch--dark" style="background: #2B3300"><div class="name">signal-900</div><div class="hex">#2B3300</div></div>
+    </div>
+
+    <div class="legend" style="margin-top: 48px;">ROSA MEXICANO · CULTURAL ACCENT</div>
+    <div class="palette" style="margin-top: 16px;">
+      <div class="swatch swatch--light" style="background: #FF6AA9"><div class="name">rosa-400</div><div class="hex">#FF6AA9</div></div>
+      <div class="swatch swatch--dark" style="background: #FF2E88; box-shadow: var(--glow-rosa);"><div class="name">rosa-500 · ACCENT</div><div class="hex">#FF2E88</div></div>
+      <div class="swatch swatch--dark" style="background: #D6005F"><div class="name">rosa-600</div><div class="hex">#D6005F</div></div>
+    </div>
+
+    <div class="legend" style="margin-top: 48px;">STATE · OXBLOOD · LEAF · SUN · CENOTE</div>
+    <div class="palette" style="margin-top: 16px;">
+      <div class="swatch swatch--dark" style="background: #A32438"><div class="name">oxblood-400</div><div class="hex">#A32438</div></div>
+      <div class="swatch swatch--dark" style="background: #7A1020"><div class="name">oxblood-500 · DANGER</div><div class="hex">#7A1020</div></div>
+      <div class="swatch swatch--light" style="background: #20D987"><div class="name">leaf-500 · SUCCESS</div><div class="hex">#20D987</div></div>
+      <div class="swatch swatch--light" style="background: #FF9E00"><div class="name">sun-500 · WARNING</div><div class="hex">#FF9E00</div></div>
+      <div class="swatch swatch--dark" style="background: #00B3C7"><div class="name">cenote-500 · INFO</div><div class="hex">#00B3C7</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ———————————————————————————————————— TYPOGRAPHY ———————————————————————————————————— -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">06 · FOUNDATION</div>
+        <h2 class="section-title">Typography.</h2>
+      </div>
+      <div style="max-width: 420px; color: var(--ink-300);">Bricolage Grotesque (display) · Inter (body) · JetBrains Mono (numerics). All variable, all open-source, all self-hostable.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">display-2xl<br/><strong>128/112 · 900 · -4%</strong></div>
+      <div class="type-sample" style="font-family: var(--f-display); font-size: clamp(64px, 10vw, 128px); font-weight: 900; letter-spacing: -0.04em; line-height: 0.875;">La noche</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">display-xl<br/><strong>96/88 · 900 · -3.5%</strong></div>
+      <div class="type-sample" style="font-family: var(--f-display); font-size: clamp(56px, 8vw, 96px); font-weight: 900; letter-spacing: -0.035em; line-height: 0.917;">Tu próximo show</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">display-lg<br/><strong>72/68 · 850 · -3%</strong></div>
+      <div class="type-sample" style="font-family: var(--f-display); font-size: clamp(48px, 6vw, 72px); font-weight: 850; letter-spacing: -0.03em; line-height: 0.944;">Noche de Indie Rock</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">heading-lg<br/><strong>32/36 · 700 · -1.5%</strong></div>
+      <div class="type-sample" style="font-family: var(--f-display); font-size: 32px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.125;">Foro Puebla · Sábado 17 de mayo</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">heading-md<br/><strong>24/30 · 700 · -1%</strong></div>
+      <div class="type-sample" style="font-family: var(--f-display); font-size: 24px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25;">Triplete · Las Nubes · Fuente de Juventud</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">body-lg<br/><strong>18/28 · 400</strong></div>
+      <div class="type-sample" style="font-family: var(--f-body); font-size: 18px; line-height: 1.555;">Lorem ipsum indie rock sonido local. Compra tu boleto sin cargos ocultos y recibe tu QR al correo en segundos. Sin letras chiquitas, sin mamadas.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">overline<br/><strong>11/16 · 700 · +16% UP</strong></div>
+      <div class="type-sample" style="font-family: var(--f-body); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;">DESCUBRE · NOCHES · SONIDOS · CDMX · 2026</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">mono-md<br/><strong>14/20 · 500 · tabular</strong></div>
+      <div class="type-sample" style="font-family: var(--f-mono); font-size: 14px; font-weight: 500; font-feature-settings: 'tnum', 'ss01'; letter-spacing: 0;">$450.00 MXN · SÁB 17 MAY · 21:00 · TCK-0412-0091</div>
+    </div>
+  </div>
+</section>
+
+<!-- ———————————————————————————————————— DATA STRIP ———————————————————————————————————— -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">07 · ORGANIZER DASHBOARD</div>
+        <h2 class="section-title">Tabular<br/>numerics.</h2>
+      </div>
+      <div style="max-width: 420px; color: var(--ink-300);">All numeric data in dashboards uses JetBrains Mono with <code class="f-mono">tnum, ss01</code>. This single choice makes the product feel closer to Bloomberg than a CMS.</div>
+    </div>
+    <dl class="data-strip">
+      <div class="stat"><dt>Venta bruta · 2026</dt><dd>$1,247,830 <small>+12.4%</small></dd></div>
+      <div class="stat"><dt>Boletos vendidos</dt><dd>8,421 <small>+284</small></dd></div>
+      <div class="stat"><dt>Eventos activos</dt><dd>24</dd></div>
+      <div class="stat"><dt>Pago próximo</dt><dd>T+3</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ———————————————————————————————————— RADII ———————————————————————————————————— -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">08 · FOUNDATION</div>
+        <h2 class="section-title">Radii.</h2>
+      </div>
+      <div style="max-width: 420px; color: var(--ink-300);">Two registers, never mixed. Brutal (0/2/4/8/14) for structural elements. Glass (22/28/40) for precious artifacts.</div>
+    </div>
+    <div class="radii">
+      <div class="cell"><div class="shape" style="border-radius: 0;"></div><div class="name">radius-0</div></div>
+      <div class="cell"><div class="shape" style="border-radius: 2px;"></div><div class="name">radius-xs</div></div>
+      <div class="cell"><div class="shape" style="border-radius: 4px;"></div><div class="name">radius-sm</div></div>
+      <div class="cell"><div class="shape" style="border-radius: 8px;"></div><div class="name">radius-md</div></div>
+      <div class="cell"><div class="shape" style="border-radius: 14px;"></div><div class="name">radius-lg</div></div>
+      <div class="cell"><div class="shape" style="border-radius: 22px;"></div><div class="name">radius-xl · GLASS</div></div>
+      <div class="cell"><div class="shape" style="border-radius: 28px;"></div><div class="name">radius-2xl · GLASS</div></div>
+      <div class="cell"><div class="shape" style="border-radius: 40px;"></div><div class="name">radius-3xl · GLASS</div></div>
+      <div class="cell"><div class="shape" style="border-radius: 9999px; width: 56px;"></div><div class="name">radius-full</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ———————————————————————————————————— SHADOWS ———————————————————————————————————— -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">09 · FOUNDATION</div>
+        <h2 class="section-title">Shadows.</h2>
+      </div>
+      <div style="max-width: 420px; color: var(--ink-300);">Three families — never mixed in one element. Brick = hard offset, zero blur, brutal. Glass = layered drop + inner catch-light. Glow = reactive light for focus and celebration.</div>
+    </div>
+    <div class="legend">BRICK · BRUTAL</div>
+    <div class="shadows">
+      <div class="cell"><div class="box brick-sm"></div><div class="name">brick-sm</div></div>
+      <div class="cell"><div class="box brick-md"></div><div class="name">brick-md</div></div>
+      <div class="cell"><div class="box brick-lg"></div><div class="name">brick-lg</div></div>
+      <div class="cell"><div class="box brick-signal"></div><div class="name">brick-signal</div></div>
+      <div class="cell"><div class="box brick-rosa"></div><div class="name">brick-rosa</div></div>
+    </div>
+    <div class="legend" style="margin-top: 32px;">GLASS · LIQUID · GLOW · REACTIVE</div>
+    <div class="shadows">
+      <div class="cell"><div class="box glass-md"></div><div class="name">glass-md</div></div>
+      <div class="cell"><div class="box glow-signal"></div><div class="name">glow-signal · FOCUS</div></div>
+      <div class="cell"><div class="box glow-rosa"></div><div class="name">glow-rosa · CELEBRATION</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="meta">
+      <div>BOLETIFY · BRUTAL-GLASS v2.0 · 2026</div>
+      <div>SPECIFICATION · DOCS/06-DESIGN-PRINCIPLES-2026.MD</div>
+      <div>TOKENS · @BOLETIFY/TOKENS</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
