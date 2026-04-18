@@ -1,33 +1,38 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Button } from "@repo/ui";
+import { Button, Input } from "@repo/ui";
 
 export default function Native() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Native</Text>
-      <Button
-        onClick={() => {
-          console.log("Pressed!");
-          alert("Pressed!");
-        }}
-        text="Boop"
-      />
+    <View className="flex-1 bg-ink-950 p-8 items-center justify-center">
+      <View className="w-full max-w-md space-y-6">
+        <Text className="text-display-md text-bone-50 font-display mb-8">
+          Boletify
+        </Text>
+        
+        <Button 
+          text="Primary Button" 
+          onPress={() => console.log("pressed!")} 
+        />
+        
+        <Button 
+          text="Secondary Button" 
+          variant="secondary"
+          onPress={() => console.log("pressed!")} 
+        />
+        
+        <Input 
+          label="Email"
+          placeholder="correo@ejemplo.com"
+        />
+        
+        <Input 
+          label="Password"
+          placeholder="Contraseña"
+          secureTextEntry
+        />
+      </View>
       <StatusBar style="auto" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  header: {
-    fontWeight: "bold",
-    marginBottom: 20,
-    fontSize: 36,
-  },
-});

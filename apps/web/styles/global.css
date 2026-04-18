@@ -1,8 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300..900&family=JetBrains+Mono:wght@300..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
-  font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica",
-    "Arial", sans-serif;
-  display: flex;
-  height: 100vh;
-  align-items: center;
-  justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
 }

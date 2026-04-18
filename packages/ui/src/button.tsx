@@ -1,37 +1,61 @@
 import * as React from "react";
 import {
-  StyleSheet,
   GestureResponderEvent,
   Text,
   Pressable,
+  ViewProps,
+  TextProps,
 } from "react-native";
 
-export interface ButtonProps {
-  text: string;
-  onClick?: (event: GestureResponderEvent) => void;
+export interface ButtonProps extends ViewProps {
+  text?: string;
+  onPress?: (event: GestureResponderEvent) => void;
+  variant?: "primary" | "secondary" | "ghost";
+  size?: "sm" | "md" | "lg";
+  children?: React.ReactNode;
+  className?: string;
 }
 
-export function Button({ text, onClick }: ButtonProps) {
+const variantStyles = {
+  primary: "bg-signal-500 active:bg-signal-600",
+  secondary: "bg-ink-800 active:bg-ink-700",
+  ghost: "bg-transparent active:bg-ink-800",
+};
+
+const sizeStyles = {
+  sm: "px-3 py-2",
+  md: "px-6 py-3.5",
+  lg: "px-8 py-4",
+};
+
+export function Button({
+  text,
+  onPress,
+  variant = "primary",
+  size = "md",
+  className = "",
+  children,
+  ...props
+}: ButtonProps) {
   return (
-    <Pressable style={styles.button} onPress={onClick}>
-      <Text style={styles.text}>{text}</Text>
+    <Pressable
+      className={`
+        ${variantStyles[variant]}
+        ${sizeStyles[size]}
+        rounded-md
+        items-center justify-center
+        ${className}
+      `}
+      onPress={onPress}
+      {...props}
+    >
+      {children ? (
+        children
+      ) : (
+        <Text className="text-ink-950 font-body text-body-md font-semibold">
+          {text}
+        </Text>
+      )}
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    maxWidth: 200,
-    textAlign: "center",
-    borderRadius: 10,
-    paddingTop: 14,
-    paddingBottom: 14,
-    paddingLeft: 30,
-    paddingRight: 30,
-    fontSize: 15,
-    backgroundColor: "#2f80ed",
-  },
-  text: {
-    color: "white",
-  },
-});

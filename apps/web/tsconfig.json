@@ -7,8 +7,8 @@
       }
     ],
     "strictNullChecks": true,
-    "types": []
+    "types": ["nativewind/types"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "packages/api", "packages/auth"]
 }
