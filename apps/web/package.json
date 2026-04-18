@@ -9,8 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/core": "^0.40.0",
+    "@boletify/api": "*",
+    "@boletify/db": "*",
     "@repo/ui": "*",
     "next": "16.2.0",
+    "next-auth": "^5.0.0-beta.25",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native-web": "^0.21.0"

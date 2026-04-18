@@ -7,7 +7,9 @@
 
 ## Overview
 
-Foundation authentication layer covering login, registration, and session management for both web and mobile platforms. Web uses cookie-based sessions via Auth.js; mobile uses Bearer token auth via `@boletify/auth` + SecureStore. This epic must be completed before any protected features can be wired up.
+Foundation authentication layer covering login, registration, and session management for both web and mobile platforms. Web uses cookie-based sessions via Auth.js; mobile uses Bearer token auth via `@boletify/api` + SecureStore. This epic must be completed before any protected features can be wired up.
+
+> **Update (2026-04-17):** `@boletify/auth` and `@boletify/shared` were consolidated into `@boletify/api` per Option A decision. Validators, password helpers, and tRPC routers are now in one package.
 
 ---
 
@@ -24,29 +26,31 @@ Foundation authentication layer covering login, registration, and session manage
 
 ## Shared Technical Foundation
 
-All auth tickets consume `@boletify/auth` which provides:
-- `validateCredentials()` — email/password verification
-- `hashPassword()` / `verifyPassword()` — bcrypt (cost 12)
-- `AUTH_PROVIDERS` — provider configs (Google OAuth)
-- `AuthSession` / `AuthUser` types
+All auth tickets now consume `@boletify/api` which provides:
+- Validators (Zod schemas): `registerSchema`, `loginSchema`, `changePasswordSchema`
+- Password utilities: `hashPassword()`, `verifyPassword()` (bcrypt, cost 12)
+- tRPC procedures: `publicProcedure`, `protectedProcedure`
+- Auth router: `auth.register`, `auth.login`, `auth.getCurrentUser`
 
 ### Web Auth Flow
+
 - Auth.js v5 with Drizzle adapter
 - Database sessions (not JWT — allows server-side invalidation)
 - Cookie: `__Secure-session-token`, `HttpOnly`, `SameSite=Lax`, `Secure`
-- Middleware in `apps/web/middleware.ts` using `@boletify/navigation` guards
+- Middleware in `apps/web/middleware.ts` using navigation guards
 
 ### Mobile Auth Flow
+
 - Bearer token stored in Expo SecureStorage
-- Token validated against DB sessions (same `@boletify/auth` core)
+- Token validated against DB sessions
 - Refresh on 401 responses
 
 ---
 
 ## Dependencies
 
-- `@boletify/auth` — auth core (must exist before this epic)
-- `@boletify/db` — user table schema
+- `@boletify/api` — auth core (validators, password utils, tRPC router)
+- `@boletify/db` — user table, sessions table
 - `@boletify/navigation` — guards consumed in app shells
 
 ---

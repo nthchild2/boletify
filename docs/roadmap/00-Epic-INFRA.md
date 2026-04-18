@@ -1,7 +1,7 @@
 # Epic: Infrastructure (Foundation)
 
 **Epic ID:** INFRA
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 
 ---
 
@@ -17,10 +17,14 @@ This epic must be completed before feature epics (AUTH, EVENTS, PAYMENTS, etc.) 
 
 | Ticket ID | Title | Status | Dependencies |
 |-----------|-------|--------|--------------|
-| INFRA-001 | Database Setup (Neon + Drizzle) | TODO | - |
-| INFRA-002 | Auth Foundation Package | TODO | INFRA-001 |
-| INFRA-003 | tRPC / API Layer | TODO | INFRA-001, INFRA-002 |
-| INFRA-004 | Design Tokens & UI Package | TODO | - |
+| INFRA-001 | Database Setup (Neon + Drizzle) | ✅ Done | - |
+| INFRA-002 | Auth Foundation | 🟡 In Progress | INFRA-001 |
+| INFRA-003 | tRPC / API Layer | 🟡 In Progress | INFRA-001, INFRA-002 |
+| INFRA-004 | Design Tokens & UI Package | 🟡 In Progress | - |
+| INFRA-005 | UI Component Library Expansion | TODO | INFRA-004 |
+| INFRA-006 | Buyer App Shell & Navigation | TODO | INFRA-005 |
+| INFRA-007 | Organiser App Shell & Navigation | TODO | INFRA-005 |
+| INFRA-008 | Explore CSS Alternatives to Tailwind | TODO | INFRA-004 |
 | NAV-001 | Navigation Strategy Decision | TODO | - |
 
 ---
@@ -63,16 +67,18 @@ This epic must be completed before feature epics (AUTH, EVENTS, PAYMENTS, etc.) 
 
 ---
 
-## Package Structure (Target)
+## Package Structure (Current)
 
 ```
 packages/
-├── tokens/          # Design tokens (colors, spacing, typography)
-├── ui/              # Shared UI components (@repo/ui → @boletify/ui)
+├── ui/              # Shared UI components (@boletify/ui)
 ├── db/              # Drizzle schema + Neon client
-├── auth/            # Auth.js configuration + utilities
-└── api/             # tRPC routers (or API routes)
+├── api/             # tRPC routers + validators + password utils (CONSOLIDATED)
+├── auth/            # DELETED - consolidated into @boletify/api
+└── shared/          # DELETED - consolidated into @boletify/api
 ```
+
+> **Note (2026-04-17):** `@boletify/auth` and `@boletify/shared` were consolidated into `@boletify/api` per Option A decision. This simplifies the package structure — validators, password helpers, and tRPC routers are now in one package.
 
 ---
 

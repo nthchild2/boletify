@@ -3,7 +3,7 @@
 **Epic:** Infrastructure
 **Ticket ID:** INFRA-001
 **Type:** feature
-**Status:** TODO
+**Status:** ✅ Done
 
 ---
 
@@ -15,41 +15,42 @@ Set up the database foundation using Neon (serverless PostgreSQL) and Drizzle OR
 
 ## Acceptance Criteria
 
-- [ ] **AC1:** Neon project created with free tier (or appropriate tier for MVP)
-- [ ] **AC2:** Drizzle schema created for core entities: users, events, tickets, orders, payments
-- [ ] **AC3:** `@boletify/db` package created with schema + Neon client
-- [ ] **AC4:** Database connection working in both web and native apps
-- [ ] **AC5:** Drizzle migrations configured and running
-- [ ] **AC6:** TypeScript types generated from schema
+- [x] **AC1:** Drizzle schema created for core entities
+- [x] **AC2:** `@boletify/db` package created with schema + Neon client
+- [x] **AC3:** Database tables defined: users, events, ticket_tiers, orders, tickets, payments, sessions, accounts, organiser_profiles, promo_codes
+- [x] **AC4:** TypeScript types generated (`$inferSelect`, `$inferInsert`)
+- [ ] **AC5:** Database migrations running
+- [ ] **AC6:** Database connection verified in apps
 
 ---
 
-## Technical Notes
+## Current State (2026-04-17)
 
-### Schema Considerations
+**Completed:**
+- ✅ `@boletify/db` package created
+- ✅ Schema in `packages/db/src/schema/index.ts` with all tables
+- ✅ Client in `packages/db/src/client.ts` (Neon serverless)
+- ✅ Types exported (User, Event, TicketTier, Order, Ticket, Payment, etc.)
 
-Based on product requirements, need tables for:
-
-- `users` — buyer and organiser accounts
-- `events` — event metadata, status, venue
-- `ticket_tiers` — pricing tiers per event
-- `orders` — buyer orders with payment status
-- `tickets` — individual tickets with QR codes
-- `payments` — payment transactions (Stripe, OXXO, Mercado Pago)
-- `organiser_profiles` — organiser-specific data
-- `sessions` — Auth.js session storage
-
-### Connection Strategy
-
-- Neon provides connection string with branch support
-- Use `@neondatabase/serverless` for edge-compatible driver
-- Configure connection pooling for serverless environment
-
-### Environment Variables
-
-```env
-DATABASE_URL=postgresql://user:pass@host/boletify?sslmode=require
+**Schema Tables:**
+```typescript
+// packages/db/src/schema/index.ts
+users                    // ✅
+organiserProfiles        // ✅
+events                   // ✅
+ticketTiers              // ✅
+orders                   // ✅
+tickets                  // ✅
+payments                 // ✅
+promoCodes               // ✅
+sessions                 // ✅
+accounts                 // ✅
+verificationTokens       // ✅
 ```
+
+**Remaining:**
+- ❌ Run migrations against actual Neon database
+- ❌ Verify connection in apps/web and apps/native
 
 ---
 

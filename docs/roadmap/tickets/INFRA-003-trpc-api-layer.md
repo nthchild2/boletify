@@ -3,7 +3,7 @@
 **Epic:** Infrastructure
 **Ticket ID:** INFRA-003
 **Type:** feature
-**Status:** TODO
+**Status:** 🟡 In Progress
 
 **Dependencies:** INFRA-001 (Database Setup), INFRA-002 (Auth Foundation)
 
@@ -17,53 +17,66 @@ Set up the API layer using tRPC for end-to-end type safety between frontend and 
 
 ## Acceptance Criteria
 
-- [ ] **AC1:** `@boletify/api` package created with tRPC router structure
-- [ ] **AC2:** tRPC server configured with Next.js API route handler
-- [ ] **AC3:** Auth context injected into tRPC procedures
-- [ ] **AC4:** Basic routers created: users, events, orders, payments
-- [ ] **AC5:** tRPC client configured in web app
-- [ ] **AC6:** tRPC client configured in native app (with Bearer token)
-- [ ] **AC7:** Error handling with proper error codes
+- [x] **AC1:** `@boletify/api` package created with tRPC router structure
+- [x] **AC2:** tRPC server configured with context and procedures
+- [x] **AC3:** Auth context injected (userId in context, protectedProcedure)
+- [x] **AC4:** Auth router created (register, login, getCurrentUser)
+- [ ] **AC5:** Events router created
+- [ ] **AC6:** Orders router created
+- [ ] **AC7:** Payments router created
+- [ ] **AC8:** tRPC client configured in web app
+- [ ] **AC9:** tRPC client configured in native app (with Bearer token)
+- [ ] **AC10:** Next.js API route handler for tRPC
 
 ---
 
-## Alternative Consideration
+## Current State (2026-04-17)
 
-If tRPC adds unnecessary complexity, consider using Next.js API routes instead:
-- Simpler to set up
-- More familiar pattern
-- Less type infrastructure
+**Completed:**
+- ✅ `@boletify/api` package exists
+- ✅ `trpc.ts` — initTRPC with superjson transformer, publicProcedure, protectedProcedure
+- ✅ `authRouter` — register, login, getCurrentUser procedures
+- ✅ `routers/index.ts` — exports authRouter
 
-**Decision:** Implement tRPC for type safety benefits, but keep API routes as fallback if complexity becomes a blocker.
+**Package Structure:**
+```
+@boletify/api/
+├── src/
+│   ├── index.ts              # Main exports
+│   ├── trpc.ts               # ✅ tRPC setup (procedures, context)
+│   ├── routers/
+│   │   ├── index.ts          # ✅ Root router
+│   │   └── auth.ts           # ✅ Auth router (register, login, getCurrentUser)
+│   ├── validators/
+│   │   └── auth.ts           # ✅ Zod schemas
+│   └── utils/
+│       ├── password.ts       # ✅ bcrypt utilities
+│       └── credentials.ts    # ✅ validation helpers
+└── package.json
+```
+
+**Remaining:**
+- ❌ events.ts router
+- ❌ orders.ts router
+- ❌ payments.ts router
+- ❌ tRPC client in apps/web
+- ❌ tRPC client in apps/native
+- ❌ Next.js API route handler (`/api/trpc/[trpc]/route.ts`)
 
 ---
 
-## Technical Notes
-
-### Router Structure
+## Router Structure (Target)
 
 ```
 @boletify/api/
 ├── routers/
-│   ├── index.ts       # Root router composition
-│   ├── users.ts       # User operations
-│   ├── events.ts      # Event operations
-│   ├── orders.ts      # Order operations
-│   └── payments.ts    # Payment operations
-├── context.ts         # tRPC context (session, db)
-├── trpc.ts           # tRPC initialization
-└── client.ts          # Client-side tRPC hook
-```
-
-### Auth Middleware
-
-```typescript
-protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  if (!ctx.session?.user) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
-  }
-  return next({ ctx: { ...ctx, session: ctx.session } });
-});
+│   ├── index.ts       # Root router (appRouter)
+│   ├── auth.ts        # ✅ Done: register, login, getCurrentUser
+│   ├── events.ts      # TODO: create, update, publish, delete, list
+│   ├── orders.ts      # TODO: create, getById, listByUser, listByEvent
+│   └── payments.ts    # TODO: createCheckout, webhook handlers
+├── trpc.ts            # ✅ Done
+└── client.ts          # TODO: typed tRPC client for frontend
 ```
 
 ---

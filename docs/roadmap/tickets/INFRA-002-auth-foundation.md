@@ -1,9 +1,9 @@
-# TICKET: Auth Foundation Package
+# TICKET: Session Management & Auth Integration
 
 **Epic:** Infrastructure
 **Ticket ID:** INFRA-002
 **Type:** feature
-**Status:** TODO
+**Status:** 🟡 In Progress
 
 **Dependencies:** INFRA-001 (Database Setup)
 
@@ -11,62 +11,111 @@
 
 ## Description
 
-Create the `@boletify/auth` package with Auth.js v5 configuration, password hashing utilities, and session management. This package provides the foundation for authentication across both web and native platforms.
+Implement session management for web and mobile. This is the core of authentication — tracking "is logged in" state across requests.
+
+> **Refined scope (2026-04-17):** Password utils and validators already in `@boletify/api`. This ticket focuses on **sessions** — the mechanism that persists auth state.
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] **AC1:** `@boletify/auth` package created
-- [ ] **AC2:** Auth.js v5 configured with database adapter (Drizzle)
-- [ ] **AC3:** Email/password authentication implemented
-- [ ] **AC4:** Google OAuth provider configured
-- [ ] **AC5:** Web sessions use cookies (Auth.js default)
-- [ ] **AC6:** Mobile sessions use Bearer tokens with SecureStore
-- [ ] **AC7:** Password hashing with bcrypt (cost 12)
-- [ ] **AC8:** Role-based access control (buyer, organiser, admin)
+- [ ] **AC1:** Auth.js v5 configured in web app with Drizzle adapter
+- [ ] **AC2:** Session created on login — insert to `sessions` table, set cookie
+- [ ] **AC3:** tRPC context reads session → populates `userId` for protected procedures
+- [ ] **AC4:** Next.js middleware protects routes based on auth state
+- [ ] **AC5:** Logout invalidates session (delete from DB)
 
 ---
 
-## Technical Notes
+## Current State (2026-04-17)
 
-### Auth.js Providers
+**Already done (in `@boletify/api`):**
+- ✅ Password utils (bcrypt, cost 12)
+- ✅ Zod validators (registerSchema, loginSchema)
+- ✅ tRPC auth router (register, login endpoints)
+- ✅ `protectedProcedure` (requires userId in context)
 
-- **Email/Password:** Credentials provider with bcrypt verification
-- **Google OAuth:** OAuth provider for social login
+**What needs building:**
+- ❌ Auth.js v5 config in `apps/web`
+- ❌ Session creation on login (update `authRouter.login`)
+- ❌ Session validation in tRPC context
+- ❌ Middleware for protected routes
 
-### Session Strategy
+---
 
-- **Web:** HTTP-only cookies (secure, httpOnly, sameSite: lax)
-- **Mobile:** Bearer token in Authorization header, stored in SecureStore
+## Technical Implementation
 
-### User Roles
+### 1. Auth.js Setup (Web)
+
+```
+apps/web/
+├── lib/
+│   ├── auth.ts        # Auth.js config + Drizzle adapter
+│   └── auth.config.ts # Providers (credentials)
+└── app/api/auth/[...nextauth]/route.ts  # Auth.js handler
+```
+
+### 2. Session Creation Flow
+
+```
+User calls POST /trpc/auth.login
+    ↓
+authRouter.login:
+  1. Validate credentials
+  2. Create session in DB (sessions table)
+  3. Return session token (or let Auth.js handle it)
+    ↓
+Auth.js sets cookie: __Secure-session-token
+```
+
+### 3. tRPC Context Enhancement
 
 ```typescript
-enum UserRole {
-  BUYER = 'buyer',
-  ORGANISER = 'organiser',
-  ADMIN = 'admin'
+// packages/api/src/trpc.ts
+export const createContext = async ({ req }) => {
+  const session = await getServerSession(req); // reads cookie
+  return {
+    userId: session?.user?.id,
+  };
+};
+```
+
+### 4. Protected Routes (Web)
+
+```typescript
+// apps/web/middleware.ts
+export function middleware(request) {
+  const session = await getServerSession(request);
+  if (!session && isProtectedRoute(request.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
 }
 ```
 
-### Package Structure
+---
 
-```
-packages/auth/
-├── src/
-│   ├── index.ts          # Main exports
-│   ├── auth.ts           # Auth.js configuration
-│   ├── adapters/         # Drizzle adapter
-│   ├── providers/        # Custom providers
-│   └── utils/            # Password utilities
-└── package.json
-```
+## Session Strategy
+
+| Platform | Mechanism | Storage |
+|----------|-----------|---------|
+| Web | HTTP-only cookie | `sessions` table (DB-backed) |
+| Mobile | Bearer token | `sessions` table + SecureStore |
+
+**Why DB-backed?** Server-side invalidation. If user does something bad, we delete their session row and they're out instantly. JWTs can't do that.
+
+---
+
+## Dependencies
+
+- `@boletify/api` — tRPC router + procedures
+- `@boletify/db` — `sessions` table exists
+- `apps/web` — Next.js app for Auth.js
 
 ---
 
 ## Related
 
 - Epic: [00-Epic-INFRA.md](../00-Epic-INFRA.md)
-- Tech Doc: [04-technical-architecture.md](../04-technical-architecture.md) § 7.1
-- Auth.js: https://authjs.dev
+- Epic: [00-Epic-AUTH.md](../00-Epic-AUTH.md)
+- Tech Doc: [04-technical-architecture.md](../04-technical-architecture.md) § 7.1 (Auth.js v5)
+- ADR-006: Auth.js over Clerk

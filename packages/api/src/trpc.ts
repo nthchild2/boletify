@@ -1,25 +1,37 @@
 /**
  * tRPC server utilities and procedures
+ * Context factory pattern - apps provide their own session resolution
  */
 
-import { initTRPC } from '@trpc/server';
+import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 
-type CreateContextOptions = {
-  userId?: number;
-};
-
-/**
- * Create tRPC context
- * Context is available in all procedures
- */
-export const createContext = (opts?: CreateContextOptions) => {
-  return {
-    userId: opts?.userId,
+export type Session = {
+  user: {
+    id: string;
+    email?: string;
+    name?: string | null;
+    role?: string;
   };
+} | null;
+
+export type Context = {
+  userId: number | undefined;
+  session: Session;
 };
 
-export type Context = Awaited<ReturnType<typeof createContext>>;
+let _createContext: (opts: { headers?: Headers }) => Context | Promise<Context> = async () => ({
+  userId: undefined,
+  session: null,
+});
+
+export function createContext(opts?: { headers?: Headers }) {
+  return _createContext(opts);
+}
+
+export function setCreateContext(fn: (opts: { headers?: Headers }) => Context | Promise<Context>) {
+  _createContext = fn;
+}
 
 /**
  * Initialize tRPC with context and data transformer
@@ -43,14 +55,17 @@ export const publicProcedure = t.procedure;
 /**
  * Protected procedure (requires authentication)
  */
-export const protectedProcedure = t.procedure.use((opts) => {
-  if (!opts.ctx.userId) {
-    throw new Error('UNAUTHORIZED');
+export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.userId) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'You must be logged in to access this resource',
+    });
   }
-  return opts.next({
+  return next({
     ctx: {
-      ...opts.ctx,
-      userId: opts.ctx.userId,
+      ...ctx,
+      userId: ctx.userId,
     },
   });
 });

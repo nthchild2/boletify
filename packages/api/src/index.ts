@@ -17,5 +17,5 @@ export const appRouter = createTRPCRouter({
 export type AppRouter = typeof appRouter;
 
 // Export utilities
-export { createContext, type Context } from './trpc';
+export { createContext, setCreateContext, type Context } from './trpc';
 export { createTRPCRouter, publicProcedure, protectedProcedure } from './trpc';
