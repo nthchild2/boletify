@@ -6,7 +6,7 @@
 
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import { verifyPassword } from '@boletify/api/src/utils/password';
+import { verifyPassword } from '@boletify/api/utils/password';
 import { db, users } from '@boletify/db';
 import { eq } from 'drizzle-orm';
 
@@ -25,6 +25,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const email = credentials.email as string;
         const password = credentials.password as string;
+
+        if (!db) {
+          return null;
+        }
 
         const userList = await db
           .select()

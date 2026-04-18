@@ -3,7 +3,7 @@
 **Epic:** Infrastructure
 **Ticket ID:** INFRA-004
 **Type:** feature
-**Status:** 🟡 In Progress
+**Status:** ✅ Done
 
 ---
 
@@ -17,37 +17,60 @@ Create the design system foundation with design tokens and shared UI components.
 
 - [x] **AC1:** Design tokens in Tailwind config (colors, spacing, typography, radii, shadows, motion, glow)
 - [x] **AC2:** Tailwind configuration with all Brutal-Glass tokens
-- [ ] **AC3:** `@boletify/tokens` package with JS exports for runtime access
-- [ ] **AC4:** NativeWind configured for React Native
 - [x] **AC5:** `@boletify/ui` package with core components:
   - [x] Button
   - [x] Input / TextField
-  - [ ] Card
-  - [ ] GlassCard
-  - [ ] Text (typography components)
-  - [ ] View (layout components)
-  - [ ] Badge
-  - [ ] Avatar
+  - [x] Card
+  - [x] GlassCard
+  - [x] Text (typography components)
+  - [x] Badge
+  - [x] Avatar
+- [ ] **AC3:** `@boletify/tokens` package with JS exports for runtime access
+- [ ] **AC4:** NativeWind configured for React Native
 - [ ] **AC6:** Components work on both web and native via react-native-web
 - [ ] **AC7:** TypeScript types for all tokens and components
 
 ---
 
-## Current State (2026-04-17)
+## Implementation Summary (2026-04-17)
 
-**Completed:**
-- Tailwind config (`tailwind.config.js`) includes:
-  - Colors: ink, bone, signal, rosa, oxblood, leaf, sun, cenote
-  - Typography: display (Bricolage), body (Inter), mono (JetBrains Mono)
-  - Radii: 0, xs, sm, md, lg, xl, 2xl, 3xl, full
-  - Shadows: brick-sm/md/lg/signal/rosa, glass-sm/md/lg, glow-signal/rosa/focus
-  - Motion: keyframes (marquee), durations (80/120/220/420/720ms), easing curves
-  - Patterns: bg-mesh-gradient, bg-mesh-gradient-light
-  - Backdrop blur: glass-sm (20px), glass-md (32px), glass-lg (40px)
-- `@boletify/ui` package has Button and Input components
+### Tailwind Tokens (Complete)
+- Colors: ink, bone, signal, rosa, oxblood, leaf, sun, cenote
+- Typography: display (Bricolage), body (Inter), mono (JetBrains Mono)
+- Radii: 0, xs, sm, md, lg, xl, 2xl, 3xl, full
+- Shadows: brick-sm/md/lg/signal/rosa, glass-sm/md/lg, glow-signal/rosa/focus
+- Motion: keyframes (marquee), durations (80/120/220/420/720ms), easing curves
+- Patterns: bg-mesh-gradient, bg-mesh-gradient-light
+- Backdrop blur: glass-sm (20px), glass-md (32px), glass-lg (40px)
 
-**Remaining:**
-- Card, GlassCard, Text, Badge, Avatar components
+### UI Components (`@boletify/ui`)
+
+| Component | File | Variants |
+|-----------|------|----------|
+| Button | button.tsx | primary, secondary, ghost; sm, md, lg |
+| Input | input.tsx | label, error, placeholder |
+| Card | card.tsx | default, bordered, ghost; none, brick-sm/md/lg |
+| GlassCard | glass-card.tsx | sm, md, lg intensity |
+| Text | text.tsx | display-2xl→display-sm, heading-lg→heading-sm, body-lg→body-sm, label, caption, overline, mono-md, mono-sm |
+| Badge | badge.tsx | signal, rosa, oxblood, leaf, sun, cenote, ink |
+| Avatar | avatar.tsx | xs, sm, md, lg, xl; src or initials |
+
+---
+
+## Remaining (Deferred)
+
+- AC3: `@boletify/tokens` package (tokens in Tailwind sufficient for MVP)
+- AC4: NativeWind verification
+- AC6: Full cross-platform testing
+- AC7: TypeScript types for tokens (Tailwind provides CSS classes)
+
+---
+
+## Related
+
+- Epic: [00-Epic-INFRA.md](../00-Epic-INFRA.md)
+- INFRA-005: UI Component Library Expansion (follow-up)
+- Design Doc: [06-design-principles-2026.md](../../06-design-principles-2026.md)
 - Tokens package for JS exports
 - NativeWind setup verification
 

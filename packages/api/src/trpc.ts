@@ -26,7 +26,7 @@ let _createContext: (opts: { headers?: Headers }) => Context | Promise<Context> 
 });
 
 export function createContext(opts?: { headers?: Headers }) {
-  return _createContext(opts);
+  return _createContext(opts ?? {});
 }
 
 export function setCreateContext(fn: (opts: { headers?: Headers }) => Context | Promise<Context>) {

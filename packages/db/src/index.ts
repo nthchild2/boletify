@@ -1,6 +1,4 @@
-export * from './schema/index.js';
-export * from './client.js';
-export { default as drizzleConfig } from './drizzle.config.js';
+export { db, sql } from './client';
+export * from './schema/index';
 
-// Re-export commonly used types
-export type { User, NewUser, OrganiserProfile, Event, TicketTier, Order, Ticket, Payment, PromoCode } from './schema/index.js';
+export type { User, NewUser, OrganiserProfile, Event, TicketTier, Order, Ticket, Payment, PromoCode } from './schema/index';

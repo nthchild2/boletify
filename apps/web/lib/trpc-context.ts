@@ -3,7 +3,7 @@
  * Uses Auth.js for session resolution
  */
 
-import { setCreateContext, type Context } from '@boletify/api/src/trpc';
+import { setCreateContext, type Context } from '@boletify/api/trpc';
 import { auth } from './auth';
 
 async function webCreateContext(): Promise<Context> {

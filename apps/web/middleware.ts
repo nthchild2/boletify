@@ -1,4 +1,4 @@
-import { auth } from '../../lib/auth';
+import { auth } from './lib/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -22,7 +22,8 @@ export async function middleware(request: NextRequest) {
   // If already logged in and trying to access login/register
   if (isAuthRoute && session) {
     // Redirect to home or dashboard based on role
-    const destination = session.user?.role === 'organiser' ? '/org/dashboard' : '/';
+    const role = (session.user as any)?.role;
+    const destination = role === 'organiser' ? '/org/dashboard' : '/';
     return NextResponse.redirect(new URL(destination, request.url));
   }
 

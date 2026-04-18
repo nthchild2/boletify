@@ -1,38 +1,34 @@
-import { neon, NeonQueryFunction, NeonResult, NeonPool, NeonServerlessPool } from '@neondatabase/serverless';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 
-// Environment-based connection
-function createConnection() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error('DATABASE_URL environment variable is not set');
-  }
-  return neon(databaseUrl);
-}
+type DbClient = ReturnType<typeof drizzle>;
 
-// For serverless edge environments (Vercel, Netlify, Cloudflare Workers)
-export const sql = createConnection();
+let _db: DbClient | null = null;
 
-// For local development or testing (creates a pool)
-let _pool: NeonServerlessPool | undefined;
-
-export function getPool(): NeonServerlessPool {
-  if (!_pool) {
+function getDb(): DbClient {
+  if (!_db) {
     const databaseUrl = process.env.DATABASE_URL;
     if (!databaseUrl) {
       throw new Error('DATABASE_URL environment variable is not set');
     }
-    _pool = new neon(databaseUrl).pool;
+    _db = drizzle(neon(databaseUrl));
   }
-  return _pool;
+  return _db;
 }
 
-// Close pool connection (call in app cleanup)
-export async function closePool() {
-  if (_pool) {
-    await _pool.end();
-    _pool = undefined;
-  }
+function createLazyProxy<T extends object>(getter: () => T): T {
+  return new Proxy({} as T, {
+    get(_target, prop) {
+      const obj = getter();
+      return obj[prop as keyof T];
+    },
+    apply(_target, _this, args) {
+      return (getter() as Function)(...args);
+    },
+  });
 }
 
-// Type for executing queries
-export type Sql = ReturnType<typeof neon>;
+export const db = createLazyProxy(getDb);
+export const sql = createLazyProxy(() => neon(process.env.DATABASE_URL || ''));
+
+export default db;

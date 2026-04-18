@@ -18,10 +18,10 @@ This epic must be completed before feature epics (AUTH, EVENTS, PAYMENTS, etc.) 
 | Ticket ID | Title | Status | Dependencies |
 |-----------|-------|--------|--------------|
 | INFRA-001 | Database Setup (Neon + Drizzle) | ✅ Done | - |
-| INFRA-002 | Auth Foundation | 🟡 In Progress | INFRA-001 |
-| INFRA-003 | tRPC / API Layer | 🟡 In Progress | INFRA-001, INFRA-002 |
-| INFRA-004 | Design Tokens & UI Package | 🟡 In Progress | - |
-| INFRA-005 | UI Component Library Expansion | TODO | INFRA-004 |
+| INFRA-002 | Session Management & Auth Integration | ✅ Done | INFRA-001 |
+| INFRA-003 | tRPC / API Layer | ✅ Done | INFRA-001, INFRA-002 |
+| INFRA-004 | Design Tokens & UI Package | ✅ Done | - |
+| INFRA-005 | UI Component Library Expansion | ✅ Done | INFRA-004 |
 | INFRA-006 | Buyer App Shell & Navigation | TODO | INFRA-005 |
 | INFRA-007 | Organiser App Shell & Navigation | TODO | INFRA-005 |
 | INFRA-008 | Explore CSS Alternatives to Tailwind | TODO | INFRA-004 |

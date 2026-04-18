@@ -8,7 +8,7 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from '../trpc';
 import { hashPassword, verifyPassword } from '../utils/password';
 import { registerSchema, loginSchema } from '../validators/auth';
 import { db } from '@boletify/db';
-import { users } from '@boletify/db/src/schema';
+import { users } from '@boletify/db/schema';
 import { eq } from 'drizzle-orm';
 
 export const authRouter = createTRPCRouter({
