@@ -4,20 +4,30 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "clean": "turbo run clean && rm -rf node_modules",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore",
+    "db:generate": "turbo run db:generate",
+    "db:push": "turbo run db:push",
+    "db:migrate": "turbo run db:migrate",
+    "db:studio": "turbo run db:studio"
   },
   "devDependencies": {
     "@types/minimatch": "^6.0.0",
     "prettier": "^3.1.1",
-    "turbo": "^2.9.6"
+    "turbo": "^2.9.6",
+    "drizzle-kit": "^0.30.0"
   },
   "engines": {
     "node": ">=18"
   },
-  "name": "with-react-native-web",
+  "name": "boletify",
   "packageManager": "npm@11.9.0",
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@boletify/db": "*",
+    "@neondatabase/serverless": "^1.1.0",
+    "drizzle-orm": "^0.39.0"
+  }
 }
