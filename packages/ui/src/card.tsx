@@ -9,7 +9,7 @@ export interface CardProps extends ViewProps {
 }
 
 const variantStyles = {
-  default: "bg-ink-900",
+  default: "bg-ink-900 border border-ink-800",
   bordered: "bg-ink-900 border border-ink-700",
   ghost: "bg-transparent",
 };
@@ -23,7 +23,7 @@ const shadowStyles = {
 
 export function Card({
   variant = "default",
-  shadow = "none",
+  shadow = "brick-md",
   className = "",
   children,
   ...props
@@ -34,7 +34,7 @@ export function Card({
         ${variantStyles[variant]}
         ${shadowStyles[shadow]}
         rounded-lg
-        p-4
+        p-5
         ${className}
       `}
       {...props}

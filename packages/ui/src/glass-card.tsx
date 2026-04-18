@@ -8,9 +8,9 @@ export interface GlassCardProps extends ViewProps {
 }
 
 const intensityStyles = {
-  sm: "bg-ink-850/60 backdrop-blur-[20px] shadow-glass-sm",
-  md: "bg-ink-850/60 backdrop-blur-[32px] shadow-glass-md",
-  lg: "bg-ink-850/60 backdrop-blur-[40px] shadow-glass-lg",
+  sm: "bg-white/5 backdrop-blur-[20px] shadow-glass-sm",
+  md: "bg-white/5 backdrop-blur-[32px] shadow-glass-md",
+  lg: "bg-white/10 backdrop-blur-[40px] shadow-glass-lg",
 };
 
 export function GlassCard({
@@ -24,8 +24,8 @@ export function GlassCard({
       className={`
         ${intensityStyles[intensity]}
         rounded-xl
-        border border-ink-700/30
-        p-4
+        border border-white/10
+        p-5
         ${className}
       `}
       style={{ 
@@ -36,6 +36,7 @@ export function GlassCard({
       }}
       {...props}
     >
+      <View className="absolute inset-x-0 top-0 h-px bg-white/20" />
       {children}
     </View>
   );

@@ -38,9 +38,9 @@ const variantStyles: Record<TextVariant, string> = {
   "display-md": "font-display text-display-md leading-[56px] tracking-[-2.5%]",
   "display-sm": "font-display text-display-sm leading-[44px] tracking-[-2%]",
   // Heading
-  "heading-lg": "font-body text-heading-lg leading-[36px] tracking-[-1.5%] font-bold",
-  "heading-md": "font-body text-heading-md leading-[30px] tracking-[-1%] font-bold",
-  "heading-sm": "font-body text-heading-sm leading-[24px] tracking-[-0.5%] font-semibold",
+  "heading-lg": "font-display text-heading-lg leading-[36px] tracking-[-1.5%] font-bold",
+  "heading-md": "font-display text-heading-md leading-[30px] tracking-[-1%] font-bold",
+  "heading-sm": "font-display text-heading-sm leading-[24px] tracking-[-0.5%] font-semibold",
   // Body
   "body-lg": "font-body text-body-lg leading-[28px]",
   "body-md": "font-body text-body-md leading-[24px]",
@@ -62,7 +62,7 @@ export function Text({
 }: TextProps) {
   return (
     <RNText
-      className={`${variantStyles[variant]} ${className}`}
+      className={`${variantStyles[variant]} text-bone-50 ${className}`}
       {...props}
     >
       {children}

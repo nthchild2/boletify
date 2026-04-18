@@ -10,22 +10,43 @@ import {
 export interface ButtonProps extends ViewProps {
   text?: string;
   onPress?: (event: GestureResponderEvent) => void;
-  variant?: "primary" | "secondary" | "ghost";
-  size?: "sm" | "md" | "lg";
+  variant?: "primary" | "accent" | "secondary" | "ghost" | "glass" | "danger";
+  size?: "sm" | "md" | "lg" | "xl";
+  disabled?: boolean;
   children?: React.ReactNode;
   className?: string;
 }
 
 const variantStyles = {
-  primary: "bg-signal-500 active:bg-signal-600",
-  secondary: "bg-ink-800 active:bg-ink-700",
-  ghost: "bg-transparent active:bg-ink-800",
+  primary: "bg-signal-500 border-2 border-ink-1000 shadow-brick-md",
+  accent: "bg-rosa-500 border-2 border-ink-1000 shadow-brick-md",
+  secondary: "bg-transparent border border-ink-700",
+  ghost: "bg-transparent border border-transparent",
+  glass: "bg-white/5 border border-white/10 rounded-xl shadow-glass-md",
+  danger: "bg-oxblood-500 border-2 border-ink-1000 shadow-brick-md",
 };
 
 const sizeStyles = {
-  sm: "px-3 py-2",
-  md: "px-6 py-3.5",
-  lg: "px-8 py-4",
+  sm: "h-9 px-3.5",
+  md: "h-[52px] px-6",
+  lg: "h-[52px] px-8",
+  xl: "h-16 px-8",
+};
+
+const textStyles = {
+  primary: "text-ink-950",
+  accent: "text-ink-950",
+  secondary: "text-bone-50",
+  ghost: "text-bone-50",
+  glass: "text-bone-50",
+  danger: "text-bone-50",
+};
+
+const textSizeStyles = {
+  sm: "text-[12px] font-semibold tracking-[0.04em]",
+  md: "text-label font-semibold tracking-[0.04em]",
+  lg: "text-label font-semibold tracking-[0.04em]",
+  xl: "font-display text-[18px] font-bold tracking-[-0.01em] normal-case",
 };
 
 export function Button({
@@ -33,6 +54,7 @@ export function Button({
   onPress,
   variant = "primary",
   size = "md",
+  disabled,
   className = "",
   children,
   ...props
@@ -42,17 +64,26 @@ export function Button({
       className={`
         ${variantStyles[variant]}
         ${sizeStyles[size]}
+        ${disabled ? "opacity-50 shadow-none" : ""}
         rounded-md
         items-center justify-center
+        flex-row
         ${className}
       `}
-      onPress={onPress}
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
       {...props}
     >
       {children ? (
         children
       ) : (
-        <Text className="text-ink-950 font-body text-body-md font-semibold">
+        <Text
+          className={`
+            ${textStyles[variant]}
+            ${textSizeStyles[size]}
+            font-body uppercase
+          `}
+        >
           {text}
         </Text>
       )}

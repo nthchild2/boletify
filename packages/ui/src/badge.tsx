@@ -10,13 +10,13 @@ export interface BadgeProps extends ViewProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  signal: "bg-signal-500 text-signal-900",
-  rosa: "bg-rosa-500 text-rosa-600",
-  oxblood: "bg-oxblood-500 text-oxblood-400",
-  leaf: "bg-leaf-500 text-leaf-500",
-  sun: "bg-sun-500 text-sun-500",
-  cenote: "bg-cenote-500 text-cenote-500",
-  ink: "bg-ink-700 text-ink-200",
+  signal: "bg-signal-500 border border-ink-1000 text-ink-950",
+  rosa: "bg-rosa-500 border border-ink-1000 text-ink-950",
+  oxblood: "bg-oxblood-500 border border-ink-1000 text-bone-50",
+  leaf: "bg-leaf-500 border border-ink-1000 text-ink-950",
+  sun: "bg-sun-500 border border-ink-1000 text-ink-950",
+  cenote: "bg-cenote-500 border border-ink-1000 text-ink-950",
+  ink: "bg-[rgba(8,8,12,0.72)] border border-white/10 text-ink-100",
 };
 
 export function Badge({
@@ -29,14 +29,14 @@ export function Badge({
     <View
       className={`
         ${variantStyles[variant]}
-        px-2 py-0.5
+        px-2.5 py-1
         rounded-xs
         items-center justify-center
         ${className}
       `}
       {...props}
     >
-      <Text className="text-label font-body">
+      <Text className="font-body text-overline uppercase">
         {children}
       </Text>
     </View>

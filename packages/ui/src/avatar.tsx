@@ -31,7 +31,7 @@ export function Avatar({
     return (
       <Image
         source={{ uri: src }}
-        className={`${sizeClass} rounded-full object-cover ${className}`}
+        className={`${sizeClass} rounded-full border border-white/10 bg-ink-850 object-cover ${className}`}
         {...props as ImageProps}
       />
     );
@@ -42,8 +42,10 @@ export function Avatar({
       className={`
         ${sizeClass}
         rounded-full
-        bg-ink-700
+        border border-white/10
+        bg-ink-850
         items-center justify-center
+        shadow-glass-sm
         ${className}
       `}
       {...props}

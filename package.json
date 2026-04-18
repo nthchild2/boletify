@@ -27,6 +27,7 @@
   ],
   "dependencies": {
     "@boletify/db": "*",
+    "@boletify/routes": "*",
     "@neondatabase/serverless": "^1.1.0",
     "drizzle-orm": "^0.39.0",
     "nativewind": "^4.2.3",

@@ -10,12 +10,16 @@ import {
 export interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
+  hint?: string;
+  glass?: boolean;
   containerClassName?: string;
 }
 
 export function Input({
   label,
   error,
+  hint,
+  glass = false,
   containerClassName = "",
   className = "",
   ...props
@@ -23,18 +27,19 @@ export function Input({
   return (
     <View className={containerClassName}>
       {label && (
-        <Text className="text-body-sm text-ink-200 mb-2 font-body">
+        <Text className="mb-2 font-body text-overline uppercase text-ink-300">
           {label}
         </Text>
       )}
       <TextInput
         className={`
-          bg-ink-800
-          text-ink-100
+          ${glass ? "bg-white/5 border-white/10 shadow-glass-sm" : "bg-ink-850 border-ink-700"}
+          h-12
+          text-bone-50
           font-body text-body-md
-          px-4 py-3
+          px-4
           rounded-md
-          border border-ink-600
+          border
           placeholder:text-ink-400
           ${error ? "border-oxblood-500" : ""}
           ${className}
@@ -42,9 +47,9 @@ export function Input({
         placeholderTextColor="#787891"
         {...props}
       />
-      {error && (
-        <Text className="text-caption text-oxblood-500 mt-1 font-body">
-          {error}
+      {(error || hint) && (
+        <Text className={`mt-2 font-body text-caption ${error ? "text-oxblood-400" : "text-ink-400"}`}>
+          {error ?? hint}
         </Text>
       )}
     </View>
