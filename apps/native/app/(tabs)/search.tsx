@@ -1,16 +1,33 @@
-import { View, Text, TextInput } from "react-native";
+import { View } from "react-native";
+import { Badge, Card, Input, Text as UIText } from "@repo/ui";
+import { HeroHeader, ScreenShell } from "../../components/brutal-mobile";
 
 export default function SearchScreen() {
   return (
-    <View className="flex-1 bg-ink-950 p-4">
-      <Text className="text-display-md text-bone-50 font-display mb-4">
-        Buscar
-      </Text>
-      <TextInput
-        className="bg-ink-900 text-bone-50 p-4 rounded-lg border border-ink-800"
-        placeholder="Buscar eventos..."
-        placeholderTextColor="#78716c"
+    <ScreenShell>
+      <HeroHeader
+        kicker="BUSCAR · EXPLORAR"
+        title={"Busca por\nsonido."}
+        body="Explora artistas, recintos y géneros desde una superficie glass pensada para móvil."
       />
-    </View>
+      <Input
+        label="Búsqueda"
+        placeholder="¿Qué vas a ver esta noche?"
+        glass
+        containerClassName="mt-6"
+      />
+      <View className="mt-4 flex-row flex-wrap gap-2">
+        <Badge variant="signal">HOY</Badge>
+        <Badge variant="ink">INDIE</Badge>
+        <Badge variant="ink">CUMBIA</Badge>
+        <Badge variant="ink">ELECTRÓNICA</Badge>
+      </View>
+      <Card className="mt-8">
+        <UIText variant="heading-md">Sugerencias</UIText>
+        <UIText variant="body-sm" className="mt-3 text-ink-300">
+          Foro Puebla · Salón Los Ángeles · Terraza Condesa
+        </UIText>
+      </Card>
+    </ScreenShell>
   );
 }

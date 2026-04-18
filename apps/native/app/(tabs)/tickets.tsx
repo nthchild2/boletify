@@ -1,46 +1,42 @@
-import { View, Text, FlatList } from "react-native";
-
-interface Ticket {
-  id: string;
-  eventName: string;
-  date: string;
-  status: "valid" | "used" | "expired";
-}
-
-const MOCK_TICKETS: Ticket[] = [
-  { id: "1", eventName: "Tech Conference 2026", date: "15 May 2026", status: "valid" },
-];
+import { FlatList, View } from "react-native";
+import { Badge, GlassCard, Text as UIText } from "@repo/ui";
+import { HeroHeader, ScreenShell } from "../../components/brutal-mobile";
+import { mobileTickets } from "../../lib/mock-data";
 
 export default function TicketsScreen() {
   return (
-    <View className="flex-1 bg-ink-950">
-      <View className="p-4">
-        <Text className="text-display-md text-bone-50 font-display mb-2">
-          Mis Tickets
-        </Text>
-        <Text className="text-bone-400">
-          Tus tickets comprados
-        </Text>
-      </View>
-
+    <ScreenShell padded={false}>
       <FlatList
-        data={MOCK_TICKETS}
+        data={mobileTickets}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16, gap: 12 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 120 }}
+        ListHeaderComponent={
+          <HeroHeader
+            kicker="MIS TICKETS"
+            title={"Tu boleto es\nun objeto."}
+            body="Aquí viven tus accesos activos, con status visible y datos en mono tabular."
+          />
+        }
         renderItem={({ item }) => (
-          <View className="bg-ink-900 rounded-lg p-4 border border-ink-800">
-            <Text className="text-lg text-bone-50 font-medium">
+          <GlassCard className="mb-5">
+            <UIText variant="overline" className="text-ink-300">
+              {item.section}
+            </UIText>
+            <UIText variant="heading-md" className="mt-2">
               {item.eventName}
-            </Text>
-            <Text className="text-bone-400 text-sm mt-1">{item.date}</Text>
-            <View className="mt-2 bg-emerald-900/50 self-start px-2 py-1 rounded">
-              <Text className="text-emerald-400 text-xs font-medium">
-                {item.status === "valid" ? "Válido" : item.status}
-              </Text>
+            </UIText>
+            <UIText variant="mono-md" className="mt-3 text-signal-500">
+              {item.date}
+            </UIText>
+            <View className="mt-4 flex-row items-center justify-between">
+              <Badge variant="leaf">{item.status}</Badge>
+              <UIText variant="mono-sm" className="text-ink-300">
+                {item.id}
+              </UIText>
             </View>
-          </View>
+          </GlassCard>
         )}
       />
-    </View>
+    </ScreenShell>
   );
 }

@@ -1,8 +1,10 @@
+const path = require("path");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./apps/**/*.{js,jsx,ts,tsx}",
-    "./packages/**/*.{js,jsx,ts,tsx}",
+    path.join(__dirname, "apps/**/*.{js,jsx,ts,tsx}"),
+    path.join(__dirname, "packages/**/*.{js,jsx,ts,tsx}"),
   ],
   presets: [require("nativewind/preset")],
   theme: {

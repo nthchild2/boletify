@@ -1,51 +1,54 @@
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { FlatList, View } from "react-native";
 import { useRouter } from "expo-router";
-
-interface Event {
-  id: string;
-  name: string;
-  date: string;
-  venue: string;
-}
-
-const MOCK_EVENTS: Event[] = [
-  { id: "1", name: "Tech Conference 2026", date: "15 May 2026", venue: "CDMX" },
-  { id: "2", name: "Music Festival", date: "20 Jun 2026", venue: "GDL" },
-  { id: "3", name: "Art Expo", date: "10 Jul 2026", venue: "MTY" },
-];
+import { Text as UIText } from "@repo/ui";
+import {
+  CTAStack,
+  EventTile,
+  HeroHeader,
+  ScreenShell,
+  SearchPanel,
+} from "../../components/brutal-mobile";
+import { mobileEvents, mobileStats } from "../../lib/mock-data";
 
 export default function EventsScreen() {
   const router = useRouter();
 
   return (
-    <View className="flex-1 bg-ink-950">
-      <View className="p-4">
-        <Text className="text-display-md text-bone-50 font-display mb-2">
-          Eventos
-        </Text>
-        <Text className="text-bone-400">
-          Descubre los próximos eventos
-        </Text>
-      </View>
-
+    <ScreenShell padded={false}>
       <FlatList
-        data={MOCK_EVENTS}
+        data={mobileEvents}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16, gap: 12 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 140 }}
+        ListHeaderComponent={
+          <View>
+            <HeroHeader
+              kicker="DESCUBRE · NOCHES · SONIDOS"
+              title={"La noche\nes de quien la vive."}
+              body="El mejor feed de eventos en vivo en CDMX. Brutal por fuera, glass donde importa."
+            />
+            <CTAStack />
+            <View className="mt-8 flex-row gap-3">
+              {mobileStats.map((stat) => (
+                <View key={stat.label} className="flex-1 rounded-lg border border-ink-800 bg-ink-900 p-3">
+                  <UIText variant="overline" className="text-ink-300">
+                    {stat.label}
+                  </UIText>
+                  <UIText variant="mono-md" className="mt-2 text-signal-500">
+                    {stat.value}
+                  </UIText>
+                </View>
+              ))}
+            </View>
+            <SearchPanel />
+            <UIText variant="heading-lg" className="mt-8">
+              Cartelera.
+            </UIText>
+          </View>
+        }
         renderItem={({ item }) => (
-          <TouchableOpacity
-            className="bg-ink-900 rounded-lg p-4 border border-ink-800"
-            onPress={() => router.push(`/event/${item.id}`)}
-          >
-            <Text className="text-lg text-bone-50 font-medium">
-              {item.name}
-            </Text>
-            <Text className="text-bone-400 text-sm mt-1">
-              {item.date} • {item.venue}
-            </Text>
-          </TouchableOpacity>
+          <EventTile event={item} onPress={() => router.push(`/event/${item.id}`)} />
         )}
       />
-    </View>
+    </ScreenShell>
   );
 }
