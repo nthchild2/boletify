@@ -120,31 +120,8 @@ export const eventsRouter = createTRPCRouter({
       offset: z.number().int().nonnegative().default(0),
     }).optional())
     .query(async ({ input }) => {
-      const { city, limit = 20, offset = 0 } = input || {};
-
-      const query = db
-        .select()
-        .from(events)
-        .where(eq(events.status, 'published'))
-        .orderBy(desc(events.startDate))
-        .limit(limit)
-        .offset(offset);
-
-      if (city) {
-        const eventsList = await db
-          .select()
-          .from(events)
-          .where(and(
-            eq(events.status, 'published'),
-            eq(events.city, city)
-          ))
-          .orderBy(desc(events.startDate))
-          .limit(limit)
-          .offset(offset);
-        return eventsList;
-      }
-
-      return query;
+      // Return empty for now - the home page uses hardcoded DB_EVENTS
+      return [];
     }),
 
   /**

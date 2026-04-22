@@ -1,19 +1,27 @@
 import { Tabs } from "expo-router";
 import { View, Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-function TabIcon({ name, focused }: { name: string; focused: boolean }) {
-  const icons: Record<string, string> = {
-    index: "🎫",
-    search: "🔍",
-    tickets: "🎟️",
-    account: "👤",
-  };
-  
+function TabItem({
+  label,
+  focused,
+  icon,
+  iconFocused,
+}: {
+  label: string;
+  focused: boolean;
+  icon: keyof typeof Ionicons.glyphMap;
+  iconFocused: keyof typeof Ionicons.glyphMap;
+}) {
+  const colorClass = focused ? "text-signal-500" : "text-ink-300";
+  const currentIcon = focused ? iconFocused : icon;
+  const iconSize = focused ? 26 : 22;
+
   return (
-    <View className="items-center">
-      <Text className="text-2xl">{icons[name] || "•"}</Text>
-      <Text className={`text-xs mt-1 ${focused ? "text-bone-50" : "text-bone-500"}`}>
-        {name === "index" ? "Eventos" : name === "account" ? "Cuenta" : name === "tickets" ? "Tickets" : name}
+    <View className="items-center justify-center w-[78px]">
+      <Ionicons name={currentIcon} size={iconSize} color={focused ? "#C6FF2E" : "#787891"} />
+      <Text className={`text-[10px] leading-3.5 mt-0.5 ${colorClass}`}>
+        {label}
       </Text>
     </View>
   );
@@ -24,40 +32,49 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: "#08080C",
-          borderTopColor: "#1F1F2B",
+          backgroundColor: "rgba(15,16,20,0.6)",
           borderTopWidth: 1,
-          height: 86,
-          paddingBottom: 20,
-          paddingTop: 10,
+          borderTopColor: "rgba(245,242,235,0.08)",
+          height: 82,
+          paddingTop: 17,
+          paddingBottom: 28,
         },
-        tabBarActiveTintColor: "#F6F2EA",
+        tabBarActiveTintColor: "#C6FF2E",
         tabBarInactiveTintColor: "#787891",
         headerShown: false,
+        tabBarShowLabel: false,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon name="index" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabItem label="Inicio" focused={focused} icon="home-outline" iconFocused="home" />
+          ),
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon name="search" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabItem label="Buscar" focused={focused} icon="search-outline" iconFocused="search" />
+          ),
         }}
       />
       <Tabs.Screen
         name="tickets"
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon name="tickets" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabItem label="Mis boletos" focused={focused} icon="ticket-outline" iconFocused="ticket" />
+          ),
         }}
       />
       <Tabs.Screen
         name="account"
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon name="account" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabItem label="Cuenta" focused={focused} icon="person-outline" iconFocused="person" />
+          ),
         }}
       />
     </Tabs>

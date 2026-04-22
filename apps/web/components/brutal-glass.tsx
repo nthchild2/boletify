@@ -15,8 +15,14 @@ export function SiteNav() {
       >
         bolet<span className="text-signal-500">ify</span>
       </Link>
-      <div className="font-mono text-[12px] uppercase tracking-[0.08em] text-ink-300">
-        v2.0 · Brutal-Glass · 2026
+      <div className="flex items-center gap-4">
+        <span className="font-mono text-[11px] uppercase tracking-widest text-ink-500">v0.0.2 beta</span>
+        <BrutalButton href="/auth/signin" variant="ghost" size="sm">
+          Iniciar sesión
+        </BrutalButton>
+        <BrutalButton href="/auth/signup" variant="primary" size="sm">
+          Registrarse
+        </BrutalButton>
       </div>
     </nav>
   );
@@ -128,13 +134,20 @@ export function HeroKicker({ children }: { children: ReactNode }) {
   );
 }
 
-export function EventCard({ event }: { event: EventRecord }) {
+export function EventCard({ event }: { event: any }) {
   return (
     <Link
       href={`/events/${event.id}`}
       className="group block overflow-hidden rounded-lg border border-ink-800 bg-ink-900 text-bone-50 shadow-brick-md transition duration-fast ease-motion-fast hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brick-lg active:translate-x-[6px] active:translate-y-[6px] active:shadow-none"
     >
       <div className={cn("relative aspect-[4/5] overflow-hidden", event.posterClassName)}>
+        {event.posterImage && (
+          <img src={event.posterImage} alt={event.title} className="absolute inset-0 w-full h-full object-cover" />
+        )}
+        { /* Light gloss overlay always visible */ }
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/0 via-white/8 to-white/18 opacity-25" />
+        { /* Heavy gloss overlay on hover */ }
+        <div className="absolute inset-0 pointer-events-none mix-blend-overlay bg-gradient-to-br from-white/0 via-white/12 to-white/40 opacity-0 group-hover:opacity-60 transition-opacity" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(8,8,12,0.72)_100%)]" />
         <div className="absolute left-4 right-4 top-4 z-10 flex items-center justify-between gap-3">
           <span
@@ -195,6 +208,106 @@ export function StatStrip({
         </div>
       ))}
     </dl>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className="border-t border-ink-800 py-16">
+      <Container>
+        <div className="grid gap-12 md:grid-cols-4">
+          <div className="md:col-span-2">
+            <div className="font-display text-2xl font-black tracking-tight text-bone-50">
+              Boletify
+            </div>
+            <p className="mt-3 max-w-sm text-body-sm text-ink-300">
+              La plataforma de ticketing transparente para organizadores independientes y fans de la música en vivo.
+            </p>
+            <div className="mt-6 flex gap-4">
+              <a
+                href="https://instagram.com/boletify"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-ink-400 transition-colors hover:text-signal-500"
+              >
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </a>
+              <a
+                href="https://twitter.com/boletify"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-ink-400 transition-colors hover:text-signal-500"
+              >
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </a>
+              <a
+                href="https://tiktok.com/@boletify"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-ink-400 transition-colors hover:text-signal-500"
+              >
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div>
+            <div className="font-mono text-xs uppercase tracking-widest text-ink-400">Organizadores</div>
+            <ul className="mt-4 space-y-2 text-body-sm">
+              <li>
+                <a href="/organizador" className="text-ink-300 transition-colors hover:text-bone-50">
+                  Crear evento
+                </a>
+              </li>
+              <li>
+                <a href="/panel" className="text-ink-300 transition-colors hover:text-bone-50">
+                  Panel de control
+                </a>
+              </li>
+              <li>
+                <a href="/precios" className="text-ink-300 transition-colors hover:text-bone-50">
+                  Precios
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <div className="font-mono text-xs uppercase tracking-widest text-ink-400">Empresa</div>
+            <ul className="mt-4 space-y-2 text-body-sm">
+              <li>
+                <a href="/about" className="text-ink-300 transition-colors hover:text-bone-50">
+                  Nosotros
+                </a>
+              </li>
+              <li>
+                <a href="/ayuda" className="text-ink-300 transition-colors hover:text-bone-50">
+                  Ayuda
+                </a>
+              </li>
+              <li>
+                <a href="mailto:hola@boletify.com" className="text-ink-300 transition-colors hover:text-bone-50">
+                  Contacto
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-16 flex flex-wrap justify-between gap-4 border-t border-ink-800 pt-8">
+          <div className="font-mono text-xs uppercase tracking-widest text-ink-500">
+            © 2026 Boletify
+          </div>
+          <div className="flex gap-6 font-mono text-xs uppercase tracking-widest text-ink-500">
+            <a href="/privacidad" className="transition-colors hover:text-ink-300">Privacidad</a>
+            <a href="/terminos" className="transition-colors hover:text-ink-300">Términos</a>
+          </div>
+        </div>
+      </Container>
+    </footer>
   );
 }
 

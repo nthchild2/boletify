@@ -471,6 +471,18 @@ Translate the validated business model into a concrete product definition: who t
 - **Support/errors:** Empathetic, honest, solution-oriented. *"Algo salió mal con tu pago. Intenta de nuevo o prueba otro método."*
 - **Organiser comms:** Professional but warm. We're a partner, not a vendor. *"Tu evento ya está en línea. Comparte el link y empieza a vender."*
 
+### 6.3.1 Swearing & Profanity Guidelines
+
+> Added 2026-04-21
+
+Our brand is **modern, young, and easygoing** — but we draw the line at **vulgarity**.
+
+We're not prudes. Strong language can work — but only when it hits harder than the clean alternative would. The test is simple: does this land as clever, funny, or pointed? If it just reads as crude, it stays out.
+
+This applies to everything: marketing, product UI, error messages, support, emails. One voice, consistently.
+
+**The deeper principle:** Some words are inherently too explicit to ever land the way we want. They're just crude by default, no matter how you try to spin it. Those words don't belong in our brand — not as a blanket ban on swearing, but as a filter for execution quality. We don't just avoid bad words; we execute well.
+
 ### 6.4 Core Values
 
 1. **Transparencia radical** — No hidden fees. Ever. The price you see is the price you pay.

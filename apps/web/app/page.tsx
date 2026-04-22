@@ -1,166 +1,223 @@
 "use client";
 
-import { Routes } from "@boletify/routes";
+"use client";
+
+import { useState, useEffect } from "react";
+import { trpc } from "../lib/trpc";
 import {
   BrutalButton,
-  BrutalInput,
   Container,
   EventCard,
   HeroKicker,
-  MarqueeBand,
   PageShell,
-  SectionHeading,
   SiteNav,
-  StatStrip,
-  TicketArtifact,
+  Footer,
 } from "../components/brutal-glass";
-import { dashboardStats, featuredEvents } from "../lib/mock-data";
+
+const FILTER_CATEGORIES = [
+  "ELECTRONICA",
+  "ROCK",
+  "INDIE",
+  "CUMBIA",
+  "JAZZ",
+  "TECHNO",
+  "METAL",
+  "POP",
+  "REGGAETON",
+  "FOLK",
+] as const;
+
+type EventRecord = {
+  id: string;
+  title: string;
+  eyebrow: string;
+  venue: string;
+  location: string;
+  date: string;
+  access: string;
+  price: string;
+  priceValue: number;
+  status: string;
+  category: string;
+  posterTitle: string;
+  posterClassName: string;
+  posterImage: string;
+  accent: "signal" | "rosa";
+  lineup: string;
+  description: string;
+};
+
+function formatDate(date: Date | string | null): string {
+  if (!date) return "POR CONFIRMAR";
+  return new Date(date).toLocaleDateString("es-MX", { weekday: "short", day: "numeric", month: "short" }).toUpperCase();
+}
 
 export default function Home() {
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [events, setEvents] = useState<EventRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/events')
+      .then(r => r.json())
+      .then(data => {
+        const mapped = data.map((e: any) => ({
+          id: String(e.id),
+          title: e.title,
+          eyebrow: e.venue_name,
+          venue: e.venue_name,
+          location: e.city || "CDMX",
+          date: formatDate(e.start_date),
+          access: "",
+          price: "POR CONFIRMAR",
+          priceValue: 0,
+          status: e.status,
+          category: (e.genre_tags?.[0] || "INDIE").toUpperCase(),
+          posterTitle: e.title,
+          posterClassName: e.cover_image_url ? "bg-cover bg-center" : "bg-ink-900",
+          posterImage: e.cover_image_url || "",
+          accent: "signal" as const,
+          lineup: e.description || "",
+          description: e.description || "",
+        }));
+        setEvents(mapped);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const featured = events[0];
+  const filteredEvents = activeFilter
+    ? events.filter((e) => {
+        const cat = e.category?.toLowerCase() || "";
+        const filter = activeFilter.toLowerCase();
+        return cat.includes(filter) || cat === filter;
+      })
+    : events;
+
+  if (loading) {
+    return <PageShell mesh="hero"><SiteNav /><Container><div className="pt-20 text-center text-ink-300">Cargando...</div></Container></PageShell>;
+  }
+
+  if (events.length === 0) {
+    return (
+      <PageShell mesh="hero">
+        <SiteNav />
+        <Container>
+          <section className="pt-16">
+            <HeroKicker>Próximamente</HeroKicker>
+          </section>
+          <section className="mt-6">
+            <div className="grid gap-8 lg:grid-cols-2">
+              <div>
+                <h1 className="font-display text-5xl md:text-8xl text-bone-50">La noche<br/>es de<br/>quien la vive</h1>
+                <p className="mt-4 text-lg text-ink-200">Los mejores eventos de música en vivo en CDMX.</p>
+              </div>
+            </div>
+          </section>
+        </Container>
+      </PageShell>
+    );
+  }
+
   return (
     <PageShell mesh="hero">
       <SiteNav />
 
-      <section className="pt-24">
-        <Container className="pb-16">
-          <HeroKicker>Descubre · noches · sonidos · CDMX</HeroKicker>
-          <h1 className="mt-8 font-display text-[64px] font-black leading-[0.88] tracking-[-0.045em] text-bone-50 md:text-[156px]">
-            <span>La noche</span>
-            <br />
-            <span className="text-rosa-500">es de</span>{" "}
-            <span className="text-signal-500">quien</span>
-            <br />
-            <span className="text-transparent [-webkit-text-stroke:2px_#C2C2D0]">la vive.</span>
-          </h1>
-          <p className="max-w-[640px] text-body-lg text-ink-200 md:text-[20px] md:leading-[1.5]">
-            El mejor feed de eventos de música en vivo en la Ciudad de México. Sin cargos
-            ocultos, sin letras chiquitas, sin mamadas.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center gap-5">
-            <BrutalButton href={Routes.EVENTS} size="xl">
-              Encontrar boletos
-            </BrutalButton>
-            <BrutalButton href={Routes.AUTH_SIGNIN} variant="secondary">
-              Soy organizador →
-            </BrutalButton>
-          </div>
-          <div className="mt-20 border-t border-ink-800 pt-6">
-            <StatStrip
-              stats={[
-                { label: "Eventos esta semana", value: "284" },
-                { label: "Recintos activos", value: "147" },
-                { label: "Asistentes 2026", value: "1.2M" },
-                { label: "Pago organizador", value: "T+3 días" },
-              ]}
-            />
-          </div>
-        </Container>
-      </section>
+      <Container>
+        <section className="pt-16">
+          <HeroKicker>Esta semana · CDMX</HeroKicker>
+        </section>
 
-      <MarqueeBand items={["Descubre", "Noches", "Sonidos", "CDMX", "2026"]} />
+        <section className="mt-6">
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+            <div className="flex flex-col justify-center">
+              <span className="font-mono text-mono-sm uppercase tracking-widest text-signal-500">
+                Evento destacado
+              </span>
+              <h1 className="mt-4 font-display text-5xl font-black leading-none tracking-tight text-bone-50 md:text-8xl">
+                {featured?.title}
+              </h1>
+              <p className="mt-4 max-w-md text-lg text-ink-200">
+                {featured?.description}
+              </p>
+              <div className="mt-6 flex items-center gap-4">
+                <span className="font-mono text-mono-md text-signal-500">
+                  {featured?.price}
+                </span>
+                <span className="text-ink-300">·</span>
+                <span className="text-ink-300">{featured?.date}</span>
+                <span className="text-ink-300">·</span>
+                <span className="text-ink-300">{featured?.venue}</span>
+              </div>
+              <div className="mt-8">
+                <BrutalButton href={`/events/${featured?.id}`} size="lg">
+                  Ver detalles
+                </BrutalButton>
+              </div>
+            </div>
+            <div className="relative aspect-[4/5] overflow-hidden rounded-xl">
+              {featured?.posterImage ? (
+                <img src={featured.posterImage} alt={featured.title} className="absolute inset-0 w-full h-full object-cover" />
+              ) : (
+                <div className={`absolute inset-0 ${featured?.posterClassName}`} />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <span className="font-mono text-mono-sm uppercase tracking-widest text-ink-300">
+                  {featured?.lineup}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <section className="border-t border-ink-800 py-24">
-        <Container>
-          <SectionHeading
-            kicker="01 · ESTA SEMANA"
-            title={
-              <>
-                Event card
-                <br />
-                grid.
-              </>
-            }
-            description={
-              <>
-                Poster-ratio (4:5) imagery, 1.5px ink-800 border, brick shadow y precio en
-                mono. Todo vive en el mismo brutal-glass chassis.
-              </>
-            }
-          />
-          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
-            {featuredEvents.map((event) => (
+        <section className="mt-16 border-t border-ink-800 pt-8">
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setActiveFilter(null)}
+              className={`rounded-full border px-4 py-2 font-body text-label font-semibold uppercase tracking-wider transition duration-fast ${
+                activeFilter === null
+                  ? "border-ink-950 bg-signal-500 text-ink-950"
+                  : "border-ink-700 bg-transparent text-bone-50 hover:border-ink-500"
+              }`}
+            >
+              Todos ({events.length})
+            </button>
+            {FILTER_CATEGORIES.map((cat) => {
+              const catLower = cat.toLowerCase();
+              const count = events.filter(e => {
+                const eCat = (e.category || "").toLowerCase().replace(/áéíóú/g, "").replace(/"/g, "");
+                return eCat.includes(catLower) || eCat === catLower;
+              }).length;
+              if (count === 0) return null;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setActiveFilter(cat)}
+                  className={`rounded-full border px-4 py-2 font-body text-label font-semibold uppercase tracking-wider transition duration-fast ${
+                    activeFilter === cat
+                      ? "border-ink-950 bg-signal-500 text-ink-950"
+                      : "border-ink-700 bg-transparent text-bone-50 hover:border-ink-500"
+                  }`}
+                >
+                  {cat.replace(/([A-Z])/g, " $1").trim()} ({count})
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="mt-8 pb-16">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredEvents.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}
           </div>
-        </Container>
-      </section>
+        </section>
 
-      <section className="border-t border-ink-800 bg-[radial-gradient(900px_500px_at_20%_0%,rgba(198,255,46,0.08),transparent_55%),radial-gradient(700px_600px_at_90%_30%,rgba(255,46,136,0.10),transparent_55%),#0F0F15] py-24">
-        <Container>
-          <SectionHeading
-            kicker="02 · THE ARTIFACT"
-            title={
-              <>
-                El boleto
-                <br />
-                es un objeto.
-              </>
-            }
-            description="Die-cut silhouette, glass body, dotted perforation, glow en el QR y textura de papel. Este es el artefacto estrella del sistema."
-          />
-        </Container>
-        <TicketArtifact event={featuredEvents[0]} />
-      </section>
-
-      <section className="border-t border-ink-800 py-24">
-        <Container>
-          <SectionHeading
-            kicker="03 · COMPONENTS"
-            title="Forms."
-            description="Inputs de 48px, labels en overline, foco signal-lime y una variante glass para contextos sobre fondos atmosféricos."
-          />
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            <BrutalInput
-              label="Correo electrónico"
-              type="email"
-              defaultValue="maria@example.mx"
-              hint="Te mandamos el boleto aquí."
-            />
-            <BrutalInput
-              label="Código de promoción"
-              placeholder="INSERTA CÓDIGO"
-              hint="Opcional. Se aplica al final."
-            />
-            <BrutalInput
-              label="Número de boletos"
-              type="number"
-              defaultValue="11"
-              hint="Máximo 10 por compra."
-              error="Máximo 10 por compra."
-            />
-            <BrutalInput
-              label="Búsqueda"
-              type="search"
-              placeholder="¿Qué vas a ver esta noche?"
-              hint="Variante glass sobre hero."
-              glass
-            />
-          </div>
-        </Container>
-      </section>
-
-      <section className="border-t border-ink-800 py-24">
-        <Container>
-          <SectionHeading
-            kicker="04 · ORGANIZER DASHBOARD"
-            title={
-              <>
-                Tabular
-                <br />
-                numerics.
-              </>
-            }
-            description="Todas las métricas viven en mono tabular para que ventas, cortes y estados se sientan como instrumentos, no como CMS."
-          />
-          <StatStrip stats={dashboardStats} />
-          <div className="mt-10 flex flex-wrap gap-4">
-            <BrutalButton href={Routes.EVENTS}>Obtener boletos</BrutalButton>
-            <BrutalButton variant="accent">Guardar evento</BrutalButton>
-            <BrutalButton variant="secondary">Soy organizador</BrutalButton>
-            <BrutalButton variant="glass">Comparte en WhatsApp</BrutalButton>
-          </div>
-        </Container>
-      </section>
+      </Container>
+      <Footer />
     </PageShell>
   );
 }

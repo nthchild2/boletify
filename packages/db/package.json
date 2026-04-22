@@ -17,11 +17,11 @@
       "types": "./src/client.ts"
     }
   },
-  "scripts": {
-    "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+"scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "seed": "tsx seed.ts"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",

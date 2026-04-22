@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Image, ImageBackground } from "react-native";
 import { Badge, Button, Card, GlassCard, Input, Text as UIText } from "@repo/ui";
 import type { MobileEvent } from "../lib/mock-data";
 
@@ -45,9 +45,29 @@ export function EventTile({
   event: MobileEvent;
   onPress?: () => void;
 }) {
+  const coverUrl = event.coverImageUrl;
+
   return (
     <Pressable onPress={onPress} className="mb-5">
       <Card className="overflow-hidden p-0">
+        {coverUrl ? (
+          <ImageBackground
+            source={{ uri: coverUrl }}
+            className="aspect-[4/5] w-full justify-between p-4"
+            imageStyle={{ borderRadius: 0 }}
+          >
+            <View className="absolute inset-0 bg-black/40" />
+            <View className="relative flex-row items-start justify-between">
+              <Badge variant="signal">{event.status}</Badge>
+              <Badge variant="ink">{event.category}</Badge>
+            </View>
+            <View className="mt-auto">
+              <Text className="font-display text-[38px] font-black uppercase leading-[36px] tracking-[-0.03em] text-white">
+                {event.title}
+              </Text>
+            </View>
+          </ImageBackground>
+        ) : (
         <View className={cn("aspect-[4/5] p-4", event.gradientClassName)}>
           <View className="flex-row items-start justify-between">
             <Badge variant="signal">{event.status}</Badge>
@@ -59,6 +79,7 @@ export function EventTile({
             </Text>
           </View>
         </View>
+        )}
         <View className="p-5">
           <UIText variant="mono-sm" className="text-ink-300">
             {event.eyebrow}
@@ -101,9 +122,10 @@ export function SearchPanel() {
 
 export function CTAStack() {
   return (
-    <View className="mt-6 gap-3">
-      <Button text="Encontrar boletos" size="xl" />
-      <Button text="Soy organizador" variant="secondary" />
-    </View>
+    <Pressable className="mt-6 bg-signal-500 h-[52px] rounded-xl items-center justify-center shadow-brick-md">
+      <Text className="text-ink-950 font-body text-label font-semibold uppercase">
+        Explorar shows →
+      </Text>
+    </Pressable>
   );
 }

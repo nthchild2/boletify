@@ -19,6 +19,7 @@ export interface EventRecord {
   category: EventCategory;
   posterTitle: string;
   posterClassName: string;
+  posterImage?: string;
   accent: "signal" | "rosa";
   lineup: string;
   description: string;

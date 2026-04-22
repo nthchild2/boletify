@@ -20,6 +20,7 @@ Phase 2 refs: O3 (event creation), O4 (ticket tier config), O5 (fee preview), O7
 | EVT-001 | Event Creation (with Ticket Tiers) | TODO |
 | EVT-002 | Event Update / Edit | TODO |
 | EVT-003 | Event Publish / Delete | TODO |
+| EVT-004 | Featured Event Slider (Web Home) | TODO |
 
 ---
 

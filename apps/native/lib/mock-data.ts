@@ -12,6 +12,7 @@ export interface MobileEvent {
   lineup: string;
   description: string;
   gradientClassName: string;
+  coverImageUrl?: string;
 }
 
 export const mobileEvents: MobileEvent[] = [

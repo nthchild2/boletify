@@ -33,10 +33,6 @@ export default function AppLayout() {
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="index" options={{ title: "Eventos", headerShown: false }} />
-        <Stack.Screen name="search" options={{ title: "Buscar", headerShown: false }} />
-        <Stack.Screen name="tickets" options={{ title: "Mis Tickets", headerShown: false }} />
-        <Stack.Screen name="account" options={{ title: "Cuenta", headerShown: false }} />
         <Stack.Screen name="auth/signin" options={{ headerShown: false }} />
         <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
         <Stack.Screen name="event/[id]" options={{ title: "Evento", headerShown: false }} />
