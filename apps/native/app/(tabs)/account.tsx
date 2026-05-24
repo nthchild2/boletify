@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { Routes } from "@boletify/routes";
 import { Avatar, Button, GlassCard, Text as UIText } from "@repo/ui";
 import { HeroHeader, ScreenShell } from "../../components/brutal-mobile";
+import { ThemeToggle } from "../../components/theme-toggle";
 
 export default function AccountScreen() {
   const router = useRouter();
@@ -20,12 +21,19 @@ export default function AccountScreen() {
           <Avatar initials="CC" size="lg" />
           <View className="flex-1">
             <UIText variant="heading-md">Carlos Cortes</UIText>
-            <UIText variant="body-sm" className="mt-1 text-ink-300">
+            <UIText variant="body-sm" className="mt-1 text-fg-muted">
               nth.child.1@gmail.com
             </UIText>
           </View>
         </View>
       </GlassCard>
+
+      <View className="mt-6">
+        <UIText variant="overline" className="mb-3 text-fg-muted">
+          Apariencia
+        </UIText>
+        <ThemeToggle />
+      </View>
 
       <View className="mt-6 gap-3">
         <Button text="Iniciar sesión" onPress={() => router.push(Routes.AUTH_SIGNIN)} />

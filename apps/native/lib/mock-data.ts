@@ -1,3 +1,12 @@
+export type MobileEventStatusVariant =
+  | "signal"
+  | "rosa"
+  | "oxblood"
+  | "leaf"
+  | "sun"
+  | "cenote"
+  | "ink";
+
 export interface MobileEvent {
   id: string;
   title: string;
@@ -7,7 +16,13 @@ export interface MobileEvent {
   date: string;
   access: string;
   price: string;
+  /** Buyer-facing label rendered in the status badge ("EN VENTA", etc.). */
   status: string;
+  /** Brand variant for the badge — derived via @boletify/routes for API
+   *  data, hardcoded for local mock entries. Defaults to "signal". */
+  statusVariant?: MobileEventStatusVariant;
+  /** When false the EventTile drops the status badge entirely. */
+  showStatus?: boolean;
   category: string;
   lineup: string;
   description: string;
@@ -32,6 +47,7 @@ export const mobileEvents: MobileEvent[] = [
       "Una fecha para perder la voz entre guitarras crudas, synths melancólicos y pogo elegante en el corazón de la Roma.",
     gradientClassName:
       "bg-[radial-gradient(circle_at_30%_80%,rgba(255,46,136,0.55),transparent_55%),radial-gradient(circle_at_80%_20%,rgba(198,255,46,0.35),transparent_52%),linear-gradient(180deg,#24112B_0%,#140C1A_100%)]",
+    coverImageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80",
   },
   {
     id: "sonido-del-valle",
@@ -49,6 +65,7 @@ export const mobileEvents: MobileEvent[] = [
       "Percusión tropical, visuales calientes y una pista lista para zapatear hasta las tres de la mañana.",
     gradientClassName:
       "bg-[radial-gradient(circle_at_50%_100%,rgba(122,16,32,0.72),transparent_55%),radial-gradient(circle_at_20%_10%,rgba(255,158,0,0.28),transparent_58%),linear-gradient(180deg,#2B1112_0%,#12090B_100%)]",
+    coverImageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
   },
   {
     id: "cenote-club-full-moon",
@@ -66,6 +83,7 @@ export const mobileEvents: MobileEvent[] = [
       "House hipnótico bajo la luna con sistema de audio envolvente, visuales acuáticos y entrada libre antes de las 10.",
     gradientClassName:
       "bg-[radial-gradient(circle_at_70%_30%,rgba(0,179,199,0.35),transparent_60%),radial-gradient(circle_at_20%_80%,rgba(198,255,46,0.30),transparent_55%),linear-gradient(180deg,#0B171C_0%,#091116_100%)]",
+    coverImageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80",
   },
 ];
 

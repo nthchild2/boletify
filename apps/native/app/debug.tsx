@@ -3,16 +3,16 @@ import { Avatar, Badge, Button, Card, GlassCard, Input, Text as TextNative } fro
 
 export default function DebugPage() {
   return (
-    <ScrollView className="flex-1 bg-ink-950 px-4 pt-4">
+    <ScrollView className="flex-1 bg-bg px-4 pt-4">
       <View className="mb-6">
-        <View className="mb-5 self-start rounded-xs border border-ink-700 px-3 py-2">
-          <Text className="font-body text-overline uppercase text-ink-300">shared components</Text>
+        <View className="mb-5 self-start rounded-xs border border-border-strong px-3 py-2">
+          <Text className="font-body text-overline uppercase text-fg-muted">shared components</Text>
         </View>
-        <Text className="font-display text-[44px] font-black leading-[42px] tracking-[-0.03em] text-bone-50">
+        <Text className="font-display text-[44px] font-black leading-[42px] tracking-[-0.03em] text-fg">
           Debug ya no
           {"\n"}parece placeholder.
         </Text>
-        <Text className="mt-3 text-body-md text-ink-200">
+        <Text className="mt-3 text-body-md text-fg-secondary">
           Esta página ahora funciona como una hoja de estilo viva para revisar si los componentes compartidos realmente siguen el brutal glass del preview.
         </Text>
       </View>
@@ -65,7 +65,7 @@ export default function DebugPage() {
         <View className="gap-6 lg:grid lg:grid-cols-[1.3fr_0.7fr]">
           <Card className="gap-5">
             <TextNative variant="heading-md">Card / Event Shell</TextNative>
-            <View className="overflow-hidden rounded-lg border border-ink-800 bg-ink-950 shadow-brick-md">
+            <View className="overflow-hidden rounded-lg border border-border bg-bg shadow-brick-md">
               <View className="aspect-[4/5] justify-between p-4 bg-gradient-to-br from-[#24112B] via-[#140C1A] to-[#140C1A]">
                 <View className="flex-row justify-between">
                   <Badge variant="signal">EN VENTA</Badge>
@@ -73,11 +73,11 @@ export default function DebugPage() {
                 </View>
               </View>
               <View className="gap-2 p-5">
-                <TextNative variant="mono-sm" className="text-ink-300">FORO INDIE ROCK</TextNative>
+                <TextNative variant="mono-sm" className="text-fg-muted">FORO INDIE ROCK</TextNative>
                 <TextNative variant="heading-md">Noche de Indie Rock · CDMX</TextNative>
                 <View className="flex-row justify-between">
-                  <TextNative variant="body-sm" className="text-ink-300">Foro Puebla · Roma Nte</TextNative>
-                  <TextNative variant="mono-md" className="text-signal-500">$450 MXN</TextNative>
+                  <TextNative variant="body-sm" className="text-fg-muted">Foro Puebla · Roma Nte</TextNative>
+                  <TextNative variant="mono-md" className="text-primary">$450 MXN</TextNative>
                 </View>
               </View>
             </View>
@@ -89,7 +89,7 @@ export default function DebugPage() {
               <Avatar initials="CC" size="lg" />
               <View className="gap-1">
                 <TextNative variant="heading-sm">Carlos Cortes</TextNative>
-                <TextNative variant="body-sm" className="text-ink-300">Organizador · Roma Nte</TextNative>
+                <TextNative variant="body-sm" className="text-fg-muted">Organizador · Roma Nte</TextNative>
               </View>
             </View>
             <View className="flex-row flex-wrap gap-3">
@@ -100,21 +100,21 @@ export default function DebugPage() {
           </GlassCard>
         </View>
 
-        <View className="rounded-lg border border-ink-800 bg-ink-900 p-6 shadow-brick-md">
+        <View className="rounded-lg border border-border bg-surface p-6 shadow-brick-md">
           <TextNative variant="heading-lg" className="mb-5">Typography</TextNative>
           <View className="gap-3">
             <TextNative variant="display-lg">La noche</TextNative>
             <TextNative variant="heading-lg">Foro Puebla · Sábado 17 de mayo</TextNative>
             <TextNative variant="heading-md">Triplete · Las Nubes · Fuente de Juventud</TextNative>
-            <TextNative variant="body-lg" className="text-ink-200">
+            <TextNative variant="body-lg" className="text-fg-secondary">
               Compra tu boleto sin cargos ocultos y recibe tu QR al correo en segundos.
             </TextNative>
-            <TextNative variant="overline" className="text-ink-300">DESCUBRE · NOCHES · SONIDOS · CDMX</TextNative>
-            <TextNative variant="mono-md" className="text-signal-500">$450.00 MXN · TCK-0412-0091</TextNative>
-            <TextNative variant="caption" className="text-ink-400">Caption para ayuda y microcopy.</TextNative>
+            <TextNative variant="overline" className="text-fg-muted">DESCUBRE · NOCHES · SONIDOS · CDMX</TextNative>
+            <TextNative variant="mono-md" className="text-primary">$450.00 MXN · TCK-0412-0091</TextNative>
+            <TextNative variant="caption" className="text-fg-subtle">Caption para ayuda y microcopy.</TextNative>
           </View>
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
   );
 }

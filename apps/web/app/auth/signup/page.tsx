@@ -30,65 +30,65 @@ export default function SignUpPage() {
   return (
     <PageShell mesh="ambient">
       <SiteNav />
-      <section className="border-t border-ink-800 py-20">
+      <section className="border-t border-border py-20">
         <Container className="grid gap-12 xl:grid-cols-[minmax(0,1fr)_520px]">
           <div>
-            <div className="font-body text-overline uppercase text-ink-300">Cuenta · registro</div>
-            <h1 className="mt-4 font-display text-[56px] font-black leading-[0.92] tracking-[-0.03em] text-bone-50 md:text-[96px]">
+            <div className="font-body text-overline uppercase text-fg-muted">Cuenta · registro</div>
+            <h1 className="mt-4 font-display text-[56px] font-black leading-[0.92] tracking-[-0.03em] text-fg md:text-[96px]">
               Haz perfil,
               <br />
               arma plan.
             </h1>
-            <p className="mt-5 max-w-[560px] text-body-lg leading-8 text-ink-200">
+            <p className="mt-5 max-w-[560px] text-body-lg leading-8 text-fg-secondary">
               Desde aquí arranca todo: seguir artistas, guardar eventos y recibir el boleto
               como un artefacto, no como un PDF triste.
             </p>
           </div>
 
-          <div className="rounded-[28px] border border-white/10 bg-white/5 p-8 shadow-glass-lg backdrop-blur-glass-md">
-            <h2 className="font-display text-heading-lg text-bone-50">Crear cuenta</h2>
-            <p className="mt-2 text-body-sm text-ink-300">
+          <div className="rounded-[28px] border border-glass-edge bg-glass-tint p-8 shadow-glass-lg backdrop-blur-glass-md">
+            <h2 className="font-display text-heading-lg text-fg">Crear cuenta</h2>
+            <p className="mt-2 text-body-sm text-fg-muted">
               Regístrate para comprar tickets, gestionar accesos y seguir tus venues favoritos.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               <div>
-                <label className="mb-2 block font-body text-overline uppercase text-ink-300">
+                <label className="mb-2 block font-body text-overline uppercase text-fg-muted">
                   Nombre
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="h-12 w-full rounded-md border border-white/10 bg-white/5 px-4 font-body text-body-md text-bone-50 shadow-glass-sm backdrop-blur-glass-sm placeholder:text-ink-400 focus:border-signal-500 focus:outline-none focus:shadow-glow-focus"
+                  className="h-12 w-full rounded-md border border-glass-edge bg-glass-tint px-4 font-body text-body-md text-fg shadow-glass-sm backdrop-blur-glass-sm placeholder:text-fg-subtle focus:border-primary focus:outline-none focus:shadow-glow-focus"
                   placeholder="Tu nombre"
                   required
                 />
               </div>
 
               <div>
-                <label className="mb-2 block font-body text-overline uppercase text-ink-300">
+                <label className="mb-2 block font-body text-overline uppercase text-fg-muted">
                   Email
                 </label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 w-full rounded-md border border-white/10 bg-white/5 px-4 font-body text-body-md text-bone-50 shadow-glass-sm backdrop-blur-glass-sm placeholder:text-ink-400 focus:border-signal-500 focus:outline-none focus:shadow-glow-focus"
+                  className="h-12 w-full rounded-md border border-glass-edge bg-glass-tint px-4 font-body text-body-md text-fg shadow-glass-sm backdrop-blur-glass-sm placeholder:text-fg-subtle focus:border-primary focus:outline-none focus:shadow-glow-focus"
                   placeholder="correo@ejemplo.com"
                   required
                 />
               </div>
 
               <div>
-                <label className="mb-2 block font-body text-overline uppercase text-ink-300">
+                <label className="mb-2 block font-body text-overline uppercase text-fg-muted">
                   Contraseña
                 </label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 w-full rounded-md border border-white/10 bg-white/5 px-4 font-body text-body-md text-bone-50 shadow-glass-sm backdrop-blur-glass-sm placeholder:text-ink-400 focus:border-signal-500 focus:outline-none focus:shadow-glow-focus"
+                  className="h-12 w-full rounded-md border border-glass-edge bg-glass-tint px-4 font-body text-body-md text-fg shadow-glass-sm backdrop-blur-glass-sm placeholder:text-fg-subtle focus:border-primary focus:outline-none focus:shadow-glow-focus"
                   placeholder="••••••••"
                   required
                   minLength={6}
@@ -102,9 +102,9 @@ export default function SignUpPage() {
               </button>
             </form>
 
-            <p className="mt-8 text-center text-body-sm text-ink-300">
+            <p className="mt-8 text-center text-body-sm text-fg-muted">
               ¿Ya tienes cuenta?{" "}
-              <Link href={Routes.AUTH_SIGNIN} className="text-signal-500 underline-offset-4 hover:underline">
+              <Link href={Routes.AUTH_SIGNIN} className="text-primary underline-offset-4 hover:underline">
                 Iniciar sesión
               </Link>
             </p>

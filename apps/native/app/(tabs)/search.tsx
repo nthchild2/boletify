@@ -24,7 +24,7 @@ export default function SearchScreen() {
       </View>
       <Card className="mt-8">
         <UIText variant="heading-md">Sugerencias</UIText>
-        <UIText variant="body-sm" className="mt-3 text-ink-300">
+        <UIText variant="body-sm" className="mt-3 text-fg-muted">
           Foro Puebla · Salón Los Ángeles · Terraza Condesa
         </UIText>
       </Card>

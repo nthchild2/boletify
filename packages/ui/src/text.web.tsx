@@ -71,7 +71,7 @@ export function Text({
   const Component = as ?? tagMap[variant] ?? "span";
 
   return (
-    <Component className={cn("text-bone-50", variantStyles[variant], className)} {...props}>
+    <Component className={cn("text-fg", variantStyles[variant], className)} {...props}>
       {children}
     </Component>
   );

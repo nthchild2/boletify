@@ -62,7 +62,7 @@ export function Text({
 }: TextProps) {
   return (
     <RNText
-      className={`${variantStyles[variant]} text-bone-50 ${className}`}
+      className={`${variantStyles[variant]} text-fg ${className}`}
       {...props}
     >
       {children}

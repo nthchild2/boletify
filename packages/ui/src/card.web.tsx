@@ -10,8 +10,8 @@ function cn(...values: Array<string | false | null | undefined>) {
 }
 
 const variantStyles = {
-  default: "bg-ink-900 border border-ink-800",
-  bordered: "bg-ink-900 border border-ink-700",
+  default: "bg-surface border border-border",
+  bordered: "bg-surface border border-border-strong",
   ghost: "bg-transparent border border-transparent",
 } as const;
 
@@ -32,7 +32,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-lg p-5 text-bone-50",
+        "rounded-lg p-5 text-fg",
         variantStyles[variant],
         shadowStyles[shadow],
         className,

@@ -4,7 +4,6 @@ import {
   View,
   Text,
   TextInputProps,
-  ViewProps,
 } from "react-native";
 
 export interface InputProps extends TextInputProps {
@@ -15,6 +14,12 @@ export interface InputProps extends TextInputProps {
   containerClassName?: string;
 }
 
+// Placeholder text color — fg-subtle. Light is #6E6E8A (Slate), dark is
+// #787891 (ink-400). We use the light value here; it's close enough in dark
+// mode and acceptable for both. The imperative `placeholderTextColor` prop
+// doesn't accept Tailwind classes.
+const PLACEHOLDER_COLOR = "#6E6E8A";
+
 export function Input({
   label,
   error,
@@ -22,33 +27,34 @@ export function Input({
   glass = false,
   containerClassName = "",
   className = "",
+  placeholderTextColor,
   ...props
 }: InputProps) {
   return (
     <View className={containerClassName}>
       {label && (
-        <Text className="mb-2 font-body text-overline uppercase text-ink-300">
+        <Text className="mb-2 font-body text-overline uppercase text-fg-muted">
           {label}
         </Text>
       )}
       <TextInput
         className={`
-          ${glass ? "bg-white/5 border-white/10 shadow-glass-sm" : "bg-ink-850 border-ink-700"}
+          ${glass ? "bg-glass-tint border-glass-edge shadow-glass-sm" : "bg-surface-sunken border-border-strong"}
           h-12
-          text-bone-50
+          text-fg
           font-body text-body-md
           px-4
           rounded-md
           border
-          placeholder:text-ink-400
-          ${error ? "border-oxblood-500" : ""}
+          placeholder:text-fg-subtle
+          ${error ? "border-danger" : ""}
           ${className}
         `}
-        placeholderTextColor="#787891"
+        placeholderTextColor={placeholderTextColor ?? PLACEHOLDER_COLOR}
         {...props}
       />
       {(error || hint) && (
-        <Text className={`mt-2 font-body text-caption ${error ? "text-oxblood-400" : "text-ink-400"}`}>
+        <Text className={`mt-2 font-body text-caption ${error ? "text-danger" : "text-fg-subtle"}`}>
           {error ?? hint}
         </Text>
       )}

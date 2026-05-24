@@ -19,15 +19,15 @@ export default function SignUpScreen() {
   };
 
   return (
-    <View className="flex-1 bg-ink-950 p-4 pt-8">
-      <UIText variant="overline" className="text-ink-300">
+    <View className="flex-1 bg-bg p-4 pt-8">
+      <UIText variant="overline" className="text-fg-muted">
         CUENTA · REGISTRO
       </UIText>
       <UIText variant="display-sm" className="mt-3">
         Haz perfil,
         {"\n"}arma plan.
       </UIText>
-      <UIText variant="body-md" className="mt-3 text-ink-200">
+      <UIText variant="body-md" className="mt-3 text-fg-secondary">
         Regístrate para comprar tickets, seguir venues y guardar eventos favoritos.
       </UIText>
 

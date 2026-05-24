@@ -31,7 +31,7 @@ export function Avatar({
     return (
       <Image
         source={{ uri: src }}
-        className={`${sizeClass} rounded-full border border-white/10 bg-ink-850 object-cover ${className}`}
+        className={`${sizeClass} rounded-full border border-glass-edge bg-surface-raised object-cover ${className}`}
         {...props as ImageProps}
       />
     );
@@ -42,15 +42,15 @@ export function Avatar({
       className={`
         ${sizeClass}
         rounded-full
-        border border-white/10
-        bg-ink-850
+        border border-glass-edge
+        bg-surface-raised
         items-center justify-center
         shadow-glass-sm
         ${className}
       `}
       {...props}
     >
-      <Text className="text-ink-200 font-body font-semibold">
+      <Text className="text-fg-secondary font-body font-semibold">
         {initials?.slice(0, 2).toUpperCase() || "?"}
       </Text>
     </View>

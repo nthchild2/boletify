@@ -4,19 +4,19 @@ import { Avatar, Badge, Button, Card, GlassCard, Input, Text } from "@repo/ui";
 
 export default function DebugPage() {
   return (
-    <div className="min-h-screen bg-mesh-gradient text-bone-50">
-      <div className="sticky top-0 z-20 flex items-center justify-between border-b border-ink-800 bg-[rgba(8,8,12,0.72)] px-5 py-3 backdrop-blur-[20px] md:px-12">
+    <div className="min-h-screen bg-mesh text-fg">
+      <div className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-nav-tint px-5 py-3 backdrop-blur-[20px] md:px-12">
         <div className="font-display text-[22px] font-black tracking-[-0.03em]">
-          bolet<span className="text-signal-500">ify</span>
+          bolet<span className="text-primary">ify</span>
         </div>
-        <div className="font-mono text-mono-sm uppercase tracking-[0.08em] text-ink-300">
+        <div className="font-mono text-mono-sm uppercase tracking-[0.08em] text-fg-muted">
           debug · ui specimen
         </div>
       </div>
 
       <div className="mx-auto max-w-6xl space-y-12 px-5 py-10 md:px-12">
         <header className="space-y-5">
-          <div className="inline-flex items-center gap-3 rounded-xs border border-ink-700 px-[14px] py-2 font-body text-overline uppercase text-ink-300">
+          <div className="inline-flex items-center gap-3 rounded-xs border border-border-strong px-[14px] py-2 font-body text-overline uppercase text-fg-muted">
             <span className="h-1.5 w-1.5 rounded-full bg-signal-500 shadow-glow-signal" />
             shared components
           </div>
@@ -25,13 +25,13 @@ export default function DebugPage() {
             <br />
             parece placeholder.
           </h1>
-          <p className="max-w-3xl text-body-lg text-ink-200">
+          <p className="max-w-3xl text-body-lg text-fg-secondary">
             Esta página ahora funciona como una hoja de estilo viva para revisar si los
             componentes compartidos realmente siguen el brutal glass del preview.
           </p>
         </header>
 
-        <section className="space-y-5 rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-glass-lg backdrop-blur-glass-md">
+        <section className="space-y-5 rounded-[28px] border border-glass-edge bg-glass-tint p-6 shadow-glass-lg backdrop-blur-glass-md">
           <Text variant="heading-lg">Buttons</Text>
           <div className="flex flex-wrap gap-4">
             <Button text="Primary" onPress={() => console.log("primary")} />
@@ -77,7 +77,7 @@ export default function DebugPage() {
         <section className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
           <Card className="space-y-5">
             <Text variant="heading-md">Card / Event Shell</Text>
-            <div className="overflow-hidden rounded-lg border border-ink-800 bg-ink-950 shadow-brick-md">
+            <div className="overflow-hidden rounded-lg border border-border bg-bg shadow-brick-md">
               <div className="aspect-[4/5] bg-[radial-gradient(circle_at_30%_80%,rgba(255,46,136,0.55),transparent_55%),radial-gradient(circle_at_80%_20%,rgba(198,255,46,0.35),transparent_52%),linear-gradient(180deg,#24112B_0%,#140C1A_100%)] p-4">
                 <div className="flex items-start justify-between">
                   <Badge variant="signal">EN VENTA</Badge>
@@ -85,11 +85,11 @@ export default function DebugPage() {
                 </div>
               </div>
               <div className="space-y-2 p-5">
-                <Text variant="mono-sm" className="text-ink-300">FORO INDIE ROCK</Text>
+                <Text variant="mono-sm" className="text-fg-muted">FORO INDIE ROCK</Text>
                 <Text variant="heading-md">Noche de Indie Rock · CDMX</Text>
                 <div className="flex items-center justify-between">
-                  <Text variant="body-sm" className="text-ink-300">Foro Puebla · Roma Nte</Text>
-                  <Text variant="mono-md" className="text-signal-500">$450 MXN</Text>
+                  <Text variant="body-sm" className="text-fg-muted">Foro Puebla · Roma Nte</Text>
+                  <Text variant="mono-md" className="text-primary">$450 MXN</Text>
                 </div>
               </div>
             </div>
@@ -101,7 +101,7 @@ export default function DebugPage() {
               <Avatar initials="CC" size="lg" />
               <div className="space-y-1">
                 <Text variant="heading-sm">Carlos Cortes</Text>
-                <Text variant="body-sm" className="text-ink-300">Organizador · Roma Nte</Text>
+                <Text variant="body-sm" className="text-fg-muted">Organizador · Roma Nte</Text>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -112,18 +112,18 @@ export default function DebugPage() {
           </GlassCard>
         </section>
 
-        <section className="space-y-5 rounded-lg border border-ink-800 bg-ink-900 p-6 shadow-brick-md">
+        <section className="space-y-5 rounded-lg border border-border bg-surface p-6 shadow-brick-md">
           <Text variant="heading-lg">Typography</Text>
           <div className="space-y-3">
             <Text variant="display-lg">La noche</Text>
             <Text variant="heading-lg">Foro Puebla · Sábado 17 de mayo</Text>
             <Text variant="heading-md">Triplete · Las Nubes · Fuente de Juventud</Text>
-            <Text variant="body-lg" className="text-ink-200">
+            <Text variant="body-lg" className="text-fg-secondary">
               Compra tu boleto sin cargos ocultos y recibe tu QR al correo en segundos.
             </Text>
-            <Text variant="overline" className="text-ink-300">DESCUBRE · NOCHES · SONIDOS · CDMX</Text>
-            <Text variant="mono-md" className="text-signal-500">$450.00 MXN · TCK-0412-0091</Text>
-            <Text variant="caption" className="text-ink-400">Caption para ayuda y microcopy.</Text>
+            <Text variant="overline" className="text-fg-muted">DESCUBRE · NOCHES · SONIDOS · CDMX</Text>
+            <Text variant="mono-md" className="text-primary">$450.00 MXN · TCK-0412-0091</Text>
+            <Text variant="caption" className="text-fg-subtle">Caption para ayuda y microcopy.</Text>
           </div>
         </section>
       </div>

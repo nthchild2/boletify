@@ -8,9 +8,9 @@ export interface GlassCardProps extends ViewProps {
 }
 
 const intensityStyles = {
-  sm: "bg-white/5 backdrop-blur-[20px] shadow-glass-sm",
-  md: "bg-white/5 backdrop-blur-[32px] shadow-glass-md",
-  lg: "bg-white/10 backdrop-blur-[40px] shadow-glass-lg",
+  sm: "bg-glass-tint backdrop-blur-[20px] shadow-glass-sm",
+  md: "bg-glass-tint backdrop-blur-[32px] shadow-glass-md",
+  lg: "bg-glass-tint backdrop-blur-[40px] shadow-glass-lg",
 };
 
 export function GlassCard({
@@ -24,19 +24,22 @@ export function GlassCard({
       className={`
         ${intensityStyles[intensity]}
         rounded-xl
-        border border-white/10
+        border border-glass-edge
         p-5
         ${className}
       `}
-      style={{ 
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.25,
+      style={{
+        // RN doesn't render CSS box-shadow; this gives the iOS/Android shadow
+        // a similar weight in both themes (the glass material reads on dark
+        // and on cream — we tune offset/opacity to be neutral).
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.18,
         shadowRadius: 24,
       }}
       {...props}
     >
-      <View className="absolute inset-x-0 top-0 h-px bg-white/20" />
+      <View className="absolute inset-x-0 top-0 h-px bg-glass-edge" />
       {children}
     </View>
   );

@@ -19,18 +19,18 @@ export default function TicketsScreen() {
         }
         renderItem={({ item }) => (
           <GlassCard className="mb-5">
-            <UIText variant="overline" className="text-ink-300">
+            <UIText variant="overline" className="text-fg-muted">
               {item.section}
             </UIText>
             <UIText variant="heading-md" className="mt-2">
               {item.eventName}
             </UIText>
-            <UIText variant="mono-md" className="mt-3 text-signal-500">
+            <UIText variant="mono-md" className="mt-3 text-primary">
               {item.date}
             </UIText>
             <View className="mt-4 flex-row items-center justify-between">
               <Badge variant="leaf">{item.status}</Badge>
-              <UIText variant="mono-sm" className="text-ink-300">
+              <UIText variant="mono-sm" className="text-fg-muted">
                 {item.id}
               </UIText>
             </View>

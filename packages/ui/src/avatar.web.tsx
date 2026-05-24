@@ -35,7 +35,7 @@ export function Avatar({
         src={src}
         alt={initials ?? "avatar"}
         className={cn(
-          "rounded-full border border-white/10 bg-ink-850 object-cover shadow-glass-sm",
+          "rounded-full border border-glass-edge bg-surface-raised object-cover shadow-glass-sm",
           sizeClassName,
           className,
         )}
@@ -46,7 +46,7 @@ export function Avatar({
   return (
     <div
       className={cn(
-        "inline-flex items-center justify-center rounded-full border border-white/10 bg-ink-850 font-body font-semibold text-ink-200 shadow-glass-sm",
+        "inline-flex items-center justify-center rounded-full border border-glass-edge bg-surface-raised font-body font-semibold text-fg-secondary shadow-glass-sm",
         sizeClassName,
         className,
       )}

@@ -9,14 +9,28 @@ export interface BadgeProps extends ViewProps {
   className?: string;
 }
 
+// Brand-color badges keep their hue across themes (the lime is always lime),
+// but text color flips for legibility on the colored fill.
 const variantStyles: Record<BadgeVariant, string> = {
-  signal: "bg-signal-500 border border-ink-1000 text-ink-950",
-  rosa: "bg-rosa-500 border border-ink-1000 text-ink-950",
-  oxblood: "bg-oxblood-500 border border-ink-1000 text-bone-50",
-  leaf: "bg-leaf-500 border border-ink-1000 text-ink-950",
-  sun: "bg-sun-500 border border-ink-1000 text-ink-950",
-  cenote: "bg-cenote-500 border border-ink-1000 text-ink-950",
-  ink: "bg-[rgba(8,8,12,0.72)] border border-white/10 text-ink-100",
+  signal: "bg-signal-500 border border-border-ink",
+  rosa: "bg-rosa-500 border border-border-ink",
+  oxblood: "bg-oxblood-500 border border-border-ink",
+  leaf: "bg-leaf-500 border border-border-ink",
+  sun: "bg-sun-500 border border-border-ink",
+  cenote: "bg-cenote-500 border border-border-ink",
+  // The "ink" variant is meant to look like a chip inset on the page —
+  // adapts to the active theme's surface tint.
+  ink: "bg-nav-tint border border-border",
+};
+
+const textStyles: Record<BadgeVariant, string> = {
+  signal: "text-ink-950",
+  rosa: "text-ink-950",
+  oxblood: "text-bone-50",
+  leaf: "text-ink-950",
+  sun: "text-ink-950",
+  cenote: "text-ink-950",
+  ink: "text-fg",
 };
 
 export function Badge({
@@ -36,7 +50,7 @@ export function Badge({
       `}
       {...props}
     >
-      <Text className="font-body text-overline uppercase">
+      <Text className={`font-body text-overline uppercase ${textStyles[variant]}`}>
         {children}
       </Text>
     </View>

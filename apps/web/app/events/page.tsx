@@ -17,18 +17,18 @@ export default function EventsPage() {
   return (
     <PageShell mesh="ambient">
       <SiteNav />
-      <section className="border-t border-ink-800 py-20">
+      <section className="border-t border-border py-20">
         <Container>
           <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
             <div>
-              <div className="font-body text-overline uppercase text-ink-300">Feed · CDMX</div>
-              <h1 className="mt-3 font-display text-[40px] font-[850] leading-[0.95] tracking-[-0.03em] text-bone-50 md:text-[72px]">
+              <div className="font-body text-overline uppercase text-fg-muted">Feed · CDMX</div>
+              <h1 className="mt-3 font-display text-[40px] font-[850] leading-[0.95] tracking-[-0.03em] text-fg md:text-[72px]">
                 Tu próximo
                 <br />
                 show.
               </h1>
             </div>
-            <div className="max-w-[420px] text-body-sm leading-7 text-ink-300">
+            <div className="max-w-[420px] text-body-sm leading-7 text-fg-muted">
               Carteles densos, datos claros y una sola acción protagonista. El feed ya
               respira con el mismo brutal glass del preview.
             </div>

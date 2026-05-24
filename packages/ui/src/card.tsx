@@ -9,8 +9,8 @@ export interface CardProps extends ViewProps {
 }
 
 const variantStyles = {
-  default: "bg-ink-900 border border-ink-800",
-  bordered: "bg-ink-900 border border-ink-700",
+  default: "bg-surface border border-border",
+  bordered: "bg-surface border border-border-strong",
   ghost: "bg-transparent",
 };
 

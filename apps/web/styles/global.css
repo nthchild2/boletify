@@ -5,6 +5,168 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ------------------------------------------------------------------ */
+/*  THEME TOKENS — semantic CSS variables                              */
+/*  Light is the :root default. Dark mode is applied by toggling       */
+/*  the `.dark` class on the <html> element (see lib/theme.tsx).       */
+/*  Color values are space-separated RGB triplets so Tailwind utilities */
+/*  like `bg-bg/72` resolve correctly via the rgb(... / <alpha>) form. */
+/* ------------------------------------------------------------------ */
+
+@layer base {
+  :root {
+    /* Surfaces — Brutal-Glass v2.0 light (Slate cool) */
+    --color-bg: 244 244 248;           /* slate #F4F4F8 — page */
+    --color-surface: 255 255 255;      /* pure white panel */
+    --color-surface-raised: 255 255 255;
+    --color-surface-sunken: 232 232 240; /* slate-100 #E8E8F0 — input troughs */
+
+    /* Foreground / text — ink on slate */
+    --color-fg: 8 8 12;                /* ink-950 — primary text */
+    --color-fg-secondary: 46 46 62;    /* ink-700 — secondary text */
+    --color-fg-muted: 85 85 106;       /* ink-500 — muted */
+    --color-fg-subtle: 110 110 138;    /* ink-400 #6E6E8A — placeholder / disabled */
+
+    /* Borders */
+    --color-border: 221 221 230;       /* ink-100 #DDDDE6 — default 1px on slate */
+    --color-border-strong: 184 184 203;/* ink-200 #B8B8CB — emphasised border */
+    --color-border-ink: 0 0 0;         /* ink-1000 — load-bearing brutal */
+
+    /* Primary CTA — dark fill + lime text on cream (docs §9 signature) */
+    --color-primary: 8 8 12;           /* ink-950 */
+    --color-primary-fg: 198 255 46;    /* signal-500 — lime text */
+    --color-primary-hover: 15 15 21;   /* ink-900 */
+    --color-primary-pressed: 22 22 32; /* ink-850 */
+
+    /* Accent — Rosa Mexicano deepened to AA on cream */
+    --color-accent: 214 0 95;          /* rosa-600 #D6005F */
+    --color-accent-fg: 244 244 248;    /* slate */
+    --color-accent-hover: 255 46 136;  /* rosa-500 */
+
+    /* States */
+    --color-danger: 122 16 32;         /* oxblood-500 */
+    --color-danger-fg: 244 244 248;
+    --color-danger-hover: 163 36 56;   /* oxblood-400 */
+    --color-success: 32 217 135;       /* leaf-500 */
+    --color-warning: 255 158 0;        /* sun-500 */
+    --color-info: 0 179 199;           /* cenote-500 */
+
+    /* Inverse — on light, inverse means "dark". */
+    --color-inverse: 8 8 12;           /* ink-950 */
+    --color-inverse-fg: 244 244 248;   /* slate */
+
+    /* Brick shadow color — black on both themes per docs §6.1 */
+    --color-brick: #000000;
+
+    /* Glass surfaces — translucent white on cream */
+    --color-glass-tint: rgba(255, 255, 255, 0.60);
+    --color-glass-edge: rgba(0, 0, 0, 0.06);
+
+    /* Nav with translucency over light page */
+    --color-nav-tint: rgba(244, 244, 248, 0.72);
+
+    /* Mesh gradients — light variants over slate */
+    --bg-mesh:
+      radial-gradient(1200px 600px at 15% 10%, rgba(198,255,46,0.20), transparent 60%),
+      radial-gradient(900px 700px at 85% 20%, rgba(255,46,136,0.18), transparent 55%),
+      radial-gradient(800px 800px at 50% 110%, rgba(255,158,0,0.18), transparent 60%),
+      #F4F4F8;
+    --bg-mesh-ambient:
+      radial-gradient(900px 500px at 20% 0%, rgba(198,255,46,0.10), transparent 55%),
+      radial-gradient(700px 600px at 90% 30%, rgba(255,46,136,0.10), transparent 55%),
+      #FFFFFF;
+
+    /* Glass shadows — softer on light (less aggressive drop, subtle catch-light) */
+    --shadow-glass-sm:
+      0 1px 2px 0 rgba(0,0,0,0.06),
+      inset 0 1px 0 rgba(255,255,255,0.60);
+    --shadow-glass-md:
+      0 12px 32px -8px rgba(0,0,0,0.16),
+      0 4px 12px -4px rgba(0,0,0,0.10),
+      inset 0 1px 0 rgba(255,255,255,0.70);
+    --shadow-glass-lg:
+      0 32px 80px -16px rgba(0,0,0,0.22),
+      0 12px 28px -8px rgba(0,0,0,0.14),
+      inset 0 1px 0 rgba(255,255,255,0.80);
+  }
+
+  .dark {
+    /* Surfaces — Brutal-Glass v2.0 dark (ink chassis) */
+    --color-bg: 8 8 12;                /* ink-950 #08080C */
+    --color-surface: 15 15 21;         /* ink-900 #0F0F15 */
+    --color-surface-raised: 22 22 32;  /* ink-850 #161620 */
+    --color-surface-sunken: 22 22 32;  /* ink-850 — input troughs */
+
+    /* Foreground / text — bone on ink */
+    --color-fg: 246 242 234;           /* bone-50 */
+    --color-fg-secondary: 194 194 208; /* ink-200 */
+    --color-fg-muted: 155 155 179;     /* ink-300 */
+    --color-fg-subtle: 120 120 145;    /* ink-400 */
+
+    /* Borders */
+    --color-border: 31 31 43;          /* ink-800 */
+    --color-border-strong: 46 46 62;   /* ink-700 */
+    --color-border-ink: 0 0 0;         /* ink-1000 */
+
+    /* Primary CTA — signal-lime on ink */
+    --color-primary: 198 255 46;       /* signal-500 */
+    --color-primary-fg: 8 8 12;        /* ink-950 */
+    --color-primary-hover: 215 255 58; /* signal-400 */
+    --color-primary-pressed: 159 230 0;/* signal-600 */
+
+    /* Accent — Rosa Mexicano at full saturation on ink */
+    --color-accent: 255 46 136;        /* rosa-500 #FF2E88 */
+    --color-accent-fg: 8 8 12;         /* ink-950 */
+    --color-accent-hover: 255 106 169; /* rosa-400 */
+
+    /* States — same hue family, kept consistent */
+    --color-danger: 122 16 32;
+    --color-danger-fg: 246 242 234;
+    --color-danger-hover: 163 36 56;
+    --color-success: 32 217 135;
+    --color-warning: 255 158 0;
+    --color-info: 0 179 199;
+
+    /* Inverse — on dark, inverse means "light". */
+    --color-inverse: 246 242 234;
+    --color-inverse-fg: 8 8 12;
+
+    /* Brick shadow stays black */
+    --color-brick: #000000;
+
+    /* Glass surfaces — translucent white on ink */
+    --color-glass-tint: rgba(255, 255, 255, 0.05);
+    --color-glass-edge: rgba(255, 255, 255, 0.10);
+
+    /* Nav with translucency over dark page */
+    --color-nav-tint: rgba(8, 8, 12, 0.72);
+
+    /* Mesh gradients — dark variants over ink */
+    --bg-mesh:
+      radial-gradient(1200px 600px at 15% 10%, rgba(198,255,46,0.18), transparent 60%),
+      radial-gradient(900px 700px at 85% 20%, rgba(255,46,136,0.22), transparent 55%),
+      radial-gradient(800px 800px at 50% 110%, rgba(122,16,32,0.35), transparent 60%),
+      #08080C;
+    --bg-mesh-ambient:
+      radial-gradient(900px 500px at 20% 0%, rgba(198,255,46,0.08), transparent 55%),
+      radial-gradient(700px 600px at 90% 30%, rgba(255,46,136,0.10), transparent 55%),
+      #0F0F15;
+
+    /* Glass shadows — heavier drops, brighter inner catch-light on ink */
+    --shadow-glass-sm:
+      0 1px 1px 0 rgba(0,0,0,0.25),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    --shadow-glass-md:
+      0 8px 24px -4px rgba(0,0,0,0.35),
+      0 2px 8px -2px rgba(0,0,0,0.25),
+      inset 0 1px 0 rgba(255,255,255,0.10);
+    --shadow-glass-lg:
+      0 24px 64px -12px rgba(0,0,0,0.45),
+      0 8px 20px -4px rgba(0,0,0,0.30),
+      inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -12,15 +174,28 @@
 
   html {
     scroll-behavior: smooth;
+    /* Set the page background at the html level so that the no-flash
+       script can pick the right color before React hydrates. */
+    background-color: rgb(var(--color-bg));
+    color: rgb(var(--color-fg));
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 
   body {
     margin: 0;
     font-family: "Inter", system-ui, sans-serif;
-    background: #08080c;
-    color: #f6f2ea;
+    background-color: rgb(var(--color-bg));
+    color: rgb(var(--color-fg));
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Smooth the brief moment of theme switching without animating
+       heavy layout properties. */
+    transition: background-color 220ms cubic-bezier(0.2, 0, 0, 1),
+                color 220ms cubic-bezier(0.2, 0, 0, 1);
   }
 
   a {
@@ -31,5 +206,15 @@
   ::selection {
     background: #c6ff2e;
     color: #08080c;
+  }
+}
+
+/* Respect reduced-motion preferences — collapse decorative transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
   }
 }

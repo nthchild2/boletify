@@ -1,3 +1,165 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/*  THEME TOKENS — semantic CSS variables for NativeWind               */
+/*  Light is the :root default. Dark overrides under `.dark`.          */
+/*  Toggled at runtime via NativeWind's colorScheme API (see lib/      */
+/*  theme.tsx). Color values are space-separated RGB triplets so       */
+/*  Tailwind utilities like `bg-bg/72` resolve via rgb(... / <alpha>). */
+/* ------------------------------------------------------------------ */
+
+@layer base {
+  :root {
+    /* Surfaces — Brutal-Glass v2.0 light (Slate cool) */
+    --color-bg: 244 244 248;
+    --color-surface: 255 255 255;
+    --color-surface-raised: 255 255 255;
+    --color-surface-sunken: 232 232 240;
+
+    /* Foreground / text */
+    --color-fg: 8 8 12;
+    --color-fg-secondary: 46 46 62;
+    --color-fg-muted: 85 85 106;
+    --color-fg-subtle: 110 110 138;
+
+    /* Borders */
+    --color-border: 221 221 230;
+    --color-border-strong: 184 184 203;
+    --color-border-ink: 0 0 0;
+
+    /* Primary CTA — dark fill + lime text on cream */
+    --color-primary: 8 8 12;
+    --color-primary-fg: 198 255 46;
+    --color-primary-hover: 15 15 21;
+    --color-primary-pressed: 22 22 32;
+
+    /* Accent — Rosa Mexicano deepened to AA on cream */
+    --color-accent: 214 0 95;
+    --color-accent-fg: 244 244 248;
+    --color-accent-hover: 255 46 136;
+
+    /* States */
+    --color-danger: 122 16 32;
+    --color-danger-fg: 244 244 248;
+    --color-danger-hover: 163 36 56;
+    --color-success: 32 217 135;
+    --color-warning: 255 158 0;
+    --color-info: 0 179 199;
+
+    /* Inverse */
+    --color-inverse: 8 8 12;
+    --color-inverse-fg: 244 244 248;
+
+    /* Brick stays black */
+    --color-brick: #000000;
+
+    /* Glass surfaces — translucent white on cream */
+    --color-glass-tint: rgba(255, 255, 255, 0.60);
+    --color-glass-edge: rgba(0, 0, 0, 0.06);
+
+    /* Nav with translucency over light page */
+    --color-nav-tint: rgba(244, 244, 248, 0.72);
+
+    /* Mesh gradients — light variants over slate */
+    --bg-mesh:
+      radial-gradient(1200px 600px at 15% 10%, rgba(198,255,46,0.20), transparent 60%),
+      radial-gradient(900px 700px at 85% 20%, rgba(255,46,136,0.18), transparent 55%),
+      radial-gradient(800px 800px at 50% 110%, rgba(255,158,0,0.18), transparent 60%),
+      #F4F4F8;
+    --bg-mesh-ambient:
+      radial-gradient(900px 500px at 20% 0%, rgba(198,255,46,0.10), transparent 55%),
+      radial-gradient(700px 600px at 90% 30%, rgba(255,46,136,0.10), transparent 55%),
+      #FFFFFF;
+
+    /* Glass shadows — softer on light */
+    --shadow-glass-sm:
+      0 1px 2px 0 rgba(0,0,0,0.06),
+      inset 0 1px 0 rgba(255,255,255,0.60);
+    --shadow-glass-md:
+      0 12px 32px -8px rgba(0,0,0,0.16),
+      0 4px 12px -4px rgba(0,0,0,0.10),
+      inset 0 1px 0 rgba(255,255,255,0.70);
+    --shadow-glass-lg:
+      0 32px 80px -16px rgba(0,0,0,0.22),
+      0 12px 28px -8px rgba(0,0,0,0.14),
+      inset 0 1px 0 rgba(255,255,255,0.80);
+  }
+
+  .dark {
+    /* Surfaces — Brutal-Glass v2.0 dark */
+    --color-bg: 8 8 12;
+    --color-surface: 15 15 21;
+    --color-surface-raised: 22 22 32;
+    --color-surface-sunken: 22 22 32;
+
+    /* Foreground / text */
+    --color-fg: 246 242 234;
+    --color-fg-secondary: 194 194 208;
+    --color-fg-muted: 155 155 179;
+    --color-fg-subtle: 120 120 145;
+
+    /* Borders */
+    --color-border: 31 31 43;
+    --color-border-strong: 46 46 62;
+    --color-border-ink: 0 0 0;
+
+    /* Primary CTA — signal-lime on ink */
+    --color-primary: 198 255 46;
+    --color-primary-fg: 8 8 12;
+    --color-primary-hover: 215 255 58;
+    --color-primary-pressed: 159 230 0;
+
+    /* Accent — Rosa Mexicano at full saturation on ink */
+    --color-accent: 255 46 136;
+    --color-accent-fg: 8 8 12;
+    --color-accent-hover: 255 106 169;
+
+    /* States */
+    --color-danger: 122 16 32;
+    --color-danger-fg: 246 242 234;
+    --color-danger-hover: 163 36 56;
+    --color-success: 32 217 135;
+    --color-warning: 255 158 0;
+    --color-info: 0 179 199;
+
+    /* Inverse */
+    --color-inverse: 246 242 234;
+    --color-inverse-fg: 8 8 12;
+
+    /* Brick */
+    --color-brick: #000000;
+
+    /* Glass surfaces — translucent white on ink */
+    --color-glass-tint: rgba(255, 255, 255, 0.05);
+    --color-glass-edge: rgba(255, 255, 255, 0.10);
+
+    /* Nav with translucency over dark page */
+    --color-nav-tint: rgba(8, 8, 12, 0.72);
+
+    /* Mesh gradients — dark variants */
+    --bg-mesh:
+      radial-gradient(1200px 600px at 15% 10%, rgba(198,255,46,0.18), transparent 60%),
+      radial-gradient(900px 700px at 85% 20%, rgba(255,46,136,0.22), transparent 55%),
+      radial-gradient(800px 800px at 50% 110%, rgba(122,16,32,0.35), transparent 60%),
+      #08080C;
+    --bg-mesh-ambient:
+      radial-gradient(900px 500px at 20% 0%, rgba(198,255,46,0.08), transparent 55%),
+      radial-gradient(700px 600px at 90% 30%, rgba(255,46,136,0.10), transparent 55%),
+      #0F0F15;
+
+    /* Glass shadows — heavier on ink */
+    --shadow-glass-sm:
+      0 1px 1px 0 rgba(0,0,0,0.25),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    --shadow-glass-md:
+      0 8px 24px -4px rgba(0,0,0,0.35),
+      0 2px 8px -2px rgba(0,0,0,0.25),
+      inset 0 1px 0 rgba(255,255,255,0.10);
+    --shadow-glass-lg:
+      0 24px 64px -12px rgba(0,0,0,0.45),
+      0 8px 20px -4px rgba(0,0,0,0.30),
+      inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+}

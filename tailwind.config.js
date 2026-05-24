@@ -7,9 +7,68 @@ module.exports = {
     path.join(__dirname, "packages/**/*.{js,jsx,ts,tsx}"),
   ],
   presets: [require("nativewind/preset")],
+  // Dark mode is opt-in via the `.dark` class applied to the root element.
+  // ThemeProviders (web + native) toggle this class based on user preference
+  // (light / dark / system). Light is the Tailwind default; `dark:` variants
+  // override for dark mode.
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
+        // ---------------------------------------------------------------
+        // SEMANTIC TOKENS — these flip with the active theme via CSS vars
+        // defined in apps/web/styles/global.css and apps/native/tailwind.css.
+        // Use these for new code: bg-bg, text-fg, border-border, etc.
+        // The literal tokens below (ink-, bone-, signal-, ...) are preserved
+        // for backwards compatibility and for places where the brand color
+        // should NOT change between themes (e.g. signal-lime always lime).
+        // ---------------------------------------------------------------
+
+        // Surfaces
+        bg: "rgb(var(--color-bg) / <alpha-value>)",
+        surface: "rgb(var(--color-surface) / <alpha-value>)",
+        "surface-raised": "rgb(var(--color-surface-raised) / <alpha-value>)",
+        "surface-sunken": "rgb(var(--color-surface-sunken) / <alpha-value>)",
+
+        // Foreground / text
+        fg: "rgb(var(--color-fg) / <alpha-value>)",
+        "fg-secondary": "rgb(var(--color-fg-secondary) / <alpha-value>)",
+        "fg-muted": "rgb(var(--color-fg-muted) / <alpha-value>)",
+        "fg-subtle": "rgb(var(--color-fg-subtle) / <alpha-value>)",
+
+        // Borders
+        border: "rgb(var(--color-border) / <alpha-value>)",
+        "border-strong": "rgb(var(--color-border-strong) / <alpha-value>)",
+        // Load-bearing brutal border — always ink-1000 in both themes.
+        "border-ink": "rgb(var(--color-border-ink) / <alpha-value>)",
+
+        // Primary CTA — flips between signal-on-ink (dark) and ink-on-bone (light)
+        primary: "rgb(var(--color-primary) / <alpha-value>)",
+        "primary-fg": "rgb(var(--color-primary-fg) / <alpha-value>)",
+        "primary-hover": "rgb(var(--color-primary-hover) / <alpha-value>)",
+        "primary-pressed": "rgb(var(--color-primary-pressed) / <alpha-value>)",
+
+        // Accent — Rosa Mexicano. Slightly deeper hue in light for AA contrast.
+        accent: "rgb(var(--color-accent) / <alpha-value>)",
+        "accent-fg": "rgb(var(--color-accent-fg) / <alpha-value>)",
+        "accent-hover": "rgb(var(--color-accent-hover) / <alpha-value>)",
+
+        // States
+        danger: "rgb(var(--color-danger) / <alpha-value>)",
+        "danger-fg": "rgb(var(--color-danger-fg) / <alpha-value>)",
+        "danger-hover": "rgb(var(--color-danger-hover) / <alpha-value>)",
+        success: "rgb(var(--color-success) / <alpha-value>)",
+        warning: "rgb(var(--color-warning) / <alpha-value>)",
+        info: "rgb(var(--color-info) / <alpha-value>)",
+
+        // Inverse — used by elements that flip ground (e.g. brick-shadow CTA
+        // which is dark fill on light page, light fill on dark page).
+        inverse: "rgb(var(--color-inverse) / <alpha-value>)",
+        "inverse-fg": "rgb(var(--color-inverse-fg) / <alpha-value>)",
+
+        // ---------------------------------------------------------------
+        // LITERAL TOKENS (Ánima Nocturna palette) — preserved as-is.
+        // ---------------------------------------------------------------
         ink: {
           50: '#E4E4EB',
           100: '#E4E4EB',
@@ -56,6 +115,26 @@ module.exports = {
           500: '#00B3C7',
         },
       },
+
+      // Translucent surfaces (alpha is part of the token, no opacity modifier)
+      backgroundColor: {
+        'glass-tint': 'var(--color-glass-tint)',
+        'nav-tint': 'var(--color-nav-tint)',
+      },
+      borderColor: {
+        'glass-edge': 'var(--color-glass-edge)',
+      },
+
+      backgroundImage: {
+        // Themeable mesh — defined in CSS so it swaps with the active theme.
+        mesh: 'var(--bg-mesh)',
+        'mesh-ambient': 'var(--bg-mesh-ambient)',
+
+        // Static mesh utilities preserved for explicit dark/light usage.
+        'mesh-gradient': 'radial-gradient(1200px 600px at 15% 10%, rgba(198,255,46,0.18), transparent 60%), radial-gradient(900px 700px at 85% 20%, rgba(255,46,136,0.22), transparent 55%), radial-gradient(800px 800px at 50% 110%, rgba(122,16,32,0.35), transparent 60%), #08080C',
+        'mesh-gradient-light': 'radial-gradient(1200px 600px at 15% 10%, rgba(198,255,46,0.20), transparent 60%), radial-gradient(900px 700px at 85% 20%, rgba(255,46,136,0.18), transparent 55%), radial-gradient(800px 800px at 50% 110%, rgba(255,158,0,0.18), transparent 60%), #F4F4F8',
+      },
+
       fontFamily: {
         display: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
         body: ['Inter', 'system-ui', 'sans-serif'],
@@ -106,14 +185,19 @@ module.exports = {
         'full': '9999px',
       },
       boxShadow: {
-        'brick-sm': '3px 3px 0 0 #000000',
-        'brick-md': '6px 6px 0 0 #000000',
-        'brick-lg': '10px 10px 0 0 #000000',
+        // Brick shadows reference --color-brick so the brick stays black on
+        // both bone (light) and ink (dark) page backgrounds — per docs §6.1.
+        'brick-sm': '3px 3px 0 0 var(--color-brick)',
+        'brick-md': '6px 6px 0 0 var(--color-brick)',
+        'brick-lg': '10px 10px 0 0 var(--color-brick)',
         'brick-signal': '6px 6px 0 0 #C6FF2E',
         'brick-rosa': '6px 6px 0 0 #FF2E88',
-        'glass-sm': '0 1px 1px 0 rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08)',
-        'glass-md': '0 8px 24px -4px rgba(0,0,0,0.35), 0 2px 8px -2px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.10)',
-        'glass-lg': '0 24px 64px -12px rgba(0,0,0,0.45), 0 8px 20px -4px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.12)',
+        // Glass shadows are theme-aware: the inner catch-light gets stronger
+        // on dark and softer on light. Outer drops adjust accordingly.
+        'glass-sm': 'var(--shadow-glass-sm)',
+        'glass-md': 'var(--shadow-glass-md)',
+        'glass-lg': 'var(--shadow-glass-lg)',
+        // Glow shadows — signal/rosa are constant; focus uses the signal hue.
         'glow-signal': '0 0 32px rgba(198,255,46,0.35), 0 0 64px rgba(198,255,46,0.15)',
         'glow-rosa': '0 0 32px rgba(255,46,136,0.35), 0 0 64px rgba(255,46,136,0.15)',
         'glow-focus': '0 0 0 2px #C6FF2E, 0 0 16px rgba(198,255,46,0.45)',
@@ -131,10 +215,6 @@ module.exports = {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(0%)' },
         },
-      },
-      backgroundImage: {
-        'mesh-gradient': 'radial-gradient(1200px 600px at 15% 10%, rgba(198,255,46,0.18), transparent 60%), radial-gradient(900px 700px at 85% 20%, rgba(255,46,136,0.22), transparent 55%), radial-gradient(800px 800px at 50% 110%, rgba(122,16,32,0.35), transparent 60%), #08080C',
-        'mesh-gradient-light': 'radial-gradient(1200px 600px at 15% 10%, rgba(198,255,46,0.12), transparent 60%), radial-gradient(900px 700px at 85% 20%, rgba(255,46,136,0.15), transparent 55%), radial-gradient(800px 800px at 50% 110%, rgba(122,16,32,0.20), transparent 60%), #F6F2EA',
       },
       backdropBlur: {
         'glass-sm': '20px',

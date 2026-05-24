@@ -17,14 +17,15 @@ function cn(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(" ");
 }
 
+// Brand-color badges keep their hue across themes; the "ink" variant adapts.
 const variantStyles: Record<BadgeVariant, string> = {
-  signal: "border border-ink-1000 bg-signal-500 text-ink-950",
-  rosa: "border border-ink-1000 bg-rosa-500 text-ink-950",
-  oxblood: "border border-ink-1000 bg-oxblood-500 text-bone-50",
-  leaf: "border border-ink-1000 bg-leaf-500 text-ink-950",
-  sun: "border border-ink-1000 bg-sun-500 text-ink-950",
-  cenote: "border border-ink-1000 bg-cenote-500 text-ink-950",
-  ink: "border border-white/10 bg-[rgba(8,8,12,0.72)] text-ink-100 backdrop-blur-[12px]",
+  signal: "border border-border-ink bg-signal-500 text-ink-950",
+  rosa: "border border-border-ink bg-rosa-500 text-ink-950",
+  oxblood: "border border-border-ink bg-oxblood-500 text-bone-50",
+  leaf: "border border-border-ink bg-leaf-500 text-ink-950",
+  sun: "border border-border-ink bg-sun-500 text-ink-950",
+  cenote: "border border-border-ink bg-cenote-500 text-ink-950",
+  ink: "border border-border bg-nav-tint text-fg backdrop-blur-[12px]",
 };
 
 export function Badge({
