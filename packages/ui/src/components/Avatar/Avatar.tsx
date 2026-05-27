@@ -1,5 +1,6 @@
 import * as React from "react";
 import { View, Image, Text, ViewProps, ImageProps } from "react-native";
+import { glassShadows } from "../../shadows";
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -37,9 +38,9 @@ export function Avatar({ src, initials, size = "md", className = "", ...props }:
         border border-glass-edge
         bg-surface-raised
         items-center justify-center
-        shadow-glass-sm
         ${className}
       `}
+      style={glassShadows.sm}
       {...props}
     >
       <Text className="text-fg-secondary font-body font-semibold">

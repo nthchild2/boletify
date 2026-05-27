@@ -4,7 +4,9 @@ import {
   Text,
   Pressable,
   ViewProps,
+  type ViewStyle,
 } from "react-native";
+import { brickShadows, glassShadows } from "../../shadows";
 
 export interface ButtonProps extends ViewProps {
   text?: string;
@@ -17,12 +19,21 @@ export interface ButtonProps extends ViewProps {
 }
 
 const variantStyles = {
-  primary: "bg-primary border-2 border-border-ink shadow-brick-md",
-  accent: "bg-accent border-2 border-border-ink shadow-brick-md",
+  primary: "bg-primary border-2 border-border-ink",
+  accent: "bg-accent border-2 border-border-ink",
   secondary: "bg-transparent border border-border-strong",
   ghost: "bg-transparent border border-transparent",
-  glass: "bg-glass-tint border border-glass-edge rounded-xl shadow-glass-md",
-  danger: "bg-danger border-2 border-border-ink shadow-brick-md",
+  glass: "bg-glass-tint border border-glass-edge rounded-xl",
+  danger: "bg-danger border-2 border-border-ink",
+};
+
+const variantShadows: Record<string, ViewStyle> = {
+  primary: brickShadows.md,
+  accent: brickShadows.md,
+  secondary: brickShadows.none,
+  ghost: brickShadows.none,
+  glass: glassShadows.md,
+  danger: brickShadows.md,
 };
 
 const sizeStyles = {
@@ -56,6 +67,7 @@ export function Button({
   disabled,
   className = "",
   children,
+  style,
   ...props
 }: ButtonProps) {
   return (
@@ -63,12 +75,15 @@ export function Button({
       className={`
         ${variantStyles[variant]}
         ${sizeStyles[size]}
-        ${disabled ? "opacity-50 shadow-none" : ""}
         rounded-md
         items-center justify-center
         flex-row
         ${className}
       `}
+      style={[
+        disabled ? { opacity: 0.5 } : variantShadows[variant],
+        style,
+      ]}
       onPress={disabled ? undefined : onPress}
       disabled={disabled}
       {...props}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Routes } from "@boletify/routes";
 import {
   BrutalButton,
@@ -17,14 +18,46 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    // TODO: Call sign-up API
-    setTimeout(() => {
+
+    try {
+      // 1. Register the user
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Error al crear la cuenta");
+        setLoading(false);
+        return;
+      }
+
+      // 2. Auto sign-in after successful registration
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        // Registration succeeded but auto-login failed — redirect to sign-in
+        router.push(Routes.AUTH_SIGNIN);
+        return;
+      }
+
       router.push(Routes.MY_TICKETS);
-    }, 1000);
+    } catch {
+      setError("Error al crear la cuenta. Intenta de nuevo.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,6 +83,12 @@ export default function SignUpPage() {
             <p className="mt-2 text-body-sm text-fg-muted">
               Regístrate para comprar tickets, gestionar accesos y seguir tus venues favoritos.
             </p>
+
+            {error && (
+              <div className="mt-4 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-body-sm text-red-400">
+                {error}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               <div>

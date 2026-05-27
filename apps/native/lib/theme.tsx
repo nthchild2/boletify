@@ -1,115 +1,117 @@
 /**
- * Native ThemeProvider — Brutal-Glass v2.0
+ * Native ThemeProvider — Brutal-Glass v2.0 (vars-based)
  *
- * Mirrors the web provider in apps/web/lib/theme.tsx: three-state preference
- * (light / dark / system), persisted to AsyncStorage when available, applied
- * via NativeWind's colorScheme controller. NativeWind handles live OS-following
- * automatically when set to "system".
+ * Instead of toggling a `.dark` class (which relies on the flaky
+ * Appearance.setColorScheme() → listener → observable chain), this
+ * provider uses NativeWind's `vars()` API to directly set every
+ * `--color-*` CSS variable on a root View.
  *
- * Resolved theme (light/dark — what's actually rendering) is exposed for
- * components that need to drive imperative colors (StatusBar, Stack header
- * tints, native modals, etc.) where Tailwind classes can't reach.
+ * When the user flips the toggle, we swap the full set of CSS variable
+ * values. Every descendant using Tailwind utilities like `bg-bg`,
+ * `text-fg`, `border-border`, etc. picks up the new values immediately
+ * because those utilities reference `rgb(var(--color-bg) / <alpha>)`.
  *
- * Storage is intentionally defensive: AsyncStorage's native module may be
- * missing from a running Expo binary if the app hasn't been rebuilt after
- * the dependency was added. We fall back to in-memory persistence in that
- * case, so the toggle still works for the session.
+ * This approach works identically on physical devices, Expo Go, and the
+ * iOS simulator — no dependency on Appearance listeners.
  */
 
 import * as React from "react";
-import { Appearance } from "react-native";
-import { colorScheme as nwColorScheme } from "nativewind";
+import { Appearance, View } from "react-native";
+import { vars } from "nativewind";
+import {
+  themeColors,
+  themeCSSVars,
+  nextTheme,
+  STORAGE_KEY,
+  type ThemePreference,
+  type ResolvedTheme,
+  type ThemePalette,
+  type ThemeContextValue,
+} from "@repo/ui";
 
-export type ThemePreference = "light" | "dark" | "system";
-export type ResolvedTheme = "light" | "dark";
+// Re-export types so existing imports from "../lib/theme" keep working.
+export type { ThemePreference, ResolvedTheme, ThemePalette, ThemeContextValue };
+export { themeColors };
 
-const STORAGE_KEY = "boletify-theme";
-
-// Lazy + safe AsyncStorage access. Resolves to null if the package isn't
-// installed in the current binary (which throws on first native call).
+// ---------------------------------------------------------------------------
+// Async-storage helper (defensive — works even if native module is missing)
+// ---------------------------------------------------------------------------
 type StorageLike = {
   getItem: (key: string) => Promise<string | null>;
   setItem: (key: string, value: string) => Promise<void>;
 };
 
-let storagePromise: Promise<StorageLike | null> | null = null;
+let _storagePromise: Promise<StorageLike | null> | null = null;
 function getStorage(): Promise<StorageLike | null> {
-  if (storagePromise) return storagePromise;
-  storagePromise = (async () => {
+  if (_storagePromise) return _storagePromise;
+  _storagePromise = (async () => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const mod = require("@react-native-async-storage/async-storage");
       const AsyncStorage: StorageLike = mod?.default ?? mod;
-      // Verify by doing a no-op read — surfaces the "native module missing"
-      // error early so we degrade gracefully instead of crashing later.
       await AsyncStorage.getItem(STORAGE_KEY);
       return AsyncStorage;
     } catch (err) {
       if (__DEV__) {
-        // eslint-disable-next-line no-console
         console.warn(
-          "[theme] AsyncStorage unavailable — theme preference won't persist across launches.",
+          "[theme] AsyncStorage unavailable — preference won't persist.",
           err,
         );
       }
       return null;
     }
   })();
-  return storagePromise;
+  return _storagePromise;
 }
 
-interface ThemeContextValue {
-  /** The user's explicit preference. */
-  theme: ThemePreference;
-  /** What's actually rendering right now (system → light or dark). */
-  resolvedTheme: ResolvedTheme;
-  /** Set the user preference. Persists to storage when available. */
-  setTheme: (theme: ThemePreference) => void;
-  /** Cycle preference: light → dark → system → light. */
-  cycleTheme: () => void;
-}
-
+// ---------------------------------------------------------------------------
+// Context
+// ---------------------------------------------------------------------------
 const ThemeContext = React.createContext<ThemeContextValue | null>(null);
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 function getSystemTheme(): ResolvedTheme {
   return Appearance.getColorScheme() === "light" ? "light" : "dark";
 }
 
-function safeApplyToNativeWind(theme: ThemePreference) {
-  try {
-    nwColorScheme.set(theme);
-  } catch (err) {
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.warn("[theme] nativewind.colorScheme.set failed", err);
-    }
-  }
+function resolve(pref: ThemePreference): ResolvedTheme {
+  return pref === "system" ? getSystemTheme() : pref;
 }
 
-export function ThemeProvider({
-  children,
-  defaultTheme = "system",
-}: {
-  children: React.ReactNode;
-  defaultTheme?: ThemePreference;
-}) {
-  const [theme, setThemeState] = React.useState<ThemePreference>(defaultTheme);
+// ---------------------------------------------------------------------------
+// ThemeProvider
+// ---------------------------------------------------------------------------
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setThemeState] = React.useState<ThemePreference>("system");
   const [resolvedTheme, setResolvedTheme] = React.useState<ResolvedTheme>(
-    defaultTheme === "system" ? getSystemTheme() : defaultTheme === "light" ? "light" : "dark",
+    getSystemTheme,
   );
 
-  // Resolve "system" to an explicit light/dark value. Used both for
-  // resolvedTheme state and for NativeWind — passing "system" to
-  // nwColorScheme.set() is unreliable on web.
-  const resolveTheme = React.useCallback(
-    (pref: ThemePreference): ResolvedTheme =>
-      pref === "system" ? getSystemTheme() : pref,
-    [],
-  );
+  // Ref so the Appearance listener always sees the latest preference.
+  const themeRef = React.useRef(theme);
+  themeRef.current = theme;
 
-  // Hydrate persisted preference on mount. If the stored value is "system"
-  // (legacy), resolve it to the current OS preference so the toggle and
-  // NativeWind stay in sync.
+  // ------------------------------------------------------------------
+  // setTheme: the public setter.
+  // ------------------------------------------------------------------
+  const setTheme = React.useCallback((next: ThemePreference) => {
+    setThemeState(next);
+    const resolved = resolve(next);
+    setResolvedTheme(resolved);
+    // Update status bar style.
+    try { Appearance.setColorScheme(resolved); } catch {}
+    // Persist (fire-and-forget).
+    getStorage().then((s) => s?.setItem(STORAGE_KEY, next).catch(() => {}));
+  }, []);
+
+  const cycleTheme = React.useCallback(() => {
+    setTheme(nextTheme(themeRef.current));
+  }, [setTheme]);
+
+  // ------------------------------------------------------------------
+  // Hydrate from storage on mount.
+  // ------------------------------------------------------------------
   React.useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -118,65 +120,60 @@ export function ThemeProvider({
       try {
         const stored = await storage.getItem(STORAGE_KEY);
         if (cancelled) return;
-        if (stored === "light" || stored === "dark") {
+        if (stored === "light" || stored === "dark" || stored === "system") {
           setThemeState(stored);
-        } else if (stored === "system") {
-          // Migrate legacy "system" to the actual OS preference.
-          const resolved = getSystemTheme();
-          setThemeState(resolved);
-          storage.setItem(STORAGE_KEY, resolved).catch(() => {});
+          const resolved = resolve(stored);
+          setResolvedTheme(resolved);
+          try { Appearance.setColorScheme(resolved); } catch {}
         }
       } catch {
-        // Ignore — keep default.
+        /* keep default */
       }
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
-  // Push preference into NativeWind's colorScheme controller. Always pass
-  // an explicit "light" or "dark" — NativeWind's "system" mode is unreliable
-  // on web where Appearance.getColorScheme() can return null.
+  // ------------------------------------------------------------------
+  // Follow OS theme changes when preference is "system".
+  // ------------------------------------------------------------------
   React.useEffect(() => {
-    const resolved = resolveTheme(theme);
-    safeApplyToNativeWind(resolved);
-    setResolvedTheme(resolved);
-  }, [theme, resolveTheme]);
-
-  // When following system, react to OS-level changes for the imperative
-  // resolved value (StatusBar / Stack headers).
-  React.useEffect(() => {
-    if (theme !== "system") return;
     const sub = Appearance.addChangeListener(({ colorScheme }) => {
-      const resolved = colorScheme === "light" ? "light" : "dark";
-      setResolvedTheme(resolved);
-      safeApplyToNativeWind(resolved);
+      if (themeRef.current !== "system") return;
+      const next: ResolvedTheme = colorScheme === "light" ? "light" : "dark";
+      setResolvedTheme((prev) => (prev === next ? prev : next));
     });
     return () => sub.remove();
-  }, [theme]);
-
-  const setTheme = React.useCallback((next: ThemePreference) => {
-    setThemeState(next);
-    // Fire-and-forget persistence; failures already logged in getStorage().
-    getStorage().then((storage) => {
-      if (!storage) return;
-      storage.setItem(STORAGE_KEY, next).catch(() => {});
-    });
   }, []);
 
-  const cycleTheme = React.useCallback(() => {
-    setTheme(theme === "light" ? "dark" : theme === "dark" ? "system" : "light");
-  }, [theme, setTheme]);
+  // ------------------------------------------------------------------
+  // Build the vars() style for the current resolved theme.
+  // This is what actually makes NativeWind utilities see the right colors.
+  // ------------------------------------------------------------------
+  const themeVarsStyle = React.useMemo(
+    () => vars(themeCSSVars[resolvedTheme]),
+    [resolvedTheme],
+  );
 
+  // ------------------------------------------------------------------
+  // Context value.
+  // ------------------------------------------------------------------
   const value = React.useMemo<ThemeContextValue>(
     () => ({ theme, resolvedTheme, setTheme, cycleTheme }),
     [theme, resolvedTheme, setTheme, cycleTheme],
   );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>
+      <View style={[{ flex: 1 }, themeVarsStyle]}>
+        {children}
+      </View>
+    </ThemeContext.Provider>
+  );
 }
 
+// ---------------------------------------------------------------------------
+// Hooks
+// ---------------------------------------------------------------------------
 export function useTheme(): ThemeContextValue {
   const ctx = React.useContext(ThemeContext);
   if (!ctx) {
@@ -185,70 +182,6 @@ export function useTheme(): ThemeContextValue {
   return ctx;
 }
 
-/**
- * Resolved theme palette — for places that can't reach Tailwind classes
- * (Stack screenOptions, native APIs, third-party components, gradients).
- * Mirrors the CSS variables in apps/native/tailwind.css.
- */
-export interface ThemePalette {
-  bg: string;
-  surface: string;
-  surfaceRaised: string;
-  surfaceSunken: string;
-  fg: string;
-  fgSecondary: string;
-  fgMuted: string;
-  fgSubtle: string;
-  border: string;
-  borderStrong: string;
-  borderInk: string;
-  primary: string;
-  primaryFg: string;
-  accent: string;
-  accentFg: string;
-  danger: string;
-}
-
-export const themeColors: Record<ResolvedTheme, ThemePalette> = {
-  light: {
-    bg: "#F4F4F8",
-    surface: "#FFFFFF",
-    surfaceRaised: "#FFFFFF",
-    surfaceSunken: "#E8E8F0",
-    fg: "#08080C",
-    fgSecondary: "#2E2E3E",
-    fgMuted: "#55556A",
-    fgSubtle: "#6E6E8A",
-    border: "#DDDDE6",
-    borderStrong: "#B8B8CB",
-    borderInk: "#000000",
-    primary: "#08080C",
-    primaryFg: "#C6FF2E",
-    accent: "#D6005F",
-    accentFg: "#F4F4F8",
-    danger: "#7A1020",
-  },
-  dark: {
-    bg: "#08080C",
-    surface: "#0F0F15",
-    surfaceRaised: "#161620",
-    surfaceSunken: "#161620",
-    fg: "#F6F2EA",
-    fgSecondary: "#C2C2D0",
-    fgMuted: "#9B9BB3",
-    fgSubtle: "#787891",
-    border: "#1F1F2B",
-    borderStrong: "#2E2E3E",
-    borderInk: "#000000",
-    primary: "#C6FF2E",
-    primaryFg: "#08080C",
-    accent: "#FF2E88",
-    accentFg: "#08080C",
-    danger: "#7A1020",
-  },
-};
-
-/** Convenience: returns the active theme's flat color palette. */
 export function useThemeColors(): ThemePalette {
   const { resolvedTheme } = useTheme();
   return themeColors[resolvedTheme];

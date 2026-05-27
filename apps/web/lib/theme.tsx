@@ -11,27 +11,26 @@
  * To prevent a flash of incorrect theme on first paint, render
  * <ThemeNoFlashScript /> inside <head> in app/layout.tsx. It runs the same
  * resolution synchronously before React hydrates.
+ *
+ * Types and palette constants are shared with the native app via
+ * packages/ui/src/theme.ts.
  */
 
 import * as React from "react";
+import {
+  STORAGE_KEY,
+  nextTheme,
+  type ThemePreference,
+  type ResolvedTheme,
+  type ThemeContextValue,
+} from "@repo/ui";
 
-export type ThemePreference = "light" | "dark" | "system";
-export type ResolvedTheme = "light" | "dark";
+// Re-export so existing `import { ThemePreference } from "../lib/theme"`
+// keeps working without changes.
+export type { ThemePreference, ResolvedTheme, ThemeContextValue };
 
-const STORAGE_KEY = "boletify-theme";
 const DARK_CLASS = "dark";
 const ATTR = "data-theme";
-
-interface ThemeContextValue {
-  /** The user's explicit preference. */
-  theme: ThemePreference;
-  /** What's actually rendering right now (system → light or dark). */
-  resolvedTheme: ResolvedTheme;
-  /** Set the user preference. Persists to localStorage. */
-  setTheme: (theme: ThemePreference) => void;
-  /** Cycle preference: light → dark → system → light. */
-  cycleTheme: () => void;
-}
 
 const ThemeContext = React.createContext<ThemeContextValue | null>(null);
 
@@ -117,7 +116,7 @@ export function ThemeProvider({
   }, []);
 
   const cycleTheme = React.useCallback(() => {
-    setTheme(theme === "light" ? "dark" : theme === "dark" ? "system" : "light");
+    setTheme(nextTheme(theme));
   }, [theme, setTheme]);
 
   const value = React.useMemo<ThemeContextValue>(

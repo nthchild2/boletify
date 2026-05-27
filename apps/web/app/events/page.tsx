@@ -1,3 +1,4 @@
+import { deriveSaleStatus, formatMxnPrice } from "@boletify/routes";
 import {
   BrutalButton,
   Container,
@@ -13,7 +14,96 @@ export const metadata = {
   description: "Explora los próximos eventos",
 };
 
-export default function EventsPage() {
+/** Default dark gradient for cards without a cover image. */
+const FALLBACK_POSTER =
+  "bg-[linear-gradient(180deg,#1A1A2E_0%,#0F0F1A_100%)]";
+
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return "POR CONFIRMAR";
+  const d = new Date(dateStr);
+  return d
+    .toLocaleDateString("es-MX", { weekday: "short", day: "numeric", month: "short" })
+    .toUpperCase();
+}
+
+function formatTime(dateStr: string | null): string {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return "";
+  if (d.getHours() === 0 && d.getMinutes() === 0) return "";
+  return (
+    d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", hour12: false }) +
+    " hrs"
+  );
+}
+
+/**
+ * Turns a full title like "Noche de Indie Rock" into a poster-friendly
+ * line-broken string: "Noche de\nIndie Rock".
+ */
+function derivePosterTitle(title: string): string {
+  const words = title.split(" ");
+  if (words.length <= 2) return title;
+  const mid = Math.ceil(words.length / 2);
+  return words.slice(0, mid).join(" ") + "\n" + words.slice(mid).join(" ");
+}
+
+function mapApiEvent(e: any) {
+  const sale = deriveSaleStatus({
+    status: e.status,
+    startDate: e.start_date,
+    endDate: e.end_date,
+    saleStartDate: e.sale_starts_at,
+    saleEndDate: e.sale_ends_at,
+    totalQuantity: e.total_quantity,
+    totalSold: e.total_sold,
+    minPriceCents: e.min_price_cents,
+  });
+
+  const tags: string[] = Array.isArray(e.genre_tags) ? e.genre_tags : [];
+
+  return {
+    id: String(e.id),
+    title: e.title,
+    posterTitle: derivePosterTitle(e.title),
+    posterClassName: FALLBACK_POSTER,
+    posterImage: e.cover_image_url || undefined,
+    eyebrow: tags[0]?.toUpperCase() || "",
+    venue: e.venue_name,
+    location: e.city || "CDMX",
+    date: formatDate(e.start_date),
+    access: formatTime(e.start_date),
+    price: formatMxnPrice(e.min_price_cents),
+    status: sale.label,
+    statusVariant: sale.variant,
+    showStatus: !sale.hidden,
+    category: tags[0]?.toUpperCase() || "EVENTO",
+    description: e.description || "",
+  };
+}
+
+async function fetchEvents() {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+  try {
+    const res = await fetch(`${baseUrl}/api/events`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!Array.isArray(data)) return null;
+    return data.map(mapApiEvent);
+  } catch {
+    return null;
+  }
+}
+
+export default async function EventsPage() {
+  const apiEvents = await fetchEvents();
+  // Fall back to mock data if API is unreachable
+  const events = apiEvents ?? featuredEvents;
+
   return (
     <PageShell mesh="ambient">
       <SiteNav />
@@ -44,11 +134,11 @@ export default function EventsPage() {
           <SectionHeading
             kicker="Eventos destacados"
             title="Cartelera."
-            description="Mismo sistema, pero desplegado como un catálogo real para navegación y descubrimiento."
+            description={`${events.length} evento${events.length !== 1 ? "s" : ""} en cartelera.`}
           />
 
           <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
-            {featuredEvents.map((event) => (
+            {events.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}
           </div>

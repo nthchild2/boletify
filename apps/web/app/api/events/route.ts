@@ -11,6 +11,7 @@ import { neon } from '@neondatabase/serverless';
  * user-facing badges.
  */
 export async function GET() {
+  try {
   const sql = neon(process.env.DATABASE_URL!);
 
   const events = await sql`
@@ -73,4 +74,11 @@ export async function GET() {
   });
 
   return NextResponse.json(fixed);
+  } catch (err: any) {
+    console.error('[GET /api/events] ERROR:', err);
+    return NextResponse.json(
+      { error: err.message, stack: err.stack?.split('\n').slice(0, 5) },
+      { status: 500 },
+    );
+  }
 }

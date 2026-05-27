@@ -1,9 +1,11 @@
 import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Badge, Card, Input, Text as UIText } from "@repo/ui";
 import { HeroHeader, ScreenShell } from "../../components/brutal-mobile";
 
 export default function SearchScreen() {
   return (
+    <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-bg">
     <ScreenShell>
       <HeroHeader
         kicker="BUSCAR · EXPLORAR"
@@ -29,5 +31,6 @@ export default function SearchScreen() {
         </UIText>
       </Card>
     </ScreenShell>
+    </SafeAreaView>
   );
 }

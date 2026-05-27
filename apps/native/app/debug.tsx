@@ -1,9 +1,11 @@
 import { ScrollView, Text, View } from "react-native";
-import { Avatar, Badge, Button, Card, GlassCard, Input, Text as TextNative } from "@repo/ui";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Avatar, Badge, Button, Card, GlassCard, Input, Text as TextNative, brickShadows } from "@repo/ui";
 
 export default function DebugPage() {
   return (
-    <ScrollView className="flex-1 bg-bg px-4 pt-4">
+    <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-bg">
+    <ScrollView className="flex-1 px-4 pt-4">
       <View className="mb-6">
         <View className="mb-5 self-start rounded-xs border border-border-strong px-3 py-2">
           <Text className="font-body text-overline uppercase text-fg-muted">shared components</Text>
@@ -65,7 +67,7 @@ export default function DebugPage() {
         <View className="gap-6 lg:grid lg:grid-cols-[1.3fr_0.7fr]">
           <Card className="gap-5">
             <TextNative variant="heading-md">Card / Event Shell</TextNative>
-            <View className="overflow-hidden rounded-lg border border-border bg-bg shadow-brick-md">
+            <View className="overflow-hidden rounded-lg border border-border bg-bg" style={brickShadows.md}>
               <View className="aspect-[4/5] justify-between p-4 bg-gradient-to-br from-[#24112B] via-[#140C1A] to-[#140C1A]">
                 <View className="flex-row justify-between">
                   <Badge variant="signal">EN VENTA</Badge>
@@ -100,7 +102,7 @@ export default function DebugPage() {
           </GlassCard>
         </View>
 
-        <View className="rounded-lg border border-border bg-surface p-6 shadow-brick-md">
+        <View className="rounded-lg border border-border bg-surface p-6" style={brickShadows.md}>
           <TextNative variant="heading-lg" className="mb-5">Typography</TextNative>
           <View className="gap-3">
             <TextNative variant="display-lg">La noche</TextNative>
@@ -116,5 +118,6 @@ export default function DebugPage() {
         </View>
       </View>
       </ScrollView>
+    </SafeAreaView>
   );
 }

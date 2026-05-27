@@ -1,5 +1,5 @@
 import { View, Text, Pressable, ImageBackground } from "react-native";
-import { Badge, Card, GlassCard, Input, Text as UIText } from "@repo/ui";
+import { Badge, Card, GlassCard, Input, Text as UIText, brickShadows } from "@repo/ui";
 import type { MobileEvent } from "../lib/mock-data";
 
 function cn(...values: Array<string | false | null | undefined>) {
@@ -67,7 +67,7 @@ export function EventTile({
             {/* Dark scrim is intentional — posters carry their own imagery
                 and the dark wash gives consistent contrast for the badges
                 regardless of the active theme. */}
-            <View className="absolute inset-0 bg-black/40" />
+            <View className="absolute inset-0" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }} />
             <View className="absolute top-2 left-2 right-2 flex-row items-start justify-between">
               {showStatus ? (
                 <Badge variant={statusVariant}>{event.status}</Badge>
@@ -145,14 +145,12 @@ export function SearchPanel() {
 }
 
 export function CTAStack() {
-  // Uses explicit `dark:` variants instead of the `bg-primary` semantic
-  // token. NativeWind v4's CSS-variable resolution can be inconsistent for
-  // background utilities under runtime colorScheme changes, so we pin both
-  // halves of the swap here. Result matches docs §9: light = ink-on-cream
-  // CTA with signal-lime text; dark = signal-lime CTA with ink text.
+  // Semantic tokens: bg-primary resolves to ink-950 in light, signal-500 in
+  // dark via CSS variables. text-primary-fg is the matching foreground.
+  // No `dark:` variants needed — the vars() provider handles the swap.
   return (
-    <Pressable className="mt-6 h-[52px] rounded-xl items-center justify-center shadow-brick-md bg-ink-950 dark:bg-signal-500">
-      <Text className="font-body text-label font-semibold uppercase text-signal-500 dark:text-ink-950">
+    <Pressable className="mt-6 h-[52px] rounded-xl items-center justify-center bg-primary" style={brickShadows.md}>
+      <Text className="font-body text-label font-semibold uppercase text-primary-fg">
         Explorar shows →
       </Text>
     </Pressable>

@@ -1,6 +1,7 @@
 import "../styles/global.css";
 import { TRPCProvider } from "../lib/trpc-provider";
 import { ThemeProvider, ThemeNoFlashScript } from "../lib/theme";
+import { AuthSessionProvider } from "../lib/session-provider";
 
 export default function RootLayout({
   children,
@@ -15,7 +16,9 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          <TRPCProvider>{children}</TRPCProvider>
+          <AuthSessionProvider>
+            <TRPCProvider>{children}</TRPCProvider>
+          </AuthSessionProvider>
         </ThemeProvider>
       </body>
     </html>

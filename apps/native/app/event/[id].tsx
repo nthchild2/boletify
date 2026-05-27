@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Routes, deriveSaleStatus, formatMxnPrice, type SaleStatusVariant } from "@boletify/routes";
 import { Badge, Button, GlassCard, Text as UIText } from "@repo/ui";
 import { useThemeColors } from "../../lib/theme";
-import { mobileEvents } from "../../lib/mock-data";
 
 interface EventDetail {
   id: string;
@@ -79,26 +79,6 @@ function mapApiEvent(e: any): EventDetail {
   };
 }
 
-function mapMockEvent(mock: (typeof mobileEvents)[number]): EventDetail {
-  return {
-    id: mock.id,
-    title: mock.title,
-    description: mock.description,
-    venueName: mock.venue,
-    venueAddress: null,
-    city: mock.location,
-    date: mock.date,
-    access: mock.access,
-    price: mock.price,
-    status: mock.status,
-    statusVariant: (mock.statusVariant || "signal") as SaleStatusVariant,
-    showStatus: mock.showStatus ?? true,
-    category: mock.category,
-    coverImageUrl: mock.coverImageUrl || null,
-    genreTags: [mock.category],
-  };
-}
-
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -121,43 +101,43 @@ export default function EventDetailScreen() {
         setLoading(false);
       })
       .catch((err) => {
-        console.warn("Event API unreachable, falling back to mock:", err.message);
-        const mock = mobileEvents.find((e) => e.id === id);
-        if (mock) {
-          setEvent(mapMockEvent(mock));
-        } else {
-          setError("Evento no encontrado");
-        }
+        console.warn("Event API unreachable:", err.message);
+        setError("No se pudo cargar el evento");
         setLoading(false);
       });
   }, [id]);
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-bg">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-bg">
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      </SafeAreaView>
     );
   }
 
   if (error || !event) {
     return (
-      <View className="flex-1 items-center justify-center bg-bg px-6">
-        <UIText variant="heading-md" className="text-fg">
-          {error || "Evento no encontrado"}
-        </UIText>
-        <Button
-          text="Volver al inicio"
-          variant="secondary"
-          className="mt-6"
-          onPress={() => router.back()}
-        />
-      </View>
+      <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-bg">
+        <View className="flex-1 items-center justify-center px-6">
+          <UIText variant="heading-md" className="text-fg">
+            {error || "Evento no encontrado"}
+          </UIText>
+          <Button
+            text="Volver al inicio"
+            variant="secondary"
+            className="mt-6"
+            onPress={() => router.back()}
+          />
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView className="flex-1 bg-bg">
+    <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-bg">
+    <ScrollView className="flex-1">
       <View className="p-4 pb-16">
         {/* Cover image or gradient fallback */}
         {event.coverImageUrl ? (
@@ -245,5 +225,6 @@ export default function EventDetailScreen() {
         </View>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }

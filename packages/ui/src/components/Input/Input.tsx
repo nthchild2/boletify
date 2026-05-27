@@ -5,6 +5,7 @@ import {
   Text,
   TextInputProps,
 } from "react-native";
+import { glassShadows } from "../../shadows";
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -36,7 +37,7 @@ export function Input({
       )}
       <TextInput
         className={`
-          ${glass ? "bg-glass-tint border-glass-edge shadow-glass-sm" : "bg-surface-sunken border-border-strong"}
+          ${glass ? "bg-glass-tint border-glass-edge" : "bg-surface-sunken border-border-strong"}
           h-12
           text-fg
           font-body text-body-md
@@ -47,6 +48,7 @@ export function Input({
           ${error ? "border-danger" : ""}
           ${className}
         `}
+        style={glass ? glassShadows.sm : undefined}
         placeholderTextColor={placeholderTextColor ?? PLACEHOLDER_COLOR}
         {...props}
       />

@@ -1,42 +1,23 @@
-import { FlatList, View } from "react-native";
-import { Badge, GlassCard, Text as UIText } from "@repo/ui";
+import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Text as UIText } from "@repo/ui";
 import { HeroHeader, ScreenShell } from "../../components/brutal-mobile";
-import { mobileTickets } from "../../lib/mock-data";
 
 export default function TicketsScreen() {
   return (
-    <ScreenShell padded={false}>
-      <FlatList
-        data={mobileTickets}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 120 }}
-        ListHeaderComponent={
-          <HeroHeader
-            kicker="MIS TICKETS"
-            title={"Tu boleto es\nun objeto."}
-            body="Aquí viven tus accesos activos, con status visible y datos en mono tabular."
-          />
-        }
-        renderItem={({ item }) => (
-          <GlassCard className="mb-5">
-            <UIText variant="overline" className="text-fg-muted">
-              {item.section}
-            </UIText>
-            <UIText variant="heading-md" className="mt-2">
-              {item.eventName}
-            </UIText>
-            <UIText variant="mono-md" className="mt-3 text-primary">
-              {item.date}
-            </UIText>
-            <View className="mt-4 flex-row items-center justify-between">
-              <Badge variant="leaf">{item.status}</Badge>
-              <UIText variant="mono-sm" className="text-fg-muted">
-                {item.id}
-              </UIText>
-            </View>
-          </GlassCard>
-        )}
-      />
-    </ScreenShell>
+    <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-bg">
+      <ScreenShell padded>
+        <HeroHeader
+          kicker="MIS TICKETS"
+          title={"Tu boleto es\nun objeto."}
+          body="Aquí viven tus accesos activos, con status visible y datos en mono tabular."
+        />
+        <View className="mt-12 items-center">
+          <UIText variant="body-lg" className="text-fg-muted text-center">
+            Aún no tienes boletos.
+          </UIText>
+        </View>
+      </ScreenShell>
+    </SafeAreaView>
   );
 }

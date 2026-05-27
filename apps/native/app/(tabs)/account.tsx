@@ -1,4 +1,5 @@
 import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Routes } from "@boletify/routes";
 import { Avatar, Button, GlassCard, Text as UIText } from "@repo/ui";
@@ -9,6 +10,7 @@ export default function AccountScreen() {
   const router = useRouter();
 
   return (
+    <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-bg">
     <ScreenShell>
       <HeroHeader
         kicker="CUENTA · PERFIL"
@@ -45,5 +47,6 @@ export default function AccountScreen() {
         />
       </View>
     </ScreenShell>
+    </SafeAreaView>
   );
 }

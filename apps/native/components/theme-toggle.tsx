@@ -1,33 +1,32 @@
 /**
- * Two-state theme toggle (Claro / Oscuro) — native.
+ * Two-state theme toggle (Light / Dark) — native.
  *
- * The app defaults to following the OS theme on first launch. Once the
- * user taps a segment, their choice is persisted and overrides the system.
- * Uses Ionicons for the segment icons.
+ * Defaults to the device setting on first launch. Tapping the opposite
+ * segment overrides the OS preference and persists via AsyncStorage.
  *
- * Active-pill colors use inline styles with hardcoded values rather than
- * the useThemeColors() palette. This avoids a race where resolvedTheme
- * (and therefore the palette) can briefly disagree with NativeWind's
- * actual colorScheme — producing e.g. ink text on an ink pill.
+ * Active-pill colors use inline styles with hardcoded values to avoid a
+ * race where resolvedTheme can briefly disagree with the rendered palette.
  */
 
 import * as React from "react";
 import { View, Text, Pressable } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme, useThemeColors, type ResolvedTheme } from "../lib/theme";
+import { brickShadows } from "@repo/ui";
+import {
+  useTheme,
+  useThemeColors,
+  type ResolvedTheme,
+} from "../lib/theme";
 
 const OPTIONS: ReadonlyArray<{
   value: ResolvedTheme;
   label: string;
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: string;
 }> = [
-  { value: "light", label: "Claro", icon: "sunny-outline" },
-  { value: "dark", label: "Oscuro", icon: "moon-outline" },
+  { value: "light", label: "Claro", icon: "☀️" },
+  { value: "dark", label: "Oscuro", icon: "🌙" },
 ];
 
 // Hardcoded contrast pairs — active pill bg → text/icon color.
-// Light: ink pill (#08080C) → lime text (#C6FF2E)
-// Dark:  lime pill (#C6FF2E) → ink text (#08080C)
 const ACTIVE_COLORS: Record<ResolvedTheme, { bg: string; fg: string }> = {
   light: { bg: "#08080C", fg: "#C6FF2E" },
   dark: { bg: "#C6FF2E", fg: "#08080C" },
@@ -43,7 +42,6 @@ export function ThemeToggle({
   const { resolvedTheme, setTheme } = useTheme();
   const colors = useThemeColors();
 
-  // Which visual theme is the pill rendered against right now?
   const activePalette = ACTIVE_COLORS[resolvedTheme] ?? ACTIVE_COLORS.light;
 
   return (
@@ -60,16 +58,16 @@ export function ThemeToggle({
             accessibilityRole="radio"
             accessibilityState={{ selected: active }}
             accessibilityLabel={opt.label}
-            style={active ? { backgroundColor: activePalette.bg } : undefined}
+            style={active ? [{ backgroundColor: activePalette.bg }, brickShadows.sm] : undefined}
             className={`flex-row items-center justify-center rounded-sm ${
               showLabels ? "gap-2 px-3 py-2" : "h-8 w-8"
-            } ${active ? "shadow-brick-sm" : ""}`}
+            }`}
           >
-            <Ionicons
-              name={opt.icon}
-              size={16}
-              color={active ? activePalette.fg : colors.fgMuted}
-            />
+            <Text
+              style={{ color: active ? activePalette.fg : colors.fgMuted, fontSize: 14 }}
+            >
+              {opt.icon}
+            </Text>
             {showLabels ? (
               <Text
                 className="font-body text-overline uppercase"

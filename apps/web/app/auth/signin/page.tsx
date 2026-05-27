@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Routes } from "@boletify/routes";
 import {
   BrutalButton,
@@ -16,14 +17,31 @@ export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    // TODO: Call sign-in API
-    setTimeout(() => {
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Email o contraseña incorrectos");
+        setLoading(false);
+        return;
+      }
+
       router.push(Routes.MY_TICKETS);
-    }, 1000);
+    } catch {
+      setError("Error al iniciar sesión. Intenta de nuevo.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,6 +67,12 @@ export default function SignInPage() {
             <p className="mt-2 text-body-sm text-fg-muted">
               Accede a tu cuenta para comprar tickets, revisar tu QR y guardar eventos.
             </p>
+
+            {error && (
+              <div className="mt-4 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-body-sm text-red-400">
+                {error}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               <div>

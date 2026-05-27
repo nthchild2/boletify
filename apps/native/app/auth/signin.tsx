@@ -1,24 +1,34 @@
 import { useState } from "react";
 import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Routes } from "@boletify/routes";
 import { Button, GlassCard, Input, Text as UIText } from "@repo/ui";
+import { useAuth } from "../../lib/auth";
 
 export default function SignInScreen() {
   const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setError("");
     setLoading(true);
-    setTimeout(() => {
+    try {
+      await login(email, password);
       router.replace(Routes.MY_TICKETS);
-    }, 1000);
+    } catch (err: any) {
+      setError(err.message || "Error al iniciar sesión");
+      setLoading(false);
+    }
   };
 
   return (
-    <View className="flex-1 bg-bg p-4 pt-8">
+    <SafeAreaView style={{ flex: 1 }} edges={["top"]} className="bg-bg">
+    <View className="flex-1 p-4 pt-4">
       <UIText variant="overline" className="text-fg-muted">
         CUENTA · ACCESO
       </UIText>
@@ -28,6 +38,14 @@ export default function SignInScreen() {
       <UIText variant="body-md" className="mt-3 text-fg-secondary">
         Accede a tu cuenta para comprar tickets y revisar tu QR en segundos.
       </UIText>
+
+      {error ? (
+        <View className="mt-4 rounded-lg px-4 py-3" style={{ borderWidth: 1, borderColor: 'rgba(220,38,38,0.3)', backgroundColor: 'rgba(220,38,38,0.1)' }}>
+          <UIText variant="body-sm" className="text-danger">
+            {error}
+          </UIText>
+        </View>
+      ) : null}
 
       <GlassCard className="mt-8">
         <Input
@@ -55,5 +73,6 @@ export default function SignInScreen() {
         <Button text="Crear cuenta" variant="secondary" onPress={() => router.push(Routes.AUTH_SIGNUP)} />
       </View>
     </View>
+    </SafeAreaView>
   );
 }

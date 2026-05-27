@@ -1,5 +1,6 @@
 import * as React from "react";
-import { View, ViewProps } from "react-native";
+import { View, ViewProps, type ViewStyle } from "react-native";
+import { brickShadows } from "../../shadows";
 
 export type CardPadding = "none" | "sm" | "md" | "lg";
 
@@ -23,11 +24,11 @@ const variantStyles = {
   ghost: "bg-transparent",
 };
 
-const shadowStyles = {
-  none: "",
-  "brick-sm": "shadow-brick-sm",
-  "brick-md": "shadow-brick-md",
-  "brick-lg": "shadow-brick-lg",
+const shadowNativeStyles: Record<string, ViewStyle> = {
+  none: brickShadows.none,
+  "brick-sm": brickShadows.sm,
+  "brick-md": brickShadows.md,
+  "brick-lg": brickShadows.lg,
 };
 
 const paddingStyles: Record<CardPadding, string> = {
@@ -43,17 +44,18 @@ export function Card({
   padding = "md",
   className = "",
   children,
+  style,
   ...props
 }: CardProps) {
   return (
     <View
       className={`
         ${variantStyles[variant]}
-        ${shadowStyles[shadow]}
         rounded-lg
         ${paddingStyles[padding]}
         ${className}
       `}
+      style={[shadowNativeStyles[shadow], style]}
       {...props}
     >
       {children}

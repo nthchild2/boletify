@@ -1,18 +1,20 @@
 "use client";
 
 /**
- * Three-state theme toggle (Light / Dark / System) — web.
- * Brutal-Glass styling: 1px ink-line border, brick-shadow chassis,
- * signal-lime active fill that flips to ink-on-bone in light mode.
+ * Two-state theme toggle (Light / Dark) — web.
  *
- * Usage: drop into <SiteNav /> or any header. No props.
+ * Defaults to the device setting on first load. Clicking the opposite
+ * segment overrides the OS preference and persists to localStorage.
+ *
+ * Brutal-Glass styling: 1px border, brick-shadow active pill,
+ * signal-lime fill that flips to ink-on-bone in light mode.
  */
 
 import * as React from "react";
-import { useTheme, type ThemePreference } from "../lib/theme";
+import { useTheme, type ResolvedTheme } from "../lib/theme";
 
 const OPTIONS: ReadonlyArray<{
-  value: ThemePreference;
+  value: ResolvedTheme;
   label: string;
   icon: React.ReactNode;
 }> = [
@@ -35,20 +37,10 @@ const OPTIONS: ReadonlyArray<{
       </svg>
     ),
   },
-  {
-    value: "system",
-    label: "Sistema",
-    icon: (
-      <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="3" width="12" height="8.5" rx="1" />
-        <path d="M5.5 14h5M8 11.5V14" />
-      </svg>
-    ),
-  },
 ];
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
 
   return (
     <div
@@ -57,7 +49,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       className={`inline-flex items-center gap-0 rounded-md border border-border-strong bg-surface p-0.5 ${className}`}
     >
       {OPTIONS.map((opt) => {
-        const active = theme === opt.value;
+        const active = resolvedTheme === opt.value;
         return (
           <button
             key={opt.value}

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { View, ViewProps } from "react-native";
+import { glassShadows } from "../../shadows";
 
 export interface GlassCardProps extends ViewProps {
   intensity?: "sm" | "md" | "lg";
@@ -8,15 +9,16 @@ export interface GlassCardProps extends ViewProps {
 }
 
 const intensityStyles = {
-  sm: "bg-glass-tint backdrop-blur-[20px] shadow-glass-sm",
-  md: "bg-glass-tint backdrop-blur-[32px] shadow-glass-md",
-  lg: "bg-glass-tint backdrop-blur-[40px] shadow-glass-lg",
+  sm: "bg-glass-tint backdrop-blur-[20px]",
+  md: "bg-glass-tint backdrop-blur-[32px]",
+  lg: "bg-glass-tint backdrop-blur-[40px]",
 };
 
 export function GlassCard({
   intensity = "md",
   className = "",
   children,
+  style,
   ...props
 }: GlassCardProps) {
   return (
@@ -28,6 +30,7 @@ export function GlassCard({
         p-5
         ${className}
       `}
+      style={[glassShadows[intensity], style]}
       {...props}
     >
       <View className="absolute inset-x-0 top-0 h-px bg-glass-edge" />

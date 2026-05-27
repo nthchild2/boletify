@@ -16,7 +16,6 @@ import {
   formatMxnPrice,
   type SaleStatusVariant,
 } from "@boletify/routes";
-import { mobileEvents as mockEvents } from "../../lib/mock-data";
 
 type MobileEvent = {
   id: string;
@@ -33,6 +32,8 @@ type MobileEvent = {
   category: string;
   description: string;
   coverImageUrl?: string;
+  /** Raw ISO start date — used for "Esta semana" stat filtering. */
+  startDateRaw: string | null;
 };
 
 function formatDate(dateStr: string | null): string {
@@ -94,6 +95,7 @@ export default function EventsScreen() {
             category: e.genre_tags?.[0]?.toUpperCase() || "INDIE",
             description: e.description || "",
             coverImageUrl: e.cover_image_url || "",
+            startDateRaw: e.start_date || null,
           };
         });
         console.log("Fetched events:", mapped.length, "First image:", mapped[0]?.coverImageUrl);
@@ -101,25 +103,7 @@ export default function EventsScreen() {
         setLoading(false);
       })
       .catch((err) => {
-        console.warn("API unreachable, using mock data:", err.message);
-        // Fall back to local mock events so the app works without the API server
-        const fallback: MobileEvent[] = mockEvents.map((e) => ({
-          id: e.id,
-          title: e.title,
-          eyebrow: e.eyebrow,
-          venue: e.venue,
-          location: e.location,
-          date: e.date,
-          access: e.access,
-          price: e.price,
-          status: e.status,
-          statusVariant: (e.statusVariant || "signal") as SaleStatusVariant,
-          showStatus: e.showStatus ?? true,
-          category: e.category,
-          description: e.description,
-          coverImageUrl: e.coverImageUrl,
-        }));
-        setEvents(fallback);
+        console.warn("API unreachable:", err.message);
         setLoading(false);
       });
   }, []);
@@ -160,9 +144,26 @@ export default function EventsScreen() {
     );
   }
 
+  const thisWeekCount = (() => {
+    const now = new Date();
+    // Monday as start of week
+    const day = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - ((day + 6) % 7));
+    monday.setHours(0, 0, 0, 0);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 7);
+
+    return events.filter((e) => {
+      if (!e.startDateRaw) return false;
+      const d = new Date(e.startDateRaw);
+      return d >= monday && d < sunday;
+    }).length;
+  })();
+
   const stats = [
     { label: "Eventos", value: String(events.length) },
-    { label: "Esta semana", value: String(events.length) },
+    { label: "Esta semana", value: String(thisWeekCount) },
     { label: "Ciudad", value: "CDMX" },
   ];
 

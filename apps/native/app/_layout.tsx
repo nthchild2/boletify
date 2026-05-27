@@ -4,12 +4,41 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import {
+  ThemeProvider as NavThemeProvider,
+  DefaultTheme,
+} from "@react-navigation/native";
+import {
   BricolageGrotesque_700Bold,
   BricolageGrotesque_800ExtraBold,
 } from "@expo-google-fonts/bricolage-grotesque";
 import { Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from "@expo-google-fonts/inter";
 import { JetBrainsMono_500Medium } from "@expo-google-fonts/jetbrains-mono";
 import { ThemeProvider, useTheme } from "../lib/theme";
+import { AuthProvider } from "../lib/auth";
+
+/**
+ * A completely static React Navigation theme. Defined OUTSIDE any
+ * component so the object reference never changes, which means
+ * NavigationContainer never re-renders due to theme prop changes.
+ *
+ * We set all colours to transparent because NativeWind handles
+ * every visual via CSS variables — React Navigation's own colours
+ * are never visible. This is the key to fixing the theme-toggle
+ * crash: without a stable theme prop, expo-router's internal
+ * NavigationContainer listens to `useColorScheme()` and re-renders
+ * on every `Appearance.setColorScheme()` call, transiently
+ * invalidating the navigation context.
+ */
+const STABLE_NAV_THEME = {
+  ...DefaultTheme,
+  dark: false,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "transparent",
+    card: "transparent",
+    border: "transparent",
+  },
+};
 
 /**
  * StatusBar is the only theme-aware piece at this level. It's a separate
@@ -64,8 +93,12 @@ export default function AppLayout() {
 
   return (
     <ThemeProvider>
-      <ThemedStatusBar />
-      <StableStack />
+      <AuthProvider>
+        <NavThemeProvider value={STABLE_NAV_THEME}>
+          <ThemedStatusBar />
+          <StableStack />
+        </NavThemeProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
