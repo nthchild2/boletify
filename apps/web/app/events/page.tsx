@@ -1,4 +1,5 @@
 import { deriveSaleStatus, formatMxnPrice } from "@boletify/routes";
+import { getBaseUrl } from "../../lib/base-url";
 import {
   BrutalButton,
   Container,
@@ -83,7 +84,7 @@ function mapApiEvent(e: any) {
 }
 
 async function fetchEvents() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const baseUrl = getBaseUrl();
 
   try {
     const res = await fetch(`${baseUrl}/api/events`, {

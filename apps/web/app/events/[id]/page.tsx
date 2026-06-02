@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Routes, deriveSaleStatus, formatMxnPrice } from "@boletify/routes";
+import { getBaseUrl } from "../../../lib/base-url";
 import {
   BrutalButton,
   Container,
@@ -31,7 +32,7 @@ function formatTime(dateStr: string | null): string {
 }
 
 async function fetchEvent(id: string): Promise<EventRecord | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const baseUrl = getBaseUrl();
 
   try {
     const res = await fetch(`${baseUrl}/api/events/${id}`, {
