@@ -310,12 +310,12 @@ export function Footer() {
             <div className="font-mono text-xs uppercase tracking-widest text-fg-subtle">Organizadores</div>
             <ul className="mt-4 space-y-2 text-body-sm">
               <li>
-                <a href="/organizador" className="text-fg-muted transition-colors hover:text-fg">
+                <a href="/org/events/create" className="text-fg-muted transition-colors hover:text-fg">
                   Crear evento
                 </a>
               </li>
               <li>
-                <a href="/panel" className="text-fg-muted transition-colors hover:text-fg">
+                <a href="/org/dashboard" className="text-fg-muted transition-colors hover:text-fg">
                   Panel de control
                 </a>
               </li>
