@@ -7,7 +7,7 @@
 import { NextResponse } from 'next/server';
 import { db, users } from '@boletify/db';
 import { eq } from 'drizzle-orm';
-import { verifyToken } from '../login/route';
+import { verifyToken } from '../token';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');

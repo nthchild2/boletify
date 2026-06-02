@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server';
 import { db, users } from '@boletify/db';
 import { organiserProfiles } from '@boletify/db/schema';
 import { eq } from 'drizzle-orm';
-import { verifyToken } from '../auth/login/route';
+import { verifyToken } from '../auth/token';
 
 export type OrgContext = {
   userId: number;
