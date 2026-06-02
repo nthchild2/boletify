@@ -3,7 +3,7 @@
 **Epic:** Events
 **Ticket ID:** EVT-002
 **Type:** feature
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 
 ---
 
@@ -35,9 +35,9 @@ Phase 2 refs: S6 (event edit after publish), Phase 4 § 4.3 (organizer ownership
 
 ## Technical Notes
 
-### API Changes
-- `packages/api/src/routers/event.ts` — `update` mutation needs full implementation
-- Ownership check: verify `event.organiserId === ctx.session.user.id`
+### API Changes ✅
+- `packages/api/src/routers/event.ts` — `update` mutation implemented
+- Ownership check enforced server-side
 
 ### Validation Rules
 
@@ -64,9 +64,9 @@ if (event.status === 'live') {
 If date/time/venue changes, send a notification email (new template: "event-changed"). This is a nice-to-have at MVP — not blocking.
 
 ### Packages Touched
-- [ ] `@boletify/api` — `eventRouter.update`
-- [ ] `@boletify/screens` — event edit screen
-- [ ] `@boletify/features` — `useUpdateEvent` mutation hook
+- [x] `@boletify/api` — `eventRouter.update`
+- [x] `apps/web` — edit screen at `/org/events/[id]/edit` (284 lines, pre-populates from tRPC query)
+- [x] `apps/native` — edit screen at `apps/native/app/org/edit/[id].tsx` (271 lines)
 
 ---
 

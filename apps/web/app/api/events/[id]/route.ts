@@ -12,40 +12,51 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  try {
   const { id } = await params;
   const sql = neon(process.env.DATABASE_URL!);
 
   // Accept both numeric IDs ("42") and slugs ("noche-indie-rock-2026-05-17-cdmx").
+  // Use separate queries to avoid nesting sql`` tagged templates (unsupported by neon).
   const isNumeric = /^\d+$/.test(id);
 
-  const rows = await sql`
-    SELECT
-      e.id,
-      e.title,
-      e.slug,
-      e.description,
-      e.venue_name,
-      e.venue_address,
-      e.venue_map_url,
-      e.city,
-      e.genre_tags,
-      e.status,
-      e.start_date,
-      e.end_date,
-      e.cancelled_at,
-      e.cover_image_url,
-      MIN(t.price)                AS min_price_cents,
-      COALESCE(SUM(t.quantity), 0) AS total_quantity,
-      COALESCE(SUM(t.sold), 0)     AS total_sold,
-      MIN(t.sale_start_date)      AS sale_starts_at,
-      MAX(t.sale_end_date)        AS sale_ends_at
-    FROM events e
-    LEFT JOIN ticket_tiers t ON t.event_id = e.id
-    WHERE ${isNumeric ? sql`e.id = ${Number(id)}` : sql`e.slug = ${id}`}
-      AND e.status IN ('published', 'cancelled', 'ended')
-    GROUP BY e.id
-    LIMIT 1
-  `;
+  const rows = isNumeric
+    ? await sql`
+        SELECT
+          e.id, e.title, e.slug, e.description,
+          e.venue_name, e.venue_address, e.venue_map_url, e.city,
+          e.genre_tags, e.status, e.start_date, e.end_date,
+          e.cancelled_at, e.cover_image_url,
+          MIN(t.price)                AS min_price_cents,
+          COALESCE(SUM(t.quantity), 0) AS total_quantity,
+          COALESCE(SUM(t.sold), 0)     AS total_sold,
+          MIN(t.sale_start_date)      AS sale_starts_at,
+          MAX(t.sale_end_date)        AS sale_ends_at
+        FROM events e
+        LEFT JOIN ticket_tiers t ON t.event_id = e.id
+        WHERE e.id = ${Number(id)}
+          AND e.status IN ('published', 'cancelled', 'ended')
+        GROUP BY e.id
+        LIMIT 1
+      `
+    : await sql`
+        SELECT
+          e.id, e.title, e.slug, e.description,
+          e.venue_name, e.venue_address, e.venue_map_url, e.city,
+          e.genre_tags, e.status, e.start_date, e.end_date,
+          e.cancelled_at, e.cover_image_url,
+          MIN(t.price)                AS min_price_cents,
+          COALESCE(SUM(t.quantity), 0) AS total_quantity,
+          COALESCE(SUM(t.sold), 0)     AS total_sold,
+          MIN(t.sale_start_date)      AS sale_starts_at,
+          MAX(t.sale_end_date)        AS sale_ends_at
+        FROM events e
+        LEFT JOIN ticket_tiers t ON t.event_id = e.id
+        WHERE e.slug = ${id}
+          AND e.status IN ('published', 'cancelled', 'ended')
+        GROUP BY e.id
+        LIMIT 1
+      `;
 
   if (rows.length === 0) {
     return NextResponse.json({ error: 'Event not found' }, { status: 404 });
@@ -95,4 +106,11 @@ export async function GET(
       max_per_order: Number(t.max_per_order),
     })),
   });
+  } catch (err: any) {
+    console.error('[GET /api/events/:id] ERROR:', err);
+    return NextResponse.json(
+      { error: err.message, stack: err.stack?.split('\n').slice(0, 5) },
+      { status: 500 },
+    );
+  }
 }

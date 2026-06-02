@@ -3,7 +3,7 @@
 **Epic:** Infrastructure
 **Ticket ID:** INFRA-008
 **Type:** investigation
-**Status:** TODO
+**Status:** ✅ Closed (decided: Tailwind CSS + semantic CSS variables)
 
 ---
 

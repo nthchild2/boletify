@@ -74,6 +74,10 @@ const StableStack = React.memo(function StableStack() {
       <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
       <Stack.Screen name="event/[id]" options={{ title: "Evento", headerShown: false }} />
       <Stack.Screen name="checkout/[id]" options={{ title: "Checkout" }} />
+      <Stack.Screen name="org/index" options={{ headerShown: false }} />
+      <Stack.Screen name="org/create" options={{ headerShown: false }} />
+      <Stack.Screen name="org/event/[id]" options={{ headerShown: false }} />
+      <Stack.Screen name="org/edit/[id]" options={{ headerShown: false }} />
       <Stack.Screen name="debug" options={{ title: "Debug", headerShown: false }} />
     </Stack>
   );

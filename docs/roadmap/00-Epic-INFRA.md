@@ -22,10 +22,10 @@ This epic must be completed before feature epics (AUTH, EVENTS, PAYMENTS, etc.) 
 | INFRA-003 | tRPC / API Layer | ✅ Done | INFRA-001, INFRA-002 |
 | INFRA-004 | Design Tokens & UI Package | ✅ Done | - |
 | INFRA-005 | UI Component Library Expansion | ✅ Done | INFRA-004 |
-| INFRA-006 | Buyer App Shell & Navigation | TODO | INFRA-005 |
-| INFRA-007 | Organiser App Shell & Navigation | TODO | INFRA-005 |
-| INFRA-008 | Explore CSS Alternatives to Tailwind | TODO | INFRA-004 |
-| NAV-001 | Navigation Strategy Decision | TODO | - |
+| INFRA-006 | Buyer App Shell & Navigation | 🟡 In Progress | INFRA-005 |
+| INFRA-007 | Organiser App Shell & Navigation | ✅ Done | INFRA-005 |
+| INFRA-008 | Explore CSS Alternatives to Tailwind | ✅ Closed | INFRA-004 |
+| NAV-001 | Navigation Strategy Decision | ✅ Done | - |
 
 ---
 
@@ -52,8 +52,8 @@ This epic must be completed before feature epics (AUTH, EVENTS, PAYMENTS, etc.) 
 
 ### Auth
 - **Provider:** Auth.js v5 (NextAuth)
-- **Sessions:** Database-backed (not JWT) for server-side invalidation
-- **Rationale:** Tech doc ADR-006
+- **Sessions:** JWT strategy (simpler than DB sessions; middleware uses `next-auth/jwt` decode for Edge Runtime compatibility)
+- **Rationale:** Tech doc ADR-006. Changed from DB sessions to JWT to avoid Edge Runtime incompatibility with bcryptjs/neon imports in middleware.
 
 ### API
 - **Pattern:** tRPC (end-to-end type safety)

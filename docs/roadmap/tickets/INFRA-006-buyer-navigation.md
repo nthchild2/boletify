@@ -3,7 +3,7 @@
 **Epic:** Infrastructure
 **Ticket ID:** INFRA-006
 **Type:** feature
-**Status:** TODO
+**Status:** 🟡 In Progress
 
 ---
 

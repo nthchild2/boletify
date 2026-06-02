@@ -1,14 +1,18 @@
 /**
  * Auth.js v5 configuration
  * Uses JWT strategy (simpler) with credentials provider
- * Sessions tracked in DB for server-side invalidation
+ *
+ * NOTE: Uses raw neon() tagged-template queries instead of Drizzle ORM
+ * to avoid the @neondatabase/serverless v1.x incompatibility with
+ * drizzle-orm's neon-http driver. Once the server is restarted with
+ * neon pinned to 0.10.4 (see root package.json overrides), this can
+ * be reverted back to Drizzle.
  */
 
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import { verifyPassword } from '@boletify/api/utils/password';
-import { db, users } from '@boletify/db';
-import { eq } from 'drizzle-orm';
+import { compare } from 'bcryptjs';
+import { neon } from '@neondatabase/serverless';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -23,38 +27,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        const email = credentials.email as string;
+        const email = (credentials.email as string).toLowerCase();
         const password = credentials.password as string;
 
-        if (!db) {
+        const sql = neon(process.env.DATABASE_URL!);
+        const rows = await sql`
+          SELECT id, email, name, role, password_hash
+          FROM users
+          WHERE email = ${email}
+          LIMIT 1
+        `;
+
+        if (rows.length === 0) {
           return null;
         }
 
-        const userList = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email.toLowerCase()))
-          .limit(1);
-
-        if (userList.length === 0) {
+        const user = rows[0];
+        if (!user.password_hash) {
           return null;
         }
 
-        const user = userList[0];
-        if (!user.passwordHash) {
-          return null;
-        }
-
-        const isValid = await verifyPassword(password, user.passwordHash);
+        const isValid = await compare(password, user.password_hash as string);
         if (!isValid) {
           return null;
         }
 
         return {
           id: String(user.id),
-          email: user.email,
-          name: user.name,
-          role: user.role,
+          email: user.email as string,
+          name: user.name as string,
+          role: user.role as string,
         };
       },
     }),
@@ -80,6 +82,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
-    signIn: '/login',
+    signIn: '/auth/signin',
   },
 });

@@ -1,7 +1,7 @@
 # Epic: Organiser Dashboard
 
 **Epic ID:** ORG
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 
 ---
 
@@ -18,7 +18,7 @@ Phase 2 refs: O1 (profile), O2 (payout setup / KYC), O8 (sales dashboard), O9 (b
 | Ticket ID | Title | Status |
 |-----------|-------|--------|
 | ORG-001 | Organiser Profile Management | TODO |
-| ORG-002 | Sales Dashboard Data | TODO |
+| ORG-002 | Sales Dashboard Data | 🟡 In Progress |
 | ORG-003 | Buyer Export (CSV) | TODO |
 | ORG-004 | QR Door Check-In Scanner | TODO |
 

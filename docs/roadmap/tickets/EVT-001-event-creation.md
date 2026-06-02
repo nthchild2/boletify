@@ -3,7 +3,7 @@
 **Epic:** Events
 **Ticket ID:** EVT-001
 **Type:** feature
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 
 ---
 
@@ -36,9 +36,10 @@ Phase 2 refs: O3 (event creation form), O4 (ticket tier config), O5 (fee preview
 
 ## Technical Notes
 
-### API Changes
-- `packages/api/src/routers/event.ts` — `create` mutation needs full implementation
-- `packages/api/src/routers/event.ts` — slug generation logic
+### API Changes ✅
+- `packages/api/src/routers/event.ts` — `create` mutation implemented (374 lines total in router)
+- `packages/api/src/routers/event.ts` — `createTicketTier` mutation implemented
+- Slug generation: auto-generated from title
 
 ### Database Changes
 - `events` table insert with: title, description, date, startTime, endTime, venueName, venueAddress, coverImageUrl, genreTags, absorbFee, status = 'draft', slug
@@ -63,12 +64,11 @@ function generateSlug(title: string, date: string, venueName: string): string {
 - Return public URL, store in `Event.coverImageUrl`
 
 ### Packages Touched
-- [ ] `@boletify/api` — `eventRouter.create`
-- [ ] `@boletify/db` — `events`, `ticketTiers` tables
-- [ ] `@boletify/screens` — event creation screen (wizard)
-- [ ] `@boletify/features` — `useCreateEvent` mutation hook
-- [ ] `apps/web` — cover image upload component
-- [ ] `apps/mobile` — cover image upload component (camera + gallery)
+- [x] `@boletify/api` — `eventRouter.create`, `eventRouter.createTicketTier`
+- [x] `@boletify/db` — `events`, `ticketTiers` tables
+- [x] `apps/web` — multi-step creation wizard at `/org/events/create` (453 lines, step 1: details, step 2: ticket tiers)
+- [x] `apps/native` — organiser create screen at `apps/native/app/org/create.tsx` (243 lines)
+- [ ] `apps/web` — cover image upload component (deferred — no Vercel Blob yet)
 - [ ] Vercel Blob: `BLOB_READ_WRITE_TOKEN`
 
 ---

@@ -21,13 +21,14 @@ export const Routes = {
   AUTH_SIGNUP: '/auth/signup',
   ACCOUNT: '/account',
 
-  // Organiser - Dashboard
-  ORGANIZER_DASHBOARD: '/dashboard',
-  ORGANIZER_EVENTS: '/dashboard/events',
-  ORGANIZER_CREATE_EVENT: '/dashboard/events/create',
-  ORGANIZER_EDIT_EVENT: (id: string) => `/dashboard/events/${id}/edit`,
-  ORGANIZER_ORDERS: '/dashboard/orders',
-  ORGANIZER_TICKETS: '/dashboard/tickets',
+  // Organiser - Dashboard (protected under /org/ by middleware)
+  ORGANIZER_DASHBOARD: '/org/dashboard',
+  ORGANIZER_EVENTS: '/org/events',
+  ORGANIZER_CREATE_EVENT: '/org/events/create',
+  ORGANIZER_EDIT_EVENT: (id: string) => `/org/events/${id}/edit`,
+  ORGANIZER_EVENT_DETAIL: (id: string) => `/org/events/${id}`,
+  ORGANIZER_ORDERS: '/org/orders',
+  ORGANIZER_SETTINGS: '/org/settings',
 } as const;
 
 export type DynamicRoute = (id: string) => string;

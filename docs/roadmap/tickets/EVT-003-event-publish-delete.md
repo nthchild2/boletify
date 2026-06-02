@@ -3,7 +3,7 @@
 **Epic:** Events
 **Ticket ID:** EVT-003
 **Type:** feature
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 
 ---
 

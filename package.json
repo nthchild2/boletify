@@ -29,10 +29,13 @@
   "dependencies": {
     "@boletify/db": "*",
     "@boletify/routes": "*",
-    "@neondatabase/serverless": "^1.1.0",
+    "@neondatabase/serverless": "0.10.4",
     "drizzle-orm": "^0.39.0",
     "nativewind": "^4.2.3",
     "react-native-reanimated": "^4.3.0",
     "react-native-safe-area-context": "^5.7.0"
+  },
+  "overrides": {
+    "@neondatabase/serverless": "0.10.4"
   }
 }

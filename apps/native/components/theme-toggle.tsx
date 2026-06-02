@@ -10,6 +10,7 @@
 
 import * as React from "react";
 import { View, Text, Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { brickShadows } from "@repo/ui";
 import {
   useTheme,
@@ -20,10 +21,10 @@ import {
 const OPTIONS: ReadonlyArray<{
   value: ResolvedTheme;
   label: string;
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
 }> = [
-  { value: "light", label: "Claro", icon: "☀️" },
-  { value: "dark", label: "Oscuro", icon: "🌙" },
+  { value: "light", label: "Claro", icon: "sunny" },
+  { value: "dark", label: "Oscuro", icon: "moon" },
 ];
 
 // Hardcoded contrast pairs — active pill bg → text/icon color.
@@ -63,11 +64,11 @@ export function ThemeToggle({
               showLabels ? "gap-2 px-3 py-2" : "h-8 w-8"
             }`}
           >
-            <Text
-              style={{ color: active ? activePalette.fg : colors.fgMuted, fontSize: 14 }}
-            >
-              {opt.icon}
-            </Text>
+            <Ionicons
+              name={opt.icon}
+              size={16}
+              color={active ? activePalette.fg : colors.fgMuted}
+            />
             {showLabels ? (
               <Text
                 className="font-body text-overline uppercase"

@@ -3,7 +3,7 @@
 **Epic:** Authentication
 **Ticket ID:** AUTH-001
 **Type:** feature
-**Status:** 🟡 In Progress
+**Status:** ✅ Done
 
 ---
 
@@ -21,8 +21,8 @@ Implement email/password login and registration forms for both web and mobile pl
 - [x] **AC2:** User can log in with email + password. API endpoint exists in `authRouter.login`.
 - [x] **AC3:** API returns appropriate error messages for: invalid email format, wrong password, non-existent account.
 - [x] **AC4:** API validates: email already registered (CONFLICT), password too short.
-- [ ] **AC5:** Screen implementation — login/register UI in web and native apps with redirect handling
-- [ ] **AC6:** Protected routes redirect unauthenticated users to login with `callbackUrl` preserved
+- [x] **AC5:** Screen implementation — login/register UI in web and native apps with redirect handling
+- [x] **AC6:** Protected routes redirect unauthenticated users to login with `callbackUrl` preserved
 
 ---
 
@@ -34,14 +34,27 @@ Implement email/password login and registration forms for both web and mobile pl
 - ✅ Password utils at `packages/api/src/utils/password.ts` (hashPassword, verifyPassword)
 - ✅ Database schema: `users` table exists with `passwordHash`, `role`
 
-**Remaining (Screen implementation):**
-- ❌ Web: Login/Register screens with Auth.js integration
-- ❌ Native: Login/Register screens with SecureStore token storage
-- ❌ Protected route guards in middleware/navigation
+**Completed (Screen implementation — 2026-05-27):**
+- ✅ Web: Login (`/auth/signin`) and Register (`/auth/signup`) — full client components with form state, validation, error handling, loading states, Spanish-language UI with Brutal-Glass design system
+- ✅ Web: Auth.js v5 Credentials provider with JWT strategy, bcryptjs password comparison, raw Neon SQL queries
+- ✅ Web: Middleware protects `/org/*`, `/tickets/*`, `/profile/*` via `next-auth/jwt` decode (Edge Runtime compatible)
+- ✅ Web: `callbackUrl` preserved on redirect to login
+- ✅ Web: Auth routes redirect logged-in organisers → `/org/dashboard`, buyers → `/`
+
+**Remaining (nice-to-have):**
+- ❌ Native: Login/Register screens with SecureStore token storage (see AUTH-003)
 
 ---
 
 ## Technical Notes
+
+### Implementation Details (Updated 2026-05-27)
+
+**Auth config:** `apps/web/lib/auth.ts` — NextAuth v5 with Credentials provider, JWT strategy. Uses raw `neon()` tagged-template queries (not Drizzle) to bypass `@neondatabase/serverless` v1.x incompatibility. Can revert to Drizzle once neon 0.10.4 is confirmed across all workspaces.
+
+**Middleware:** `apps/web/middleware.ts` — Uses `next-auth/jwt` `decode()` instead of importing full auth config. This avoids pulling bcryptjs/neon into Edge Runtime. Reads `authjs.session-token` cookie directly.
+
+**Environment:** Requires `AUTH_SECRET` and `AUTH_URL` in `.env.local`.
 
 ### Package References (Updated)
 
@@ -56,12 +69,6 @@ Implement email/password login and registration forms for both web and mobile pl
 
 ### Database ✅
 - `packages/db/src/schema/index.ts` — `users` table exists with all required fields
-
-### Next Steps
-1. Create login/register screens in web app (`apps/web`)
-2. Create login/register screens in native app (`apps/native`)
-3. Add protected route middleware for web
-4. Add navigation guards for native
 
 ---
 

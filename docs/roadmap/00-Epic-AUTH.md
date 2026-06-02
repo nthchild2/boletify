@@ -1,7 +1,7 @@
 # Epic: Authentication
 
 **Epic ID:** AUTH
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 
 ---
 
@@ -17,7 +17,7 @@ Foundation authentication layer covering login, registration, and session manage
 
 | Ticket ID | Title | Status |
 |-----------|-------|--------|
-| AUTH-001 | Login / Register Forms | TODO |
+| AUTH-001 | Login / Register Forms | ✅ Done |
 | AUTH-002 | Magic Link Ticket Access | TODO |
 | AUTH-003 | Mobile Token Auth (Bearer) | TODO |
 | AUTH-004 | Google OAuth | TODO |
@@ -32,12 +32,14 @@ All auth tickets now consume `@boletify/api` which provides:
 - tRPC procedures: `publicProcedure`, `protectedProcedure`
 - Auth router: `auth.register`, `auth.login`, `auth.getCurrentUser`
 
-### Web Auth Flow
+### Web Auth Flow (Updated 2026-05-27)
 
-- Auth.js v5 with Drizzle adapter
-- Database sessions (not JWT — allows server-side invalidation)
-- Cookie: `__Secure-session-token`, `HttpOnly`, `SameSite=Lax`, `Secure`
-- Middleware in `apps/web/middleware.ts` using navigation guards
+- Auth.js v5 with Credentials provider (raw neon SQL queries — bypasses Drizzle/neon version mismatch)
+- JWT strategy (not DB sessions — avoids Edge Runtime incompatibility with bcryptjs in middleware)
+- Cookie: `authjs.session-token` (dev) / `__Secure-authjs.session-token` (prod)
+- Middleware in `apps/web/middleware.ts` uses `next-auth/jwt` `decode()` for Edge-compatible session verification
+- Protected routes: `/org/*`, `/tickets/*`, `/profile/*`
+- Auth routes redirect logged-in users: organisers → `/org/dashboard`, buyers → `/`
 
 ### Mobile Auth Flow
 

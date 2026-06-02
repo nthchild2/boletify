@@ -3,7 +3,7 @@
 **Epic:** Organiser Dashboard
 **Ticket ID:** ORG-002
 **Type:** feature
-**Status:** TODO
+**Status:** 🟡 In Progress
 
 ---
 

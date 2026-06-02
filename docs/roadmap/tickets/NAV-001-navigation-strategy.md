@@ -3,7 +3,7 @@
 **Epic:** Infrastructure
 **Ticket ID:** NAV-001
 **Type:** spike
-**Status:** TODO
+**Status:** ✅ Done
 
 ---
 
