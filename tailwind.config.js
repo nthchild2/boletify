@@ -3,8 +3,15 @@ const path = require("path");
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    path.join(__dirname, "apps/**/*.{js,jsx,ts,tsx}"),
-    path.join(__dirname, "packages/**/*.{js,jsx,ts,tsx}"),
+    path.join(__dirname, "apps/**/src/**/*.{js,jsx,ts,tsx}"),
+    path.join(__dirname, "apps/web/app/**/*.{js,jsx,ts,tsx}"),
+    path.join(__dirname, "apps/web/components/**/*.{js,jsx,ts,tsx}"),
+    path.join(__dirname, "apps/web/lib/**/*.{js,jsx,ts,tsx}"),
+    path.join(__dirname, "apps/native/app/**/*.{js,jsx,ts,tsx}"),
+    path.join(__dirname, "apps/native/components/**/*.{js,jsx,ts,tsx}"),
+    path.join(__dirname, "apps/native/lib/**/*.{js,jsx,ts,tsx}"),
+    path.join(__dirname, "packages/ui/src/**/*.{js,jsx,ts,tsx}"),
+    path.join(__dirname, "packages/routes/src/**/*.{js,jsx,ts,tsx}"),
   ],
   presets: [require("nativewind/preset")],
   // Dark mode is opt-in via the `.dark` class applied to the root element.
