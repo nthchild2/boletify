@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { neon } from "@neondatabase/serverless";
 import { Routes, deriveSaleStatus, formatMxnPrice } from "@boletify/routes";
-import { getBaseUrl } from "../../../lib/base-url";
 import {
   BrutalButton,
   Container,
@@ -10,7 +10,6 @@ import {
   TicketArtifact,
 } from "../../../components/brutal-glass";
 import type { EventRecord } from "../../../lib/mock-data";
-import { featuredEvents } from "../../../lib/mock-data";
 
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return "POR CONFIRMAR";
@@ -31,17 +30,64 @@ function formatTime(dateStr: string | null): string {
   );
 }
 
-async function fetchEvent(id: string): Promise<EventRecord | null> {
-  const baseUrl = getBaseUrl();
-
+function parseTags(raw: any): string[] {
+  if (Array.isArray(raw)) return raw;
   try {
-    const res = await fetch(`${baseUrl}/api/events/${id}`, {
-      next: { revalidate: 60 },
-    });
+    const s = String(raw || "{}");
+    if (s === "{}") return [];
+    return s.replace(/[{}"]/g, "").split(",").filter(Boolean);
+  } catch {
+    return [];
+  }
+}
 
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (data.error) return null;
+async function fetchEvent(id: string): Promise<EventRecord | null> {
+  try {
+    const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
+    const isNumeric = /^\d+$/.test(id);
+
+    const rows = isNumeric
+      ? await sql`
+          SELECT
+            e.id, e.title, e.slug, e.description,
+            e.venue_name, e.venue_address, e.city,
+            e.genre_tags, e.status, e.start_date, e.end_date,
+            e.cancelled_at, e.cover_image_url,
+            MIN(t.price)                AS min_price_cents,
+            COALESCE(SUM(t.quantity), 0) AS total_quantity,
+            COALESCE(SUM(t.sold), 0)     AS total_sold,
+            MIN(t.sale_start_date)      AS sale_starts_at,
+            MAX(t.sale_end_date)        AS sale_ends_at
+          FROM events e
+          LEFT JOIN ticket_tiers t ON t.event_id = e.id
+          WHERE e.id = ${Number(id)}
+            AND e.status IN ('published', 'cancelled', 'ended')
+          GROUP BY e.id
+          LIMIT 1
+        `
+      : await sql`
+          SELECT
+            e.id, e.title, e.slug, e.description,
+            e.venue_name, e.venue_address, e.city,
+            e.genre_tags, e.status, e.start_date, e.end_date,
+            e.cancelled_at, e.cover_image_url,
+            MIN(t.price)                AS min_price_cents,
+            COALESCE(SUM(t.quantity), 0) AS total_quantity,
+            COALESCE(SUM(t.sold), 0)     AS total_sold,
+            MIN(t.sale_start_date)      AS sale_starts_at,
+            MAX(t.sale_end_date)        AS sale_ends_at
+          FROM events e
+          LEFT JOIN ticket_tiers t ON t.event_id = e.id
+          WHERE e.slug = ${id}
+            AND e.status IN ('published', 'cancelled', 'ended')
+          GROUP BY e.id
+          LIMIT 1
+        `;
+
+    if (rows.length === 0) return null;
+
+    const data: any = rows[0];
+    const tags = parseTags(data.genre_tags);
 
     const sale = deriveSaleStatus({
       status: data.status,
@@ -49,12 +95,10 @@ async function fetchEvent(id: string): Promise<EventRecord | null> {
       endDate: data.end_date,
       saleStartDate: data.sale_starts_at,
       saleEndDate: data.sale_ends_at,
-      totalQuantity: data.total_quantity,
-      totalSold: data.total_sold,
-      minPriceCents: data.min_price_cents,
+      totalQuantity: Number(data.total_quantity ?? 0),
+      totalSold: Number(data.total_sold ?? 0),
+      minPriceCents: data.min_price_cents != null ? Number(data.min_price_cents) : null,
     });
-
-    const tags: string[] = Array.isArray(data.genre_tags) ? data.genre_tags : [];
 
     return {
       id: String(data.id),
@@ -64,8 +108,8 @@ async function fetchEvent(id: string): Promise<EventRecord | null> {
       location: data.city || "CDMX",
       date: formatDate(data.start_date),
       access: formatTime(data.start_date) || "POR CONFIRMAR",
-      price: formatMxnPrice(data.min_price_cents),
-      priceValue: data.min_price_cents ? data.min_price_cents / 100 : 0,
+      price: formatMxnPrice(data.min_price_cents != null ? Number(data.min_price_cents) : null),
+      priceValue: data.min_price_cents ? Number(data.min_price_cents) / 100 : 0,
       status: sale.label,
       category: (tags[0]?.toUpperCase() || "INDIE") as EventRecord["category"],
       posterTitle: data.title.split(" ").slice(0, 2).join("\n"),
@@ -73,11 +117,11 @@ async function fetchEvent(id: string): Promise<EventRecord | null> {
         "bg-[radial-gradient(circle_at_50%_50%,rgba(198,255,46,0.18),transparent_60%),linear-gradient(180deg,#161620_0%,#08080C_100%)]",
       posterImage: data.cover_image_url || undefined,
       accent: "signal",
-      lineup: "", // Will be derived from ticket tiers or description
+      lineup: "",
       description: data.description || "",
     };
   } catch (err) {
-    console.warn("Failed to fetch event from API:", err);
+    console.error("[events/[id]] DB error:", err);
     return null;
   }
 }
@@ -89,12 +133,7 @@ export default async function EventDetailPage({
 }) {
   const { id } = await params;
 
-  // Try API first, fall back to mock data
-  let event = await fetchEvent(id);
-  if (!event) {
-    event = featuredEvents.find((entry) => entry.id === id) ?? null;
-  }
-
+  const event = await fetchEvent(id);
   if (!event) {
     notFound();
   }

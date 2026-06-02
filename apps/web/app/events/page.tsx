@@ -1,5 +1,5 @@
+import { neon } from "@neondatabase/serverless";
 import { deriveSaleStatus, formatMxnPrice } from "@boletify/routes";
-import { getBaseUrl } from "../../lib/base-url";
 import {
   BrutalButton,
   Container,
@@ -84,18 +84,44 @@ function mapApiEvent(e: any) {
 }
 
 async function fetchEvents() {
-  const baseUrl = getBaseUrl();
-
   try {
-    const res = await fetch(`${baseUrl}/api/events`, {
-      next: { revalidate: 60 },
-    });
+    const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
+    const events = await sql`
+      SELECT
+        e.id, e.title, e.description, e.venue_name, e.venue_address,
+        e.city, e.genre_tags, e.status, e.start_date, e.end_date,
+        e.cancelled_at, e.cover_image_url,
+        MIN(t.price)                AS min_price_cents,
+        COALESCE(SUM(t.quantity), 0) AS total_quantity,
+        COALESCE(SUM(t.sold), 0)     AS total_sold,
+        MIN(t.sale_start_date)      AS sale_starts_at,
+        MAX(t.sale_end_date)        AS sale_ends_at
+      FROM events e
+      LEFT JOIN ticket_tiers t ON t.event_id = e.id
+      WHERE e.status IN ('published', 'cancelled', 'ended')
+      GROUP BY e.id
+      ORDER BY e.start_date DESC
+    `;
 
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (!Array.isArray(data)) return null;
-    return data.map(mapApiEvent);
-  } catch {
+    return events.map((e: any) => {
+      let tags: string[] = [];
+      try {
+        const raw = String(e.genre_tags || "{}");
+        if (raw && raw !== "{}") {
+          tags = raw.replace(/[{}"]/g, "").split(",").filter(Boolean);
+        }
+      } catch { /* swallow */ }
+
+      return mapApiEvent({
+        ...e,
+        genre_tags: tags,
+        total_quantity: Number(e.total_quantity ?? 0),
+        total_sold: Number(e.total_sold ?? 0),
+        min_price_cents: e.min_price_cents != null ? Number(e.min_price_cents) : null,
+      });
+    });
+  } catch (err) {
+    console.error("[events] DB error:", err);
     return null;
   }
 }
