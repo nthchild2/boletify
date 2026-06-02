@@ -14,7 +14,7 @@ export async function GET(
 ) {
   try {
   const { id } = await params;
-  const sql = neon(process.env.DATABASE_URL!);
+  const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
 
   // Accept both numeric IDs ("42") and slugs ("noche-indie-rock-2026-05-17-cdmx").
   // Use separate queries to avoid nesting sql`` tagged templates (unsupported by neon).

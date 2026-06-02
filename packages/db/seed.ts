@@ -1,6 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 
-const sql = neon(process.env.DATABASE_URL!);
+const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
 
 async function seed() {
   const orgs = await sql`SELECT id FROM organiser_profiles LIMIT 1`;

@@ -11,7 +11,7 @@ import { genSalt, hash } from 'bcryptjs';
 
 export async function POST() {
   try {
-    const sql = neon(process.env.DATABASE_URL!);
+    const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
     const email = 'org@boletify.com';
     const rawPassword = 'org12345';
     const name = 'Carlos Organiser';

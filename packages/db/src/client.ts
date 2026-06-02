@@ -7,9 +7,9 @@ let _db: DbClient | null = null;
 
 function getDb(): DbClient {
   if (!_db) {
-    const databaseUrl = process.env.DATABASE_URL;
+    const databaseUrl = process.env.BOLETIFY_DATABASE_URL;
     if (!databaseUrl) {
-      throw new Error('DATABASE_URL environment variable is not set');
+      throw new Error('BOLETIFY_DATABASE_URL environment variable is not set');
     }
     _db = drizzle(neon(databaseUrl));
   }
@@ -29,6 +29,6 @@ function createLazyProxy<T extends object>(getter: () => T): T {
 }
 
 export const db = createLazyProxy(getDb);
-export const sql = createLazyProxy(() => neon(process.env.DATABASE_URL || ''));
+export const sql = createLazyProxy(() => neon(process.env.BOLETIFY_DATABASE_URL || ''));
 
 export default db;

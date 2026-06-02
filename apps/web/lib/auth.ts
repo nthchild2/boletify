@@ -30,7 +30,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = (credentials.email as string).toLowerCase();
         const password = credentials.password as string;
 
-        const sql = neon(process.env.DATABASE_URL!);
+        const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
         const rows = await sql`
           SELECT id, email, name, role, password_hash
           FROM users

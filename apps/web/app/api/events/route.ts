@@ -12,7 +12,7 @@ import { neon } from '@neondatabase/serverless';
  */
 export async function GET() {
   try {
-  const sql = neon(process.env.DATABASE_URL!);
+  const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
 
   const events = await sql`
     SELECT
