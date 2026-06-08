@@ -65,6 +65,27 @@ export default function OrgEventDetailPage({
         Eventos
       </Link>
 
+      {/* Draft banner */}
+      {event.status === "draft" && (
+        <div className="mb-6 flex items-center justify-between rounded-lg border border-sun-400/30 bg-sun-400/10 px-5 py-4">
+          <div>
+            <div className="font-body text-[14px] font-semibold text-sun-500">
+              Este evento es un borrador
+            </div>
+            <div className="mt-0.5 text-[13px] text-fg-muted">
+              No es visible para los compradores. Publícalo cuando esté listo.
+            </div>
+          </div>
+          <button
+            onClick={() => publishMutation.mutate({ id: event.id })}
+            disabled={publishMutation.isPending}
+            className="inline-flex items-center gap-2 rounded-md border border-border-ink bg-primary px-5 py-2.5 font-body text-[13px] font-semibold uppercase tracking-[0.04em] text-primary-fg shadow-brick-md transition hover:bg-primary-hover"
+          >
+            {publishMutation.isPending ? "Publicando..." : "Publicar ahora"}
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-8 flex items-start justify-between">
         <div>

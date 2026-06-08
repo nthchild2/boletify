@@ -19,6 +19,7 @@ export const Routes = {
   // Buyer - Account
   AUTH_SIGNIN: '/auth/signin',
   AUTH_SIGNUP: '/auth/signup',
+  AUTH_SIGNUP_ORGANISER: '/auth/signup/organiser',
   ACCOUNT: '/account',
 
   // Organiser - Dashboard (protected under /org/ by middleware)

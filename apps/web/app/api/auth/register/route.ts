@@ -12,7 +12,10 @@ import { eq } from 'drizzle-orm';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, password } = body;
+    const { name, email, password, role: requestedRole } = body;
+
+    // Only allow buyer or organiser self-signup. Admin is invite-only.
+    const role = requestedRole === 'organiser' ? 'organiser' : 'buyer';
 
     // Basic validation
     if (!email || !password || !name) {
@@ -51,7 +54,7 @@ export async function POST(request: Request) {
         email: email.toLowerCase(),
         passwordHash,
         name,
-        role: 'buyer',
+        role,
       })
       .returning();
 
@@ -60,6 +63,23 @@ export async function POST(request: Request) {
         { error: 'No se pudo crear la cuenta' },
         { status: 500 },
       );
+    }
+
+    // If organiser, auto-create organiser profile
+    if (role === 'organiser') {
+      const { organiserProfiles } = await import('@boletify/db/schema');
+      const slug = name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+        || `org-${newUser[0].id}`;
+
+      await db.insert(organiserProfiles).values({
+        userId: newUser[0].id,
+        organiserName: body.organiserName || name,
+        slug,
+        isApproved: true,
+      });
     }
 
     return NextResponse.json({
