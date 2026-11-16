@@ -1,0 +1,24 @@
+<!-- @dsCard group="Core" height=212 subtitle="Solid and error states" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Input — preview</title>
+<style>
+  body { margin: 0; font-family: var(--font-body); }
+  .sec { font-size: var(--text-overline-size); font-weight: 700; letter-spacing: var(--text-overline-tracking); text-transform: uppercase; color: var(--color-fg-muted); margin-bottom: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  #preview { padding: 24px; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; max-width: 640px; }
+</style>
+</head>
+<body>
+<div id="preview"></div>
+<script>
+  var DS = window.BoletifyDesignSystem_c6a0b5, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('preview')).render(h('div', { className: 'cols' },
+    h(DS.Input, { label: 'Nombre del evento', placeholder: 'Ej: Noche de electrónica', hint: 'Como aparecerá en la página' }),
+    h(DS.Input, { label: 'Contraseña', type: 'password', defaultValue: 'secreto', error: 'Email o contraseña incorrectos' })));
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!-- @dsCard group="Core" height=176 subtitle="Liquid surface over the mesh" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>GlassCard — preview</title>
+<style>
+  body { margin: 0; font-family: var(--font-body); }
+  .sec { font-size: var(--text-overline-size); font-weight: 700; letter-spacing: var(--text-overline-tracking); text-transform: uppercase; color: var(--color-fg-muted); margin-bottom: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  body { background: var(--bg-mesh); }
+  #preview { padding: 28px; }
+  .w { max-width: 420px; }
+</style>
+</head>
+<body>
+<div id="preview"></div>
+<script>
+  var DS = window.BoletifyDesignSystem_c6a0b5, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('preview')).render(h('div', { className: 'w' }, h(DS.GlassCard, { intensity: 'md' },
+    h('div', { style: { fontSize: 'var(--text-overline-size)', fontWeight: 700, letterSpacing: 'var(--text-overline-tracking)', textTransform: 'uppercase', color: 'var(--color-fg-muted)' } }, 'Resumen de orden'),
+    h('div', { style: { display: 'flex', justifyContent: 'space-between', marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: 14, color: 'var(--color-fg)' } },
+      h('span', null, '2 × General'), h('span', { className: 'tnum' }, '$900.00 MXN')),
+    h('div', { style: { display: 'flex', justifyContent: 'space-between', marginTop: 8, fontFamily: 'var(--font-mono)', fontSize: 14, color: 'var(--color-fg-muted)' } },
+      h('span', null, 'Cargo de servicio'), h('span', { className: 'tnum' }, '$20.00 MXN')))));
+</script>
+</body>
+</html>

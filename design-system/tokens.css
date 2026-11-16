@@ -1,0 +1,155 @@
+/* Boletify Design System — generated from tokens.json */
+:root, [data-theme="light"] {
+  --ink-1000: #000000;
+  --ink-950: #08080C;
+  --ink-900: #0F0F15;
+  --ink-850: #161620;
+  --ink-800: #1F1F2B;
+  --ink-700: #2E2E3E;
+  --ink-500: #55556A;
+  --ink-400: #787891;
+  --ink-300: #9B9BB3;
+  --ink-200: #C2C2D0;
+  --ink-100: #E4E4EB;
+  --bone-50: #F6F2EA;
+  --bone-100: #EFE9DC;
+  --signal-400: #D7FF3A;
+  --signal-500: #C6FF2E;
+  --signal-600: #9FE600;
+  --signal-900: #2B3300;
+  --rosa-400: #FF6AA9;
+  --rosa-500: #FF2E88;
+  --rosa-600: #D6005F;
+  --oxblood-400: #A32438;
+  --oxblood-500: #7A1020;
+  --leaf-400: #55EBA6;
+  --leaf-500: #20D987;
+  --sun-400: #FFB85C;
+  --sun-500: #FF9E00;
+  --cenote-500: #00B3C7;
+  --color-bg: #F4F4F8;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #FFFFFF;
+  --color-surface-sunken: #E8E8F0;
+  --color-fg: #08080C;
+  --color-fg-secondary: #2E2E3E;
+  --color-fg-muted: #55556A;
+  --color-fg-subtle: #6E6E8A;
+  --color-border: #DDDDE6;
+  --color-border-strong: #B8B8CB;
+  --color-border-ink: #000000;
+  --color-primary: #08080C;
+  --color-primary-fg: #C6FF2E;
+  --color-primary-hover: #0F0F15;
+  --color-primary-pressed: #161620;
+  --color-accent: #D6005F;
+  --color-accent-fg: #F4F4F8;
+  --color-accent-hover: #FF2E88;
+  --color-danger: #7A1020;
+  --color-danger-fg: #F4F4F8;
+  --color-danger-hover: #A32438;
+  --color-success: #20D987;
+  --color-warning: #FF9E00;
+  --color-info: #00B3C7;
+  --color-inverse: #08080C;
+  --color-inverse-fg: #F4F4F8;
+  --color-brick: #000000;
+  --color-glass-tint: rgba(255, 255, 255, 0.60);
+  --color-glass-edge: rgba(0, 0, 0, 0.06);
+  --color-nav-tint: rgba(244, 244, 248, 0.72);
+  --shadow-brick-sm: 3px 3px 0 0 #000000;
+  --shadow-brick-md: 6px 6px 0 0 #000000;
+  --shadow-brick-lg: 10px 10px 0 0 #000000;
+  --shadow-brick-signal: 6px 6px 0 0 #C6FF2E;
+  --shadow-brick-rosa: 6px 6px 0 0 #FF2E88;
+  --shadow-glow-signal: 0 0 32px rgba(198,255,46,0.35), 0 0 64px rgba(198,255,46,0.15);
+  --shadow-glow-rosa: 0 0 32px rgba(255,46,136,0.35), 0 0 64px rgba(255,46,136,0.15);
+  --shadow-glow-focus: 0 0 0 2px #C6FF2E, 0 0 16px rgba(198,255,46,0.45);
+  --shadow-glass-sm: 0 1px 2px 0 rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.60);
+  --shadow-glass-md: 0 12px 32px -8px rgba(0,0,0,0.16), 0 4px 12px -4px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.70);
+  --shadow-glass-lg: 0 32px 80px -16px rgba(0,0,0,0.22), 0 12px 28px -8px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.80);
+}
+[data-theme="dark"] {
+  --color-bg: #08080C;
+  --color-surface: #0F0F15;
+  --color-surface-raised: #161620;
+  --color-surface-sunken: #161620;
+  --color-fg: #F6F2EA;
+  --color-fg-secondary: #C2C2D0;
+  --color-fg-muted: #9B9BB3;
+  --color-fg-subtle: #787891;
+  --color-border: #1F1F2B;
+  --color-border-strong: #2E2E3E;
+  --color-primary: #C6FF2E;
+  --color-primary-fg: #08080C;
+  --color-primary-hover: #D7FF3A;
+  --color-primary-pressed: #9FE600;
+  --color-accent: #FF2E88;
+  --color-accent-fg: #08080C;
+  --color-accent-hover: #FF6AA9;
+  --color-danger-fg: #F6F2EA;
+  --color-inverse: #F6F2EA;
+  --color-inverse-fg: #08080C;
+  --color-glass-tint: rgba(255, 255, 255, 0.05);
+  --color-glass-edge: rgba(255, 255, 255, 0.10);
+  --color-nav-tint: rgba(8, 8, 12, 0.72);
+  --shadow-glass-sm: 0 1px 1px 0 rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+  --shadow-glass-md: 0 8px 24px -4px rgba(0,0,0,0.35), 0 2px 8px -2px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.10);
+  --shadow-glass-lg: 0 24px 64px -12px rgba(0,0,0,0.45), 0 8px 20px -4px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+:root {
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --gutter: 20px;
+  --gutter-lg: 48px;
+  --container-max: 1440px;
+  --radius-0: 0;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-xl: 22px;
+  --radius-2xl: 28px;
+  --radius-3xl: 40px;
+  --radius-full: 9999px;
+  --blur-glass-sm: 20px;
+  --blur-glass-md: 32px;
+  --blur-glass-lg: 40px;
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-heavy: 850;
+  --weight-black: 900;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+.display-2xl { font-family: var(--font-display); font-size: 128px; line-height: 112px; font-weight: 900; letter-spacing: -0.04em; }
+.display-xl { font-family: var(--font-display); font-size: 96px; line-height: 88px; font-weight: 900; letter-spacing: -0.035em; }
+.display-lg { font-family: var(--font-display); font-size: 72px; line-height: 68px; font-weight: 850; letter-spacing: -0.03em; }
+.display-md { font-family: var(--font-display); font-size: 56px; line-height: 56px; font-weight: 800; letter-spacing: -0.025em; }
+.display-sm { font-family: var(--font-display); font-size: 40px; line-height: 44px; font-weight: 800; letter-spacing: -0.02em; }
+.heading-lg { font-family: var(--font-body); font-size: 32px; line-height: 36px; font-weight: 700; letter-spacing: -0.015em; }
+.heading-md { font-family: var(--font-body); font-size: 24px; line-height: 30px; font-weight: 700; letter-spacing: -0.01em; }
+.heading-sm { font-family: var(--font-body); font-size: 18px; line-height: 24px; font-weight: 600; letter-spacing: -0.005em; }
+.body-lg { font-family: var(--font-body); font-size: 18px; line-height: 28px; font-weight: 400; letter-spacing: 0; }
+.body-md { font-family: var(--font-body); font-size: 16px; line-height: 24px; font-weight: 400; letter-spacing: 0; }
+.body-sm { font-family: var(--font-body); font-size: 14px; line-height: 22px; font-weight: 400; letter-spacing: 0; }
+.label { font-family: var(--font-body); font-size: 13px; line-height: 16px; font-weight: 600; letter-spacing: 0.04em; }
+.caption { font-family: var(--font-body); font-size: 12px; line-height: 16px; font-weight: 400; letter-spacing: 0.02em; }
+.overline { font-family: var(--font-body); font-size: 11px; line-height: 16px; font-weight: 700; letter-spacing: 0.16em; }
+.mono-md { font-family: var(--font-mono); font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: 0; }
+.mono-sm { font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: 0; }

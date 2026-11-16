@@ -1,0 +1,21 @@
+<!-- @dsCard group="Brand" height=200 subtitle="Edge-to-edge looping brand band" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Marquee — preview</title>
+<style>
+  body { margin: 0; font-family: var(--font-body); }
+  .sec { font-size: var(--text-overline-size); font-weight: 700; letter-spacing: var(--text-overline-tracking); text-transform: uppercase; color: var(--color-fg-muted); margin-bottom: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  #preview { padding: 24px 0; }
+</style>
+</head>
+<body>
+<div id="preview"></div>
+<script>
+  var DS = window.BoletifyDesignSystem_c6a0b5, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('preview')).render(h(DS.Marquee, { items: ['Descubre', 'Noches', 'Sonidos', 'CDMX', '2026'] }));
+</script>
+</body>
+</html>

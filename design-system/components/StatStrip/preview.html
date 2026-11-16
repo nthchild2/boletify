@@ -1,0 +1,26 @@
+<!-- @dsCard group="Data" height=200 subtitle="Tabular-mono dashboard metrics" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>StatStrip — preview</title>
+<style>
+  body { margin: 0; font-family: var(--font-body); }
+  .sec { font-size: var(--text-overline-size); font-weight: 700; letter-spacing: var(--text-overline-tracking); text-transform: uppercase; color: var(--color-fg-muted); margin-bottom: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  #preview { padding: 16px 32px; }
+</style>
+</head>
+<body>
+<div id="preview"></div>
+<script>
+  var DS = window.BoletifyDesignSystem_c6a0b5, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('preview')).render(h(DS.StatStrip, { stats: [
+    { label: 'Venta bruta · 2026', value: '$1,247,830', delta: '+12.4%' },
+    { label: 'Boletos vendidos', value: '8,421', delta: '+284' },
+    { label: 'Eventos activos', value: '24' },
+    { label: 'Pago próximo', value: 'T+3' }
+  ] }));
+</script>
+</body>
+</html>

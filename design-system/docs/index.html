@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" class="dark" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boletify Design System</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; min-height: 100vh; background: var(--bg-mesh); color: var(--color-fg); font-family: var(--font-body); }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 72px 48px 96px; }
+  .kicker { display: inline-flex; align-items: center; gap: 12px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-xs); padding: 8px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-fg-muted); }
+  .dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--signal-500); box-shadow: var(--shadow-glow-signal); }
+  h1 { margin: 28px 0 0; font-family: var(--font-display); font-size: 104px; font-weight: 900; line-height: 0.9; letter-spacing: -0.04em; }
+  h1 .ify { color: var(--signal-500); }
+  .lede { margin: 24px 0 0; max-width: 620px; font-size: 20px; line-height: 32px; color: var(--color-fg-secondary); }
+  .swatches { display: flex; gap: 10px; margin-top: 40px; flex-wrap: wrap; }
+  .sw { width: 64px; height: 64px; border-radius: var(--radius-md); border: 1.5px solid var(--ink-1000); display:flex; align-items:flex-end; padding:6px; font-family: var(--font-mono); font-size: 9px; }
+  .grid { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card { display: block; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-surface); padding: 28px; box-shadow: var(--shadow-brick-md); transition: transform 120ms var(--ease-fast), box-shadow 120ms var(--ease-fast); }
+  .card:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-brick-lg); }
+  .card:active { transform: translate(6px,6px); box-shadow: none; }
+  .card .ov { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-fg-muted); }
+  .card h3 { margin: 10px 0 0; font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  .card p { margin: 10px 0 0; font-size: 14px; line-height: 22px; color: var(--color-fg-muted); }
+  .card .go { margin-top: 16px; font-family: var(--font-mono); font-size: 13px; color: var(--color-primary); }
+  .meta { margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--color-border); display: flex; flex-wrap: wrap; gap: 28px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; color: var(--color-fg-muted); }
+  .meta b { color: var(--color-fg); font-weight: 500; }
+  .note { margin-top: 24px; font-size: 13px; color: var(--color-fg-subtle); max-width: 620px; line-height: 20px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="kicker"><span class="dot"></span> Brutal-Glass · Ánima Nocturna · 2026</span>
+    <h1>bolet<span class="ify">ify</span></h1>
+    <p class="lede">El sistema de diseño para la plataforma de boletos más transparente de la noche chilanga. Chasis brutalista, artefactos líquidos.</p>
+
+    <div class="swatches">
+      <div class="sw" style="background:var(--signal-500); color:var(--ink-950)">signal</div>
+      <div class="sw" style="background:var(--rosa-500); color:var(--ink-950)">rosa</div>
+      <div class="sw" style="background:var(--oxblood-500); color:var(--bone-50)">oxblood</div>
+      <div class="sw" style="background:var(--leaf-500); color:var(--ink-950)">leaf</div>
+      <div class="sw" style="background:var(--sun-500); color:var(--ink-950)">sun</div>
+      <div class="sw" style="background:var(--cenote-500); color:var(--ink-950)">cenote</div>
+      <div class="sw" style="background:var(--ink-950); color:var(--ink-200); border-color:var(--ink-700)">ink</div>
+      <div class="sw" style="background:var(--bone-50); color:var(--ink-700)">bone</div>
+    </div>
+
+    <div class="grid">
+      <a class="card" href="../ui_kits/buyer-web/index.html">
+        <div class="ov">UI Kit · Dark</div>
+        <h3>Buyer Web</h3>
+        <p>Descubrir → evento → checkout → boleto. El flujo de compra completo con transparencia de precios.</p>
+        <div class="go">Abrir flujo →</div>
+      </a>
+      <a class="card" href="../ui_kits/organiser-web/index.html">
+        <div class="ov">UI Kit · Light</div>
+        <h3>Organiser Panel</h3>
+        <p>Dashboard con métricas tabulares, tabla de eventos y creación de evento en dos pasos.</p>
+        <div class="go">Abrir panel →</div>
+      </a>
+    </div>
+
+    <div class="meta">
+      <span><b>10</b> componentes</span>
+      <span><b>217</b> tokens</span>
+      <span><b>2</b> temas · claro/oscuro</span>
+      <span><b>3</b> familias · Bricolage / Inter / JetBrains Mono</span>
+    </div>
+    <p class="note">Abre la pestaña <b>Design System</b> para ver todas las fichas de fundamentos y componentes. La guía completa está en <b>readme.md</b>; los componentes viven en <b>components/</b> y se cargan vía <span style="font-family:var(--font-mono)">window.BoletifyDesignSystem_c6a0b5</span>.</p>
+  </div>
+</body>
+</html>
