@@ -1,0 +1,28 @@
+<!-- @dsCard group="Core" height=80 subtitle="Sale state and category" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Badge — preview</title>
+<style>
+  body { margin: 0; font-family: var(--font-body); }
+  .sec { font-size: var(--text-overline-size); font-weight: 700; letter-spacing: var(--text-overline-tracking); text-transform: uppercase; color: var(--color-fg-muted); margin-bottom: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  #preview { padding: 24px; }
+</style>
+</head>
+<body>
+<div id="preview"></div>
+<script>
+  var DS = window.BoletifyDesignSystem_c6a0b5, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('preview')).render(h('div', { className: 'row' },
+    h(DS.Badge, { variant: 'signal' }, 'En venta'),
+    h(DS.Badge, { variant: 'rosa' }, 'Últimos'),
+    h(DS.Badge, { variant: 'oxblood' }, 'Agotado'),
+    h(DS.Badge, { variant: 'leaf' }, 'Válido'),
+    h(DS.Badge, { variant: 'sun' }, 'OXXO pendiente'),
+    h(DS.Badge, { variant: 'cenote' }, 'Info'),
+    h(DS.Badge, { variant: 'ink' }, 'Indie')));
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+/* ================================================================== *
+ *  BOLETIFY DESIGN SYSTEM — "Brutal-Glass · Ánima Nocturna" (2026)    *
+ *                                                                    *
+ *  Single global-CSS entry point. Consumers link THIS file only.     *
+ *  It is a manifest of @import lines — no rules live here directly.   *
+ *                                                                    *
+ *  Light is the default theme (organiser dashboards, slate + ink).   *
+ *  Set data-theme="dark" on <html> for the buyer experience          *
+ *  (ink chassis, signal-lime CTAs, glass artifacts).                 *
+ * ================================================================== */
+
+@import url("./tokens.css");            /* every token — generated from tokens.json */
+@import url("./components/bundle.css"); /* fonts, type-scale vars, motion, mesh, base */

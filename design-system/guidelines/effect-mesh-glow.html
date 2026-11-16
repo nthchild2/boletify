@@ -1,0 +1,35 @@
+<!-- @dsCard group="Brand" viewport="700x230" name="Mesh Gradient & Glow" subtitle="Three-blob radial mesh hero background + reactive signal/rosa glow." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--font-body); padding: 0; }
+  .wrap { position:relative; height: 230px; background: var(--ink-950); overflow:hidden; }
+  /* dark mesh applied via .dark scope on wrap */
+  .mesh { position:absolute; inset:0; background:
+    radial-gradient(1200px 600px at 15% 10%, rgba(198,255,46,0.18), transparent 60%),
+    radial-gradient(900px 700px at 85% 20%, rgba(255,46,136,0.22), transparent 55%),
+    radial-gradient(800px 800px at 50% 110%, rgba(122,16,32,0.35), transparent 60%); }
+  .content { position:relative; padding: 30px 34px; }
+  .cap { display:block; margin-bottom: 22px; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-300); }
+  .glows { display:flex; gap: 28px; }
+  .dot { width: 56px; height: 56px; border-radius: 9999px; }
+  .lbl { margin-top: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-300); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="mesh"></div>
+    <div class="content">
+      <span class="cap">MESH&nbsp;HERO · REACTIVE&nbsp;GLOW</span>
+      <div class="glows">
+        <div><div class="dot" style="background:var(--signal-500); box-shadow:var(--shadow-glow-signal)"></div><div class="lbl">glow-signal</div></div>
+        <div><div class="dot" style="background:var(--rosa-500); box-shadow:var(--shadow-glow-rosa)"></div><div class="lbl">glow-rosa</div></div>
+        <div><div class="dot" style="background:var(--ink-850); border:2px solid var(--signal-500); box-shadow:var(--shadow-glow-focus)"></div><div class="lbl">glow-focus</div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

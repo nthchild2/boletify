@@ -1,0 +1,25 @@
+<!-- @dsCard group="Type" viewport="700x250" name="Mono · JetBrains · Tabular Numbers" subtitle="Every price, date, ticket ID & timer. tabular-nums, always." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--font-body); background: var(--ink-950); padding: 28px 30px; color: var(--bone-50); }
+  .cap { display:block; margin-bottom: 18px; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-300); }
+  .grid { display:grid; grid-template-columns: repeat(2, 1fr); gap: 14px 28px; }
+  .item { border-bottom: 1px solid var(--ink-800); padding-bottom: 12px; }
+  .k { font-family: var(--font-body); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-400); margin-bottom: 6px; }
+  .v { font-family: var(--font-mono); font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; font-size: 22px; }
+</style>
+</head>
+<body>
+  <span class="cap">MONO · TABULAR&nbsp;NUMERALS</span>
+  <div class="grid">
+    <div class="item"><div class="k">Precio</div><div class="v" style="color:var(--signal-500)">$450.00 MXN</div></div>
+    <div class="item"><div class="k">Fecha · acceso</div><div class="v">Sáb 15 · 21:00</div></div>
+    <div class="item"><div class="k">Ticket ID</div><div class="v">TCK-0412-0091</div></div>
+    <div class="item"><div class="k">Cuenta regresiva</div><div class="v">02:14:09</div></div>
+  </div>
+</body>
+</html>

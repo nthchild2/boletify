@@ -1,0 +1,27 @@
+<!-- @dsCard group="Events" height=560 subtitle="Poster event card with sale badge" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>EventCard — preview</title>
+<style>
+  body { margin: 0; font-family: var(--font-body); }
+  .sec { font-size: var(--text-overline-size); font-weight: 700; letter-spacing: var(--text-overline-tracking); text-transform: uppercase; color: var(--color-fg-muted); margin-bottom: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  #preview { padding: 24px; }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 300px)); gap: 24px; }
+</style>
+</head>
+<body>
+<div id="preview"></div>
+<script>
+  var DS = window.BoletifyDesignSystem_c6a0b5, h = React.createElement;
+  var indie = { id: 'noche-indie-rock', posterTitle: 'Nubes\nOscuras', category: 'INDIE', status: 'En venta', statusVariant: 'signal', date: 'SÁB 17 MAY', access: '21:00', venue: 'Foro Puebla', location: 'Roma Nte', price: '$450 MXN',
+    posterBackground: 'radial-gradient(circle at 30% 80%, rgba(255,46,136,0.55), transparent 55%), radial-gradient(circle at 80% 20%, rgba(198,255,46,0.35), transparent 52%), linear-gradient(180deg,#24112B,#140C1A)' };
+  var cumbia = { id: 'sonido-del-valle', posterTitle: 'Sonido\ndel Valle', category: 'CUMBIA', status: 'Últimos', statusVariant: 'rosa', date: 'VIE 23 MAY', access: '22:30', venue: 'Salón Los Ángeles', location: 'Obrera', price: '$350 MXN',
+    posterBackground: 'radial-gradient(circle at 50% 100%, rgba(122,16,32,0.72), transparent 55%), radial-gradient(circle at 20% 10%, rgba(255,158,0,0.28), transparent 58%), linear-gradient(180deg,#2B1112,#12090B)' };
+  ReactDOM.createRoot(document.getElementById('preview')).render(h('div', { className: 'cards' },
+    h(DS.EventCard, { event: indie, href: '#' }), h(DS.EventCard, { event: cumbia, href: '#' })));
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!-- @dsCard group="Brand" viewport="700x250" name="Glass Shadows · Material" subtitle="Layered drop + inner catch-light + backdrop-blur. For artifacts." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--font-body); padding: 30px 36px; background: var(--bg-mesh); }
+  .dark body, body.darkwrap { }
+  .cap { display:block; margin-bottom: 24px; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-500); }
+  .row { display:flex; gap: 28px; align-items:flex-start; }
+  .col { text-align:center; }
+  .glass { width: 150px; height: 88px; border-radius: var(--radius-2xl); border: 1px solid var(--color-glass-edge); background: var(--color-glass-tint); backdrop-filter: blur(var(--blur-glass-md)); -webkit-backdrop-filter: blur(var(--blur-glass-md)); }
+  .n { margin-top: 14px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-700); }
+</style>
+</head>
+<body>
+  <span class="cap">SHADOW · GLASS&nbsp;FAMILY</span>
+  <div class="row">
+    <div class="col"><div class="glass" style="box-shadow:var(--shadow-glass-sm)"></div><div class="n">glass-sm · blur 20</div></div>
+    <div class="col"><div class="glass" style="box-shadow:var(--shadow-glass-md)"></div><div class="n">glass-md · blur 32</div></div>
+    <div class="col"><div class="glass" style="box-shadow:var(--shadow-glass-lg)"></div><div class="n">glass-lg · blur 40</div></div>
+  </div>
+</body>
+</html>

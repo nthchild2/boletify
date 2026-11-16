@@ -1,0 +1,80 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Boletify Design System</title>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--color-bg); color: var(--color-fg); font-family: var(--font-body); overflow: hidden; }
+  .cover { position: relative; width: 960px; height: 288px; overflow: hidden; }
+  .band { position: absolute; left: 0; top: 0; width: 960px; height: 120px; }
+  .band svg { display: block; }
+  .deep { fill: var(--color-inverse); }
+  .lime { fill: var(--signal-500); }
+  .rosa { fill: var(--rosa-500); }
+  .ox { fill: var(--oxblood-500); }
+  .brick { fill: var(--color-brick); }
+  .cut { fill: var(--color-bg); }
+  .words { position: absolute; left: 32px; right: 32px; bottom: 32px; }
+  .name { margin: 0; font-family: var(--font-display); font-size: 64px; line-height: .95; font-weight: 850; letter-spacing: -0.03em; color: var(--color-fg); white-space: nowrap; }
+  .tag { margin: 8px 0 0 2px; font-size: 14px; line-height: 20px; color: var(--color-fg-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="band" aria-hidden="true">
+<svg viewBox="0 0 960 120" width="960" height="120">
+<!--
+  blocks      color-inverse 272×104 (ink on light, bone on dark) · signal-500 304×104 (the largest, where you act) · rosa-500 176×104 · oxblood-500 64×104 (stop, kept small) — each bled off the top, each with a shadow-brick-md (6px, color-brick) under it; ≈30% of 960×288
+  arrangement a strip of unequal bands across the top (the brand composes in bands: marquee, kicker, ticket stub), radius-0 brutal corners, space-4 gutters, 32px gutter-lg-ish inset = space-8
+  pattern     the ticket: a perforation row of radius-full discs cut in color-bg at a space-4 pitch through lime and rosa, with two die-cut half-discs (space-6 wide) at the lime block's ends — "the one allowed skeuomorphism (perforation, die-cut)"
+  scales      sides in space-4 multiples; gutters space-4; perforation pitch space-4, disc space-1 radius; notches space-3 radius; corners radius-0
+-->
+<rect class="brick" x="38" y="-10" width="272" height="104"/>
+<rect class="deep" x="32" y="-16" width="272" height="104"/>
+<rect class="brick" x="326" y="-10" width="304" height="104"/>
+<rect class="lime" x="320" y="-16" width="304" height="104"/>
+<rect class="brick" x="646" y="-10" width="176" height="104"/>
+<rect class="rosa" x="640" y="-16" width="176" height="104"/>
+<rect class="brick" x="838" y="-10" width="64" height="104"/>
+<rect class="ox" x="832" y="-16" width="64" height="104"/>
+<circle class="cut" cx="320" cy="56" r="12"/>
+<circle class="cut" cx="624" cy="56" r="12"/>
+<circle class="cut" cx="344" cy="56" r="4"/>
+<circle class="cut" cx="360" cy="56" r="4"/>
+<circle class="cut" cx="376" cy="56" r="4"/>
+<circle class="cut" cx="392" cy="56" r="4"/>
+<circle class="cut" cx="408" cy="56" r="4"/>
+<circle class="cut" cx="424" cy="56" r="4"/>
+<circle class="cut" cx="440" cy="56" r="4"/>
+<circle class="cut" cx="456" cy="56" r="4"/>
+<circle class="cut" cx="472" cy="56" r="4"/>
+<circle class="cut" cx="488" cy="56" r="4"/>
+<circle class="cut" cx="504" cy="56" r="4"/>
+<circle class="cut" cx="520" cy="56" r="4"/>
+<circle class="cut" cx="536" cy="56" r="4"/>
+<circle class="cut" cx="552" cy="56" r="4"/>
+<circle class="cut" cx="568" cy="56" r="4"/>
+<circle class="cut" cx="584" cy="56" r="4"/>
+<circle class="cut" cx="600" cy="56" r="4"/>
+<circle class="cut" cx="616" cy="56" r="4"/>
+<circle class="cut" cx="656" cy="56" r="4"/>
+<circle class="cut" cx="672" cy="56" r="4"/>
+<circle class="cut" cx="688" cy="56" r="4"/>
+<circle class="cut" cx="704" cy="56" r="4"/>
+<circle class="cut" cx="720" cy="56" r="4"/>
+<circle class="cut" cx="736" cy="56" r="4"/>
+<circle class="cut" cx="752" cy="56" r="4"/>
+<circle class="cut" cx="768" cy="56" r="4"/>
+<circle class="cut" cx="784" cy="56" r="4"/>
+<circle class="cut" cx="800" cy="56" r="4"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Boletify Design System</h1>
+<p class="tag">Brutal-Glass · Ánima Nocturna</p>
+</div>
+</div>
+</body>
+</html>
