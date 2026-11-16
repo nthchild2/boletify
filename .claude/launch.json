@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "-w", "web", "--", "-p", "3001"],
+      "env": { "PORT": "3001", "AUTH_URL": "http://localhost:3001" },
+      "port": 3001
+    },
+    {
+      "name": "native-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "web", "-w", "native", "--", "--port", "8081"],
+      "env": { "EXPO_PUBLIC_API_URL": "http://localhost:3001" },
+      "port": 8081
+    }
+  ]
+}
