@@ -1,6 +1,7 @@
 import QRCode from "qrcode";
 import { Routes, formatMxnPrice } from "@boletify/routes";
 import { getOrderForBuyer, type BuyerOrder } from "@boletify/api/checkout";
+import { orderAccessKey } from "@boletify/api/codes";
 import { BrutalButton, Container, PageShell, SiteNav } from "../../../components/brutal-glass";
 
 export const dynamic = "force-dynamic";
@@ -93,6 +94,14 @@ export default async function OrderPage({
           <span className="text-fg">{order.buyerEmail}</span>. Guarda esta página y muestra el código QR en
           la entrada; cada boleto tiene el suyo.
         </p>
+        <div className="mt-6 flex flex-wrap gap-4">
+          <BrutalButton href={`${Routes.TICKET_DETAIL(order.orderNumber)}?k=${orderAccessKey(order.orderNumber)}`}>
+            Ver en pantalla completa
+          </BrutalButton>
+          <BrutalButton href={Routes.MY_TICKETS} variant="secondary">
+            Mis boletos
+          </BrutalButton>
+        </div>
 
         <div className="mt-10 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
           <ul className="grid gap-6 sm:grid-cols-2">

@@ -27,6 +27,7 @@ import { db, events, orders, payments, ticketTiers, tickets } from '@boletify/db
 import { calculateOrderAmounts, type OrderAmounts } from './fees';
 import { generateOrderNumber, generateTicketNumber, signTicketQr } from './codes';
 import { getStripe } from './stripe';
+import { sendOrderConfirmation } from './tickets';
 
 /** How long an unpaid card order keeps its tickets reserved. */
 export const HOLD_MINUTES = 30;
@@ -371,11 +372,14 @@ export async function markOrderPaid(intent: Stripe.PaymentIntent): Promise<void>
     return;
   }
 
+  let becamePaid = false;
   if (order.status === 'pending') {
-    await db
+    const updated = await db
       .update(orders)
       .set({ status: 'paid', paymentMethod: 'card', updatedAt: new Date() })
-      .where(and(eq(orders.id, order.id), eq(orders.status, 'pending')));
+      .where(and(eq(orders.id, order.id), eq(orders.status, 'pending')))
+      .returning({ id: orders.id });
+    becamePaid = updated.length === 1;
   }
 
   // Safe to repeat: only flips tickets that are still pending.
@@ -385,6 +389,10 @@ export async function markOrderPaid(intent: Stripe.PaymentIntent): Promise<void>
     .where(and(eq(tickets.orderId, order.id), eq(tickets.status, 'pending')));
 
   await recordPayment(order.id, intent, 'succeeded');
+
+  // Only the call that flipped the order to paid sends the email, so webhook
+  // retries and the confirmation-page fallback never send it twice.
+  if (becamePaid) await sendOrderConfirmation(order.orderNumber);
 
   // Store Stripe's actual processing fee (best effort).
   try {

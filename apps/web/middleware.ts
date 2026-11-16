@@ -67,8 +67,8 @@ export async function middleware(request: NextRequest) {
 
   const isAuthenticated = !!session?.email;
 
+  // /tickets is not here: guests reach it through a magic link (see app/tickets).
   const isProtectedRoute = request.nextUrl.pathname.startsWith('/org') ||
-    request.nextUrl.pathname.startsWith('/tickets') ||
     request.nextUrl.pathname.startsWith('/profile');
 
   const isAuthRoute = request.nextUrl.pathname.startsWith('/auth/signin') ||
@@ -94,7 +94,6 @@ export const config = {
   matcher: [
     '/api/:path*',
     '/org/:path*',
-    '/tickets/:path*',
     '/profile/:path*',
     '/auth/signin',
     '/auth/signup',

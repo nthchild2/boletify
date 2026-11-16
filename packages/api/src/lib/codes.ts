@@ -37,6 +37,20 @@ export function signTicketQr(ticketNumber: string): string {
   return `${ticketNumber}.${sign(ticketNumber)}`;
 }
 
+/**
+ * Key for the "view this order" link in the confirmation email. Whoever has
+ * the email already has the QR codes, so the link grants nothing extra.
+ */
+export function orderAccessKey(orderNumber: string): string {
+  return sign(`order:${orderNumber}`);
+}
+
+export function verifyOrderAccessKey(orderNumber: string, key: string): boolean {
+  const given = Buffer.from(key);
+  const expected = Buffer.from(orderAccessKey(orderNumber));
+  return given.length === expected.length && timingSafeEqual(given, expected);
+}
+
 /** Returns the ticket number if the QR payload's signature is valid, otherwise null. */
 export function verifyTicketQr(payload: string): string | null {
   const dot = payload.lastIndexOf('.');
