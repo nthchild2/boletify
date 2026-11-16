@@ -131,6 +131,14 @@ export function deriveSaleStatus(input: SaleStatusInput): SaleStatus {
 }
 
 /**
+ * True when buyers can start a paid checkout for this status. Free events
+ * ("GRATIS") need the RSVP flow, which isn't built yet.
+ */
+export function isSaleOpen(sale: Pick<SaleStatus, "label">): boolean {
+  return sale.label === "EN VENTA" || sale.label === "ÚLTIMOS";
+}
+
+/**
  * Formats a MXN cents value as a display string. Returns "GRATIS" for 0
  * and "POR CONFIRMAR" for null/undefined so call sites don't have to
  * branch separately.

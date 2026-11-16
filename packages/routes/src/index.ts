@@ -45,6 +45,7 @@ export default Routes;
 export {
   deriveSaleStatus,
   formatMxnPrice,
+  isSaleOpen,
   type SaleStatus,
   type SaleStatusInput,
   type SaleStatusVariant,

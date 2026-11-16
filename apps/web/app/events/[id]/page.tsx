@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { neon } from "@neondatabase/serverless";
-import { Routes, deriveSaleStatus, formatMxnPrice } from "@boletify/routes";
+import { Routes, deriveSaleStatus, formatMxnPrice, isSaleOpen } from "@boletify/routes";
 import {
   BrutalButton,
   Container,
@@ -170,9 +170,21 @@ export default async function EventDetailPage({
             </div>
 
             <div className="mt-10 flex flex-wrap gap-4">
-              <BrutalButton href={Routes.CHECKOUT(event.id)} size="xl">
-                Comprar boletos
-              </BrutalButton>
+              {isSaleOpen({ label: event.status }) ? (
+                <BrutalButton href={Routes.CHECKOUT(event.id)} size="xl">
+                  Comprar boletos
+                </BrutalButton>
+              ) : (
+                <BrutalButton size="xl" disabled>
+                  {event.status === "PRÓXIMAMENTE"
+                    ? "Venta próximamente"
+                    : event.status === "AGOTADO"
+                      ? "Agotado"
+                      : event.status === "GRATIS"
+                        ? "Registro próximamente"
+                        : "Venta cerrada"}
+                </BrutalButton>
+              )}
               <BrutalButton variant="accent" size="xl">
                 Guardar evento
               </BrutalButton>

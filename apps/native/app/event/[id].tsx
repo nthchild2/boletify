@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Routes, deriveSaleStatus, formatMxnPrice, type SaleStatusVariant } from "@boletify/routes";
+import * as Linking from "expo-linking";
+import { Routes, deriveSaleStatus, formatMxnPrice, isSaleOpen, type SaleStatusVariant } from "@boletify/routes";
 import { Badge, Button, GlassCard, Text as UIText } from "@repo/ui";
 import { useThemeColors } from "../../lib/theme";
 
@@ -18,6 +19,7 @@ interface EventDetail {
   price: string;
   status: string;
   statusVariant: SaleStatusVariant;
+  saleOpen: boolean;
   showStatus: boolean;
   category: string;
   coverImageUrl: string | null;
@@ -72,6 +74,7 @@ function mapApiEvent(e: any): EventDetail {
     price: formatMxnPrice(e.min_price_cents),
     status: sale.label,
     statusVariant: sale.variant,
+    saleOpen: isSaleOpen(sale),
     showStatus: !sale.hidden,
     category: tags[0]?.toUpperCase() || "",
     coverImageUrl: e.cover_image_url || null,
@@ -216,9 +219,15 @@ export default function EventDetailScreen() {
 
         <View className="mt-6 gap-3">
           <Button
-            text="Comprar boletos"
+            text={event.saleOpen ? "Comprar boletos" : "Venta no disponible"}
             size="xl"
-            onPress={() => router.push(Routes.CHECKOUT(event.id))}
+            disabled={!event.saleOpen}
+            onPress={() => {
+              // Checkout runs on the web app (Stripe Payment Element); the
+              // confirmation page shows the tickets after paying.
+              const webUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
+              Linking.openURL(`${webUrl}${Routes.CHECKOUT(event.id)}`);
+            }}
           />
           <Button text="Guardar evento" variant="accent" />
           <Button text="Compartir" variant="glass" />

@@ -80,7 +80,7 @@ export const orders = pgTable('orders', {
   eventId: integer('event_id').notNull().references(() => events.id),
   buyerEmail: text('buyer_email').notNull(),
   buyerName: text('buyer_name'),
-  status: text('status').notNull().default('pending'), // 'pending' | 'paid' | 'failed' | 'refunded' | 'cancelled'
+  status: text('status').notNull().default('pending'), // 'pending' | 'paid' | 'failed' | 'refunded' | 'cancelled' | 'expired' (unpaid hold released)
   subtotal: integer('subtotal').notNull(), // before fees
   serviceFee: integer('service_fee').notNull(), // Boletify fee
   paymentProcessingFee: integer('payment_processing_fee').notNull(), // Stripe/OXXO fee
@@ -110,7 +110,7 @@ export const tickets = pgTable('tickets', {
   ticketTierId: integer('ticket_tier_id').notNull().references(() => ticketTiers.id),
   ticketNumber: text('ticket_number').notNull().unique(), // e.g. "TKT-ABC123"
   qrCode: text('qr_code').notNull(), // QR code data (HMAC signed)
-  status: text('status').notNull().default('valid'), // 'valid' | 'used' | 'refunded' | 'cancelled'
+  status: text('status').notNull().default('valid'), // 'pending' (awaiting payment) | 'valid' | 'used' | 'refunded' | 'cancelled'
   checkedInAt: timestamp('checked_in_at'),
   checkedInBy: text('checked_in_by'), // organiser user name
   attendeeName: text('attendee_name'),

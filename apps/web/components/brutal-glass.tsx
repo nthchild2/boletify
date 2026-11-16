@@ -89,12 +89,18 @@ export function BrutalButton({
   variant = "primary",
   size = "md",
   className,
+  type = "button",
+  onClick,
+  disabled,
 }: {
   children: ReactNode;
   href?: string;
   variant?: "primary" | "accent" | "secondary" | "ghost" | "glass" | "danger";
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
+  type?: "button" | "submit";
+  onClick?: () => void;
+  disabled?: boolean;
 }) {
   const baseClassName =
     "inline-flex items-center justify-center gap-2 rounded-md border text-center font-body uppercase transition duration-instant ease-motion-instant focus-visible:outline-none focus-visible:shadow-glow-focus";
@@ -126,7 +132,22 @@ export function BrutalButton({
     );
   }
 
-  return <div className={cn(baseClassName, variantClassName, sizeClassName, className)}>{children}</div>;
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        baseClassName,
+        variantClassName,
+        sizeClassName,
+        "disabled:pointer-events-none disabled:opacity-50",
+        className,
+      )}
+    >
+      {children}
+    </button>
+  );
 }
 
 export function HeroKicker({ children }: { children: ReactNode }) {
