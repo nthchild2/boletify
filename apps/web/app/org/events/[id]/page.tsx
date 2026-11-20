@@ -8,6 +8,9 @@ import { trpc } from "../../../../lib/trpc";
 import { cn } from "../../../../lib/utils";
 import { formatMxnPrice } from "@boletify/routes";
 import { CheckInPanel } from "./check-in/panel";
+import { SalesPanel } from "./sales-panel";
+
+type Tab = "ventas" | "check-in" | "detalles";
 
 export default function OrgEventDetailPage({
   params,
@@ -33,19 +36,20 @@ export default function OrgEventDetailPage({
   });
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [tab, setTab] = useState<"detalles" | "check-in">("detalles");
+  const [tab, setTab] = useState<Tab>("ventas");
 
-  // /org/events/:id#check-in opens the Check-in tab (the scanner links back here).
+  // #check-in / #detalles open that tab (the scanner links back to #check-in).
   useEffect(() => {
-    if (window.location.hash === "#check-in") setTab("check-in");
+    const hash = window.location.hash.slice(1);
+    if (hash === "check-in" || hash === "detalles") setTab(hash);
   }, []);
 
-  function selectTab(next: "detalles" | "check-in") {
+  function selectTab(next: Tab) {
     setTab(next);
     window.history.replaceState(
       null,
       "",
-      next === "check-in" ? "#check-in" : window.location.pathname,
+      next === "ventas" ? window.location.pathname : `#${next}`,
     );
   }
 
@@ -145,8 +149,9 @@ export default function OrgEventDetailPage({
       <div className="mb-8 flex gap-1 border-b border-border" role="tablist">
         {(
           [
-            ["detalles", "Detalles"],
+            ["ventas", "Ventas"],
             ["check-in", "Check-in"],
+            ["detalles", "Detalles"],
           ] as const
         ).map(([key, label]) => (
           <button
@@ -167,7 +172,9 @@ export default function OrgEventDetailPage({
         ))}
       </div>
 
-      {tab === "check-in" ? (
+      {tab === "ventas" ? (
+        <SalesPanel eventId={event.id} />
+      ) : tab === "check-in" ? (
         <CheckInPanel eventId={event.id} />
       ) : (
         <>
