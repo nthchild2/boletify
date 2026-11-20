@@ -130,6 +130,12 @@ export default async function OrderPage({
                 <dt>Subtotal</dt>
                 <dd>{formatMxnPrice(order.subtotal)}</dd>
               </div>
+              {order.discountAmount > 0 ? (
+                <div className="flex justify-between gap-4 text-fg">
+                  <dt>Descuento</dt>
+                  <dd>−{formatMxnPrice(order.discountAmount)}</dd>
+                </div>
+              ) : null}
               <div className="flex justify-between gap-4 text-fg-secondary">
                 <dt>Cargo por servicio</dt>
                 <dd>{formatMxnPrice(order.serviceFee)}</dd>

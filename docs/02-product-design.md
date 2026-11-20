@@ -719,6 +719,12 @@ In February 2026, Mexico's PROFECO (consumer protection agency) fined Ticketmast
 2. Buyer enters code → system validates → discount applied instantly to the total. Invalid code → inline error ("Código inválido o expirado").
 3. Discount shown as a line item in the order summary: "Descuento (AMIGOS50): −MXN 50".
 
+**Discount and service fee (decided 2026-11-20, implemented in `packages/api/src/lib/fees.ts`):**
+- The discount comes off the ticket price; the service fee (5 % + MXN 10, flat part waived at MXN 100 or less) is then charged on each ticket's *discounted* price.
+- Percentage codes take the % off every ticket. Flat codes take the amount off the whole order once, split across its tickets in proportion to price, never below MXN 0.
+- `uses_count` counts paid orders plus checkouts still holding tickets; a use is claimed atomically when checkout starts (so `max_uses` can't be exceeded) and returned if the hold expires or is cancelled.
+- Not built yet (needs schema changes): per-buyer use limit and a cap on percentage discounts. A code that makes the order free, or leaves less than Stripe's MXN 10 minimum, is refused for now.
+
 ---
 
 ## 10. Non-Functional Requirements

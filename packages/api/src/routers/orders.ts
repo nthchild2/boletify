@@ -15,6 +15,7 @@ import { and, desc, eq } from 'drizzle-orm';
 import { createTRPCRouter, publicProcedure, protectedProcedure } from '../trpc';
 import { db, events, orders, organiserProfiles } from '@boletify/db';
 import { CheckoutError, MAX_TICKETS_PER_ORDER, cancelCheckout, createCheckout } from '../lib/checkout';
+import { INVALID_CODE_MESSAGE, findUsablePromo } from '../lib/promo-codes';
 
 function toTRPCError(err: unknown): never {
   if (err instanceof CheckoutError) {
@@ -47,6 +48,7 @@ export const ordersRouter = createTRPCRouter({
           )
           .min(1)
           .max(20),
+        promoCode: z.string().trim().max(40).nullish(),
       }),
     )
     .mutation(async ({ input }) => {
@@ -55,6 +57,18 @@ export const ordersRouter = createTRPCRouter({
       } catch (err) {
         toTRPCError(err);
       }
+    }),
+
+  /**
+   * Check a promo code while the buyer fills in the checkout form. Returns the
+   * discount so the form can show the new total; checkout re-validates it.
+   */
+  previewPromo: publicProcedure
+    .input(z.object({ eventId: z.number().int().positive(), code: z.string().trim().min(1).max(40) }))
+    .query(async ({ input }) => {
+      const promo = await findUsablePromo(input.eventId, input.code);
+      if (!promo) throw new TRPCError({ code: 'NOT_FOUND', message: INVALID_CODE_MESSAGE });
+      return { code: promo.code, discountType: promo.discountType as 'percentage' | 'flat', discountValue: promo.discountValue };
     }),
 
   /** Cancel an unpaid checkout so its tickets go back on sale. */

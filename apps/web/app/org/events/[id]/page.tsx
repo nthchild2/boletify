@@ -9,8 +9,9 @@ import { cn } from "../../../../lib/utils";
 import { formatMxnPrice } from "@boletify/routes";
 import { CheckInPanel } from "./check-in/panel";
 import { SalesPanel } from "./sales-panel";
+import { PromoPanel } from "./promo-panel";
 
-type Tab = "ventas" | "check-in" | "detalles";
+type Tab = "ventas" | "check-in" | "codigos" | "detalles";
 
 export default function OrgEventDetailPage({
   params,
@@ -60,7 +61,8 @@ export default function OrgEventDetailPage({
   // #check-in / #detalles open that tab (the scanner links back to #check-in).
   useEffect(() => {
     const hash = window.location.hash.slice(1);
-    if (hash === "check-in" || hash === "detalles") setTab(hash);
+    if (hash === "check-in" || hash === "codigos" || hash === "detalles")
+      setTab(hash);
   }, []);
 
   function selectTab(next: Tab) {
@@ -197,6 +199,7 @@ export default function OrgEventDetailPage({
           [
             ["ventas", "Ventas"],
             ["check-in", "Check-in"],
+            ["codigos", "Códigos"],
             ["detalles", "Detalles"],
           ] as const
         ).map(([key, label]) => (
@@ -222,6 +225,8 @@ export default function OrgEventDetailPage({
         <SalesPanel eventId={event.id} />
       ) : tab === "check-in" ? (
         <CheckInPanel eventId={event.id} />
+      ) : tab === "codigos" ? (
+        <PromoPanel eventId={event.id} />
       ) : (
         <>
           {/* Event info grid */}

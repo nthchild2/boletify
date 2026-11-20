@@ -28,6 +28,10 @@
       "import": "./src/lib/event-lifecycle.ts",
       "types": "./src/lib/event-lifecycle.ts"
     },
+    "./promo": {
+      "import": "./src/lib/promo.ts",
+      "types": "./src/lib/promo.ts"
+    },
     "./csv": {
       "import": "./src/lib/csv.ts",
       "types": "./src/lib/csv.ts"

@@ -25,6 +25,8 @@ import type Stripe from 'stripe';
 import { and, eq, lt, sql } from 'drizzle-orm';
 import { db, events, orders, payments, ticketTiers, tickets } from '@boletify/db';
 import { calculateOrderAmounts, type OrderAmounts } from './fees';
+import { toDiscount } from './promo';
+import { INVALID_CODE_MESSAGE, claimPromoUse, findUsablePromo, releasePromoUse } from './promo-codes';
 import { generateOrderNumber, generateTicketNumber, signTicketQr } from './codes';
 import { getStripe } from './stripe';
 import { sendOrderConfirmation } from './tickets';
@@ -32,6 +34,8 @@ import { sendOrderConfirmation } from './tickets';
 /** How long an unpaid card order keeps its tickets reserved. */
 export const HOLD_MINUTES = 30;
 export const MAX_TICKETS_PER_ORDER = 10;
+/** Stripe's minimum card charge in Mexico (MXN 10.00). */
+export const MIN_CARD_CHARGE = 1000;
 
 export class CheckoutError extends Error {
   constructor(
@@ -146,8 +150,9 @@ async function expireOrder(orderId: number): Promise<boolean> {
     .update(orders)
     .set({ status: 'expired', updatedAt: new Date() })
     .where(and(eq(orders.id, orderId), eq(orders.status, 'pending')))
-    .returning({ id: orders.id });
+    .returning({ id: orders.id, promoCodeId: orders.promoCodeId });
   if (updated.length === 0) return false;
+  if (updated[0].promoCodeId) await releasePromoUse(updated[0].promoCodeId);
 
   const held = await db
     .update(tickets)
@@ -207,6 +212,8 @@ export type CheckoutInput = {
   buyerEmail: string;
   buyerName: string;
   items: Array<{ tierId: number; quantity: number }>;
+  /** Optional promo code typed by the buyer (case-insensitive). */
+  promoCode?: string | null;
 };
 
 export type CheckoutResult = {
@@ -252,9 +259,23 @@ export async function createCheckout(input: CheckoutInput): Promise<CheckoutResu
     lines.push({ tier, quantity });
   }
 
-  const amounts = calculateOrderAmounts(lines.map((l) => ({ price: l.tier.price, quantity: l.quantity })));
+  const promo = input.promoCode?.trim() ? await findUsablePromo(event.id, input.promoCode) : null;
+  if (input.promoCode?.trim() && !promo) throw new CheckoutError('BAD_REQUEST', INVALID_CODE_MESSAGE);
+
+  const amounts = calculateOrderAmounts(
+    lines.map((l) => ({ price: l.tier.price, quantity: l.quantity })),
+    promo ? toDiscount(promo) : null,
+  );
   if (amounts.total === 0) {
-    throw new CheckoutError('PRECONDITION_FAILED', 'El registro para eventos gratuitos llega pronto.');
+    throw new CheckoutError(
+      'PRECONDITION_FAILED',
+      promo
+        ? 'Este código cubre todo el total. Los boletos sin costo llegan pronto.'
+        : 'El registro para eventos gratuitos llega pronto.',
+    );
+  }
+  if (amounts.total < MIN_CARD_CHARGE) {
+    throw new CheckoutError('PRECONDITION_FAILED', 'El total con descuento es menor al pago mínimo con tarjeta ($10 MXN).');
   }
 
   // Prepare ticket rows up front (also checks TICKET_QR_SECRET is set).
@@ -275,6 +296,12 @@ export async function createCheckout(input: CheckoutInput): Promise<CheckoutResu
     reserved.push({ tierId: tier.id, quantity });
   }
 
+  // Take one use of the promo code (atomic: buyers can't exceed max_uses together).
+  if (promo && !(await claimPromoUse(promo.id))) {
+    for (const r of reserved) await releaseTier(r.tierId, r.quantity);
+    throw new CheckoutError('CONFLICT', INVALID_CODE_MESSAGE);
+  }
+
   let orderId: number | undefined;
   try {
     const orderNumber = generateOrderNumber();
@@ -291,6 +318,8 @@ export async function createCheckout(input: CheckoutInput): Promise<CheckoutResu
         paymentProcessingFee: 0,
         oxxoFee: 0,
         total: amounts.total,
+        promoCodeId: promo?.id ?? null,
+        discountAmount: amounts.discount,
         paymentMethod: 'card',
       })
       .returning();
@@ -312,7 +341,7 @@ export async function createCheckout(input: CheckoutInput): Promise<CheckoutResu
         currency: 'mxn',
         allowed_payment_method_types: ['card'], // OXXO is added in PAY-003
         receipt_email: order.buyerEmail,
-        description: `${event.title} · ${amounts.ticketCount} boleto(s) · ${orderNumber}`,
+        description: `${event.title} · ${amounts.ticketCount} boleto(s) · ${orderNumber}${promo ? ` · código ${promo.code}` : ''}`,
         transfer_group: orderNumber,
         metadata: { orderId: String(order.id), orderNumber, eventId: String(event.id) },
       },
@@ -338,6 +367,7 @@ export async function createCheckout(input: CheckoutInput): Promise<CheckoutResu
       await expireOrder(orderId).catch(() => undefined);
     } else {
       for (const r of reserved) await releaseTier(r.tierId, r.quantity).catch(() => undefined);
+      if (promo) await releasePromoUse(promo.id).catch(() => undefined);
     }
     throw err;
   }
@@ -475,6 +505,7 @@ export type BuyerOrder = {
   buyerName: string | null;
   buyerEmail: string;
   subtotal: number;
+  discountAmount: number;
   serviceFee: number;
   total: number;
   createdAt: Date;
@@ -523,6 +554,7 @@ export async function getOrderForBuyer(orderNumber: string, clientSecret: string
     buyerName: order.buyerName,
     buyerEmail: order.buyerEmail,
     subtotal: order.subtotal,
+    discountAmount: order.discountAmount ?? 0,
     serviceFee: order.serviceFee,
     total: order.total,
     createdAt: order.createdAt,
