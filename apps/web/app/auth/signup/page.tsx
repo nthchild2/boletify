@@ -171,11 +171,9 @@ export default function SignUpPage() {
                 />
               </div>
 
-              <button type="submit" disabled={loading} className="w-full text-left">
-                <BrutalButton size="xl" className="w-full">
-                  {loading ? "Creando..." : "Crear cuenta"}
-                </BrutalButton>
-              </button>
+              <BrutalButton type="submit" size="xl" className="w-full" disabled={loading}>
+                {loading ? "Creando..." : "Crear cuenta"}
+              </BrutalButton>
             </form>
 
             <p className="mt-8 text-center text-body-sm text-fg-muted">

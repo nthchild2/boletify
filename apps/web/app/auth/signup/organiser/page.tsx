@@ -213,11 +213,9 @@ export default function OrganiserSignUpPage() {
                 />
               </div>
 
-              <button type="submit" disabled={loading} className="w-full text-left">
-                <BrutalButton size="xl" className="w-full">
-                  {loading ? "Creando..." : "Crear cuenta de organizador"}
-                </BrutalButton>
-              </button>
+              <BrutalButton type="submit" size="xl" className="w-full" disabled={loading}>
+                {loading ? "Creando..." : "Crear cuenta de organizador"}
+              </BrutalButton>
             </form>
 
             <p className="mt-8 text-center text-body-sm text-fg-muted">

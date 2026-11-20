@@ -103,11 +103,9 @@ export default function SignInPage() {
                 />
               </div>
 
-              <button type="submit" disabled={loading} className="w-full text-left">
-                <BrutalButton size="xl" className="w-full">
-                  {loading ? "Iniciando..." : "Iniciar sesión"}
-                </BrutalButton>
-              </button>
+              <BrutalButton type="submit" size="xl" className="w-full" disabled={loading}>
+                {loading ? "Iniciando..." : "Iniciar sesión"}
+              </BrutalButton>
             </form>
 
             <p className="mt-8 text-center text-body-sm text-fg-muted">
