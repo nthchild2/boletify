@@ -24,6 +24,10 @@
       "import": "./src/lib/stripe.ts",
       "types": "./src/lib/stripe.ts"
     },
+    "./event-lifecycle": {
+      "import": "./src/lib/event-lifecycle.ts",
+      "types": "./src/lib/event-lifecycle.ts"
+    },
     "./csv": {
       "import": "./src/lib/csv.ts",
       "types": "./src/lib/csv.ts"

@@ -1,16 +1,21 @@
 /**
  * GET    /api/org/events/:id   — get single event (own only)
  * PATCH  /api/org/events/:id   — update event fields
- * DELETE /api/org/events/:id   — soft-delete event
+ * DELETE /api/org/events/:id   — soft-delete event (blocked once there are paid orders)
  *
  * All require Bearer token from the owning organiser.
  */
 
-import { NextResponse } from 'next/server';
-import { db } from '@boletify/db';
-import { events, ticketTiers } from '@boletify/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { requireOrganiser } from '../../auth-helper';
+import { NextResponse } from "next/server";
+import { db } from "@boletify/db";
+import { events, ticketTiers } from "@boletify/db/schema";
+import { eq, and, ne } from "drizzle-orm";
+import {
+  EventLifecycleError,
+  deleteEvent,
+} from "@boletify/api/event-lifecycle";
+import { lifecycleErrorResponse } from "./lifecycle-response";
+import { requireOrganiser } from "../../auth-helper";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -18,7 +23,13 @@ async function getOwnEvent(organiserId: number, eventId: number) {
   const [event] = await db
     .select()
     .from(events)
-    .where(and(eq(events.id, eventId), eq(events.organiserId, organiserId)))
+    .where(
+      and(
+        eq(events.id, eventId),
+        eq(events.organiserId, organiserId),
+        ne(events.status, "deleted"),
+      ),
+    )
     .limit(1);
   return event ?? null;
 }
@@ -30,12 +41,15 @@ export async function GET(request: Request, ctx: RouteContext) {
   const { id } = await ctx.params;
   const eventId = parseInt(id, 10);
   if (isNaN(eventId)) {
-    return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+    return NextResponse.json({ error: "ID inválido" }, { status: 400 });
   }
 
   const event = await getOwnEvent(result.organiserId, eventId);
   if (!event) {
-    return NextResponse.json({ error: 'Evento no encontrado' }, { status: 404 });
+    return NextResponse.json(
+      { error: "Evento no encontrado" },
+      { status: 404 },
+    );
   }
 
   // Include ticket tiers
@@ -54,12 +68,15 @@ export async function PATCH(request: Request, ctx: RouteContext) {
   const { id } = await ctx.params;
   const eventId = parseInt(id, 10);
   if (isNaN(eventId)) {
-    return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+    return NextResponse.json({ error: "ID inválido" }, { status: 400 });
   }
 
   const existing = await getOwnEvent(result.organiserId, eventId);
   if (!existing) {
-    return NextResponse.json({ error: 'Evento no encontrado' }, { status: 404 });
+    return NextResponse.json(
+      { error: "Evento no encontrado" },
+      { status: 404 },
+    );
   }
 
   try {
@@ -68,8 +85,14 @@ export async function PATCH(request: Request, ctx: RouteContext) {
 
     // Only set fields that were explicitly sent
     const allowedFields = [
-      'title', 'description', 'coverImageUrl', 'venueName',
-      'venueAddress', 'venueMapUrl', 'city', 'genreTags',
+      "title",
+      "description",
+      "coverImageUrl",
+      "venueName",
+      "venueAddress",
+      "venueMapUrl",
+      "city",
+      "genreTags",
     ];
     for (const field of allowedFields) {
       if (body[field] !== undefined) {
@@ -91,9 +114,9 @@ export async function PATCH(request: Request, ctx: RouteContext) {
 
     return NextResponse.json(updated);
   } catch (err: any) {
-    console.error('Update event error:', err);
+    console.error("Update event error:", err);
     return NextResponse.json(
-      { error: err.message || 'Error al actualizar' },
+      { error: err.message || "Error al actualizar" },
       { status: 500 },
     );
   }
@@ -106,22 +129,21 @@ export async function DELETE(request: Request, ctx: RouteContext) {
   const { id } = await ctx.params;
   const eventId = parseInt(id, 10);
   if (isNaN(eventId)) {
-    return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+    return NextResponse.json({ error: "ID inválido" }, { status: 400 });
   }
 
   const existing = await getOwnEvent(result.organiserId, eventId);
   if (!existing) {
-    return NextResponse.json({ error: 'Evento no encontrado' }, { status: 404 });
+    return NextResponse.json(
+      { error: "Evento no encontrado" },
+      { status: 404 },
+    );
   }
 
-  await db
-    .update(events)
-    .set({
-      status: 'deleted',
-      deletedAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .where(eq(events.id, eventId));
-
-  return NextResponse.json({ success: true });
+  try {
+    return NextResponse.json(await deleteEvent(result.organiserId, eventId));
+  } catch (err) {
+    if (err instanceof EventLifecycleError) return lifecycleErrorResponse(err);
+    throw err;
+  }
 }

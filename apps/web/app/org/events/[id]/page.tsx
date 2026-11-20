@@ -25,10 +25,22 @@ export default function OrgEventDetailPage({
   const { data: events } = trpc.events.listByOrganiser.useQuery();
   const event = events?.find((e) => e.id === eventId);
 
+  const lifecycle = trpc.events.lifecycleState.useQuery(
+    { id: eventId },
+    { enabled: Number.isInteger(eventId) },
+  );
+  const refresh = () => {
+    utils.events.listByOrganiser.invalidate();
+    utils.events.lifecycleState.invalidate({ id: eventId });
+  };
   const publishMutation = trpc.events.publish.useMutation({
-    onSuccess: () => utils.events.listByOrganiser.invalidate(),
+    onSuccess: refresh,
+  });
+  const unpublishMutation = trpc.events.unpublish.useMutation({
+    onSuccess: refresh,
   });
   const deleteMutation = trpc.events.delete.useMutation({
+    onError: () => setShowDeleteConfirm(false),
     onSuccess: () => {
       utils.events.listByOrganiser.invalidate();
       router.push("/org/events");
@@ -36,6 +48,13 @@ export default function OrgEventDetailPage({
   });
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const actionError =
+    publishMutation.error?.message ??
+    unpublishMutation.error?.message ??
+    deleteMutation.error?.message ??
+    null;
+  const publishBlocker = lifecycle.data?.publishBlocker ?? null;
+  const lockedReason = lifecycle.data?.lockedReason ?? null;
   const [tab, setTab] = useState<Tab>("ventas");
 
   // #check-in / #detalles open that tab (the scanner links back to #check-in).
@@ -100,13 +119,14 @@ export default function OrgEventDetailPage({
               Este evento es un borrador
             </div>
             <div className="mt-0.5 text-[13px] text-fg-muted">
-              No es visible para los compradores. Publícalo cuando esté listo.
+              {publishBlocker ??
+                "No es visible para los compradores. Publícalo cuando esté listo."}
             </div>
           </div>
           <button
             onClick={() => publishMutation.mutate({ id: event.id })}
-            disabled={publishMutation.isPending}
-            className="inline-flex items-center gap-2 rounded-md border border-border-ink bg-primary px-5 py-2.5 font-body text-[13px] font-semibold uppercase tracking-[0.04em] text-primary-fg shadow-brick-md transition hover:bg-primary-hover"
+            disabled={publishMutation.isPending || !!publishBlocker}
+            className="inline-flex shrink-0 items-center gap-2 rounded-md border border-border-ink bg-primary px-5 py-2.5 disabled:pointer-events-none disabled:opacity-50 font-body text-[13px] font-semibold uppercase tracking-[0.04em] text-primary-fg shadow-brick-md transition hover:bg-primary-hover"
           >
             {publishMutation.isPending ? "Publicando..." : "Publicar ahora"}
           </button>
@@ -130,10 +150,21 @@ export default function OrgEventDetailPage({
           {event.status === "draft" && (
             <button
               onClick={() => publishMutation.mutate({ id: event.id })}
-              disabled={publishMutation.isPending}
-              className="inline-flex items-center gap-2 rounded-md border border-border-ink bg-primary px-4 py-2.5 font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-primary-fg shadow-brick-md transition hover:bg-primary-hover"
+              disabled={publishMutation.isPending || !!publishBlocker}
+              className="inline-flex items-center gap-2 rounded-md border border-border-ink bg-primary px-4 py-2.5 font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-primary-fg shadow-brick-md transition hover:bg-primary-hover disabled:pointer-events-none disabled:opacity-50"
             >
               {publishMutation.isPending ? "Publicando..." : "Publicar"}
+            </button>
+          )}
+          {event.status === "published" && (
+            <button
+              onClick={() => unpublishMutation.mutate({ id: event.id })}
+              disabled={unpublishMutation.isPending || !!lockedReason}
+              className="inline-flex items-center gap-2 rounded-md border border-border-strong px-4 py-2.5 font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-fg transition hover:border-fg disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {unpublishMutation.isPending
+                ? "Guardando..."
+                : "Volver a borrador"}
             </button>
           )}
           <Link
@@ -144,6 +175,21 @@ export default function OrgEventDetailPage({
           </Link>
         </div>
       </div>
+
+      {event.status === "published" && lockedReason ? (
+        <p className="-mt-4 mb-6 max-w-[720px] text-[13px] text-fg-muted">
+          {lockedReason}
+        </p>
+      ) : null}
+
+      {actionError ? (
+        <div
+          role="alert"
+          className="mb-6 rounded-lg border border-danger/40 bg-danger/10 px-5 py-4 text-[14px] text-fg"
+        >
+          {actionError}
+        </div>
+      ) : null}
 
       {/* Tabs */}
       <div className="mb-8 flex gap-1 border-b border-border" role="tablist">
@@ -255,7 +301,11 @@ export default function OrgEventDetailPage({
             <h2 className="mb-2 font-body text-[11px] font-semibold uppercase tracking-[0.06em] text-danger">
               Zona peligrosa
             </h2>
-            {!showDeleteConfirm ? (
+            {lockedReason ? (
+              <p className="max-w-[640px] text-[13px] text-fg-muted">
+                {lockedReason}
+              </p>
+            ) : !showDeleteConfirm ? (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 className="rounded-md border border-danger/30 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.04em] text-danger transition hover:bg-danger/10"

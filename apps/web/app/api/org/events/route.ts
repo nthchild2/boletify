@@ -5,18 +5,18 @@
  * Both require Bearer token from a user with an organiser profile.
  */
 
-import { NextResponse } from 'next/server';
-import { db } from '@boletify/db';
-import { events } from '@boletify/db/schema';
-import { eq, and, desc } from 'drizzle-orm';
-import { requireOrganiser } from '../auth-helper';
+import { NextResponse } from "next/server";
+import { db } from "@boletify/db";
+import { events } from "@boletify/db/schema";
+import { eq, and, desc, ne } from "drizzle-orm";
+import { requireOrganiser } from "../auth-helper";
 
 function generateSlug(title: string, date: Date, city: string): string {
   const base = title
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-  const dateStr = date.toISOString().split('T')[0];
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  const dateStr = date.toISOString().split("T")[0];
   return `${base}-${dateStr}-${city.toLowerCase()}`;
 }
 
@@ -26,12 +26,12 @@ export async function GET(request: Request) {
   const { organiserId } = result;
 
   const url = new URL(request.url);
-  const status = url.searchParams.get('status');
+  const status = url.searchParams.get("status");
 
   const conditions = [eq(events.organiserId, organiserId)];
-  if (status) {
-    conditions.push(eq(events.status, status));
-  }
+  conditions.push(
+    status ? eq(events.status, status) : ne(events.status, "deleted"),
+  );
 
   const rows = await db
     .select()
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       venueName,
       venueAddress,
       venueMapUrl,
-      city = 'CDMX',
+      city = "CDMX",
       genreTags,
       startDate,
       endDate,
@@ -65,14 +65,17 @@ export async function POST(request: Request) {
 
     if (!title || !venueName || !startDate) {
       return NextResponse.json(
-        { error: 'title, venueName, y startDate son requeridos' },
+        { error: "title, venueName, y startDate son requeridos" },
         { status: 400 },
       );
     }
 
     const parsedStart = new Date(startDate);
     if (isNaN(parsedStart.getTime())) {
-      return NextResponse.json({ error: 'Fecha de inicio inválida' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Fecha de inicio inválida" },
+        { status: 400 },
+      );
     }
 
     const slug = generateSlug(title, parsedStart, city);
@@ -92,15 +95,15 @@ export async function POST(request: Request) {
         startDate: parsedStart,
         endDate: endDate ? new Date(endDate) : null,
         organiserId,
-        status: 'draft',
+        status: "draft",
       })
       .returning();
 
     return NextResponse.json(event, { status: 201 });
   } catch (err: any) {
-    console.error('Create event error:', err);
+    console.error("Create event error:", err);
     return NextResponse.json(
-      { error: err.message || 'Error al crear evento' },
+      { error: err.message || "Error al crear evento" },
       { status: 500 },
     );
   }

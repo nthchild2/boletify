@@ -8,7 +8,30 @@ import { z } from 'zod';
 import { createTRPCRouter, publicProcedure, protectedProcedure } from '../trpc';
 import { db } from '@boletify/db';
 import { events, ticketTiers, organiserProfiles } from '@boletify/db/schema';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, ne } from 'drizzle-orm';
+import { getOrganiserEvent, getOrganiserId } from '../lib/organiser';
+import {
+  EventLifecycleError,
+  deleteEvent,
+  getEventLockState,
+  publishEvent,
+  unpublishEvent,
+} from '../lib/event-lifecycle';
+
+async function requireOrganiserId(userId: number): Promise<number> {
+  const organiserId = await getOrganiserId(userId);
+  if (!organiserId) throw new TRPCError({ code: 'FORBIDDEN', message: 'No tienes un perfil de organizador' });
+  return organiserId;
+}
+
+async function lifecycle<T>(run: () => Promise<T>): Promise<T> {
+  try {
+    return await run();
+  } catch (err) {
+    if (err instanceof EventLifecycleError) throw new TRPCError({ code: err.code, message: err.message });
+    throw err;
+  }
+}
 
 const eventSchema = z.object({
   title: z.string().min(1).max(255),
@@ -148,9 +171,7 @@ export const eventsRouter = createTRPCRouter({
       }
 
       const conditions = [eq(events.organiserId, profiles[0].id)];
-      if (status) {
-        conditions.push(eq(events.status, status));
-      }
+      conditions.push(status ? eq(events.status, status) : ne(events.status, 'deleted'));
 
       return db
         .select()
@@ -189,7 +210,8 @@ export const eventsRouter = createTRPCRouter({
         .from(events)
         .where(and(
           eq(events.id, input.id),
-          eq(events.organiserId, profiles[0].id)
+          eq(events.organiserId, profiles[0].id),
+          ne(events.status, 'deleted'),
         ))
         .limit(1);
 
@@ -212,107 +234,36 @@ export const eventsRouter = createTRPCRouter({
       return updated;
     }),
 
-  /**
-   * Publish an event (make it visible)
-   */
+  /** Lifecycle state for the event page: why it can't be published, unpublished or deleted. */
+  lifecycleState: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const organiserId = await requireOrganiserId(ctx.userId);
+      const event = await getOrganiserEvent(organiserId, input.id);
+      if (!event) throw new TRPCError({ code: 'NOT_FOUND', message: 'Evento no encontrado' });
+      return getEventLockState(input.id);
+    }),
+
+  /** Publish a draft (needs at least one ticket type and a future date). */
   publish: protectedProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ ctx, input }) => {
-      const profiles = await db
-        .select()
-        .from(organiserProfiles)
-        .where(eq(organiserProfiles.userId, ctx.userId))
-        .limit(1);
+    .mutation(async ({ ctx, input }) =>
+      lifecycle(() => requireOrganiserId(ctx.userId).then((o) => publishEvent(o, input.id))),
+    ),
 
-      if (profiles.length === 0) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'No organiser profile found',
-        });
-      }
+  /** Back to draft; blocked once there are paid or in-progress orders. */
+  unpublish: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) =>
+      lifecycle(() => requireOrganiserId(ctx.userId).then((o) => unpublishEvent(o, input.id))),
+    ),
 
-      const [existing] = await db
-        .select()
-        .from(events)
-        .where(and(
-          eq(events.id, input.id),
-          eq(events.organiserId, profiles[0].id)
-        ))
-        .limit(1);
-
-      if (!existing) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Event not found or access denied',
-        });
-      }
-
-      if (existing.status !== 'draft') {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Only draft events can be published',
-        });
-      }
-
-      const [published] = await db
-        .update(events)
-        .set({
-          status: 'published',
-          publishedAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .where(eq(events.id, input.id))
-        .returning();
-
-      return published;
-    }),
-
-  /**
-   * Delete (soft delete) an event
-   */
+  /** Soft delete; blocked once there are paid or in-progress orders. */
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ ctx, input }) => {
-      const profiles = await db
-        .select()
-        .from(organiserProfiles)
-        .where(eq(organiserProfiles.userId, ctx.userId))
-        .limit(1);
-
-      if (profiles.length === 0) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'No organiser profile found',
-        });
-      }
-
-      const [existing] = await db
-        .select()
-        .from(events)
-        .where(and(
-          eq(events.id, input.id),
-          eq(events.organiserId, profiles[0].id)
-        ))
-        .limit(1);
-
-      if (!existing) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Event not found or access denied',
-        });
-      }
-
-      await db
-        .update(events)
-        .set({
-          status: 'deleted',
-          deletedAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .where(eq(events.id, input.id));
-
-      return { success: true };
-    }),
+    .mutation(async ({ ctx, input }) =>
+      lifecycle(() => requireOrganiserId(ctx.userId).then((o) => deleteEvent(o, input.id))),
+    ),
 
   /**
    * Create ticket tier for an event
@@ -341,7 +292,8 @@ export const eventsRouter = createTRPCRouter({
         .from(events)
         .where(and(
           eq(events.id, input.eventId),
-          eq(events.organiserId, profiles[0].id)
+          eq(events.organiserId, profiles[0].id),
+          ne(events.status, 'deleted'),
         ))
         .limit(1);
 
