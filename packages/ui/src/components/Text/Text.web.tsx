@@ -51,7 +51,8 @@ const tagMap: Partial<Record<TextVariant, keyof React.JSX.IntrinsicElements>> = 
 };
 
 export function Text({ as, variant = "body-md", className, children, ...props }: TextProps) {
-  const Component = as ?? tagMap[variant] ?? "span";
+  // ElementType keeps JSX from intersecting the props of every intrinsic tag.
+  const Component = (as ?? tagMap[variant] ?? "span") as React.ElementType;
   return (
     <Component className={cn("text-fg", variantStyles[variant], className)} {...props}>
       {children}

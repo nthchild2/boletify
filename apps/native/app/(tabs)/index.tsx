@@ -218,7 +218,6 @@ export default function EventsScreen() {
               category: item.category,
               lineup: item.description,
               description: item.description,
-              gradientClassName: "bg-surface",
               coverImageUrl: item.coverImageUrl,
             }}
             onPress={() => router.push(`/event/${item.id}`)}
