@@ -24,6 +24,10 @@
       "import": "./src/lib/stripe.ts",
       "types": "./src/lib/stripe.ts"
     },
+    "./checkin": {
+      "import": "./src/lib/checkin.ts",
+      "types": "./src/lib/checkin.ts"
+    },
     "./tickets": {
       "import": "./src/lib/tickets.ts",
       "types": "./src/lib/tickets.ts"

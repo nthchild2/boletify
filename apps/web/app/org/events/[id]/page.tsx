@@ -1,12 +1,13 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { trpc } from "../../../../lib/trpc";
 import { cn } from "../../../../lib/utils";
 import { formatMxnPrice } from "@boletify/routes";
+import { CheckInPanel } from "./check-in/panel";
 
 export default function OrgEventDetailPage({
   params,
@@ -32,6 +33,21 @@ export default function OrgEventDetailPage({
   });
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [tab, setTab] = useState<"detalles" | "check-in">("detalles");
+
+  // /org/events/:id#check-in opens the Check-in tab (the scanner links back here).
+  useEffect(() => {
+    if (window.location.hash === "#check-in") setTab("check-in");
+  }, []);
+
+  function selectTab(next: "detalles" | "check-in") {
+    setTab(next);
+    window.history.replaceState(
+      null,
+      "",
+      next === "check-in" ? "#check-in" : window.location.pathname,
+    );
+  }
 
   if (!events) {
     return (
@@ -59,7 +75,14 @@ export default function OrgEventDetailPage({
         href="/org/events"
         className="mb-3 inline-flex items-center gap-1.5 font-body text-[12px] uppercase tracking-[0.04em] text-fg-muted hover:text-fg"
       >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        >
           <path d="M9 3L5 7l4 4" />
         </svg>
         Eventos
@@ -118,111 +141,143 @@ export default function OrgEventDetailPage({
         </div>
       </div>
 
-      {/* Event info grid */}
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <InfoCard
-          label="Fecha"
-          value={
-            event.startDate
-              ? new Date(event.startDate).toLocaleDateString("es-MX", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })
-              : "—"
-          }
-        />
-        <InfoCard
-          label="Hora"
-          value={
-            event.startDate
-              ? new Date(event.startDate).toLocaleTimeString("es-MX", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }) + " hrs"
-              : "—"
-          }
-        />
-        <InfoCard label="Venue" value={event.venueName} />
-        <InfoCard label="Ciudad" value={event.city} />
-      </div>
-
-      {/* Cover image */}
-      {event.coverImageUrl && (
-        <div className="mb-8 overflow-hidden rounded-xl">
-          <img
-            src={event.coverImageUrl}
-            alt={event.title}
-            className="h-[300px] w-full object-cover"
-          />
-        </div>
-      )}
-
-      {/* Description */}
-      {event.description && (
-        <div className="mb-8">
-          <h2 className="mb-2 font-body text-[11px] font-semibold uppercase tracking-[0.06em] text-fg-muted">
-            Descripción
-          </h2>
-          <p className="max-w-[640px] text-[14px] leading-relaxed text-fg-secondary">
-            {event.description}
-          </p>
-        </div>
-      )}
-
-      {/* Tags */}
-      {event.genreTags && event.genreTags.length > 0 && (
-        <div className="mb-8">
-          <h2 className="mb-2 font-body text-[11px] font-semibold uppercase tracking-[0.06em] text-fg-muted">
-            Género
-          </h2>
-          <div className="flex gap-2">
-            {event.genreTags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full border border-border bg-surface-raised px-3 py-1 text-[12px] text-fg-muted"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Danger zone */}
-      <div className="mt-12 border-t border-border pt-6">
-        <h2 className="mb-2 font-body text-[11px] font-semibold uppercase tracking-[0.06em] text-danger">
-          Zona peligrosa
-        </h2>
-        {!showDeleteConfirm ? (
+      {/* Tabs */}
+      <div className="mb-8 flex gap-1 border-b border-border" role="tablist">
+        {(
+          [
+            ["detalles", "Detalles"],
+            ["check-in", "Check-in"],
+          ] as const
+        ).map(([key, label]) => (
           <button
-            onClick={() => setShowDeleteConfirm(true)}
-            className="rounded-md border border-danger/30 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.04em] text-danger transition hover:bg-danger/10"
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={tab === key}
+            onClick={() => selectTab(key)}
+            className={cn(
+              "-mb-px border-b-2 px-4 py-2.5 font-body text-[12px] font-semibold uppercase tracking-[0.04em] transition",
+              tab === key
+                ? "border-primary text-fg"
+                : "border-transparent text-fg-muted hover:text-fg",
+            )}
           >
-            Eliminar evento
+            {label}
           </button>
-        ) : (
-          <div className="flex items-center gap-3">
-            <span className="text-[13px] text-danger">
-              Esto es permanente.
-            </span>
-            <button
-              onClick={() => deleteMutation.mutate({ id: event.id })}
-              disabled={deleteMutation.isPending}
-              className="rounded-md border border-danger bg-danger px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.04em] text-danger-fg"
-            >
-              {deleteMutation.isPending ? "Eliminando..." : "Confirmar"}
-            </button>
-            <button
-              onClick={() => setShowDeleteConfirm(false)}
-              className="text-[12px] text-fg-muted hover:text-fg"
-            >
-              Cancelar
-            </button>
-          </div>
-        )}
+        ))}
       </div>
+
+      {tab === "check-in" ? (
+        <CheckInPanel eventId={event.id} />
+      ) : (
+        <>
+          {/* Event info grid */}
+          <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <InfoCard
+              label="Fecha"
+              value={
+                event.startDate
+                  ? new Date(event.startDate).toLocaleDateString("es-MX", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "—"
+              }
+            />
+            <InfoCard
+              label="Hora"
+              value={
+                event.startDate
+                  ? new Date(event.startDate).toLocaleTimeString("es-MX", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }) + " hrs"
+                  : "—"
+              }
+            />
+            <InfoCard label="Venue" value={event.venueName} />
+            <InfoCard label="Ciudad" value={event.city} />
+          </div>
+
+          {/* Cover image */}
+          {event.coverImageUrl && (
+            <div className="mb-8 overflow-hidden rounded-xl">
+              <img
+                src={event.coverImageUrl}
+                alt={event.title}
+                className="h-[300px] w-full object-cover"
+              />
+            </div>
+          )}
+
+          {/* Description */}
+          {event.description && (
+            <div className="mb-8">
+              <h2 className="mb-2 font-body text-[11px] font-semibold uppercase tracking-[0.06em] text-fg-muted">
+                Descripción
+              </h2>
+              <p className="max-w-[640px] text-[14px] leading-relaxed text-fg-secondary">
+                {event.description}
+              </p>
+            </div>
+          )}
+
+          {/* Tags */}
+          {event.genreTags && event.genreTags.length > 0 && (
+            <div className="mb-8">
+              <h2 className="mb-2 font-body text-[11px] font-semibold uppercase tracking-[0.06em] text-fg-muted">
+                Género
+              </h2>
+              <div className="flex gap-2">
+                {event.genreTags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-border bg-surface-raised px-3 py-1 text-[12px] text-fg-muted"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Danger zone */}
+          <div className="mt-12 border-t border-border pt-6">
+            <h2 className="mb-2 font-body text-[11px] font-semibold uppercase tracking-[0.06em] text-danger">
+              Zona peligrosa
+            </h2>
+            {!showDeleteConfirm ? (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="rounded-md border border-danger/30 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.04em] text-danger transition hover:bg-danger/10"
+              >
+                Eliminar evento
+              </button>
+            ) : (
+              <div className="flex items-center gap-3">
+                <span className="text-[13px] text-danger">
+                  Esto es permanente.
+                </span>
+                <button
+                  onClick={() => deleteMutation.mutate({ id: event.id })}
+                  disabled={deleteMutation.isPending}
+                  className="rounded-md border border-danger bg-danger px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.04em] text-danger-fg"
+                >
+                  {deleteMutation.isPending ? "Eliminando..." : "Confirmar"}
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="text-[12px] text-fg-muted hover:text-fg"
+                >
+                  Cancelar
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -258,7 +313,9 @@ function StatusBadge({ status }: { status: string }) {
     className: "bg-surface-raised text-fg-muted border-border",
   };
   return (
-    <span className={`inline-flex rounded-full border px-2.5 py-0.5 font-body text-[11px] font-semibold uppercase tracking-[0.04em] ${className}`}>
+    <span
+      className={`inline-flex rounded-full border px-2.5 py-0.5 font-body text-[11px] font-semibold uppercase tracking-[0.04em] ${className}`}
+    >
       {label}
     </span>
   );
