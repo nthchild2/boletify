@@ -13,6 +13,8 @@ import {
 import { useThemeColors } from "../../lib/theme";
 import {
   deriveSaleStatus,
+  formatEventDate,
+  formatEventTime,
   formatMxnPrice,
   type SaleStatusVariant,
 } from "@boletify/routes";
@@ -36,22 +38,16 @@ type MobileEvent = {
   startDateRaw: string | null;
 };
 
+// Event times are shown on a Mexico City clock, whatever the phone's time zone.
 function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "POR CONFIRMAR";
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("es-MX", { weekday: "short", day: "numeric", month: "short" }).toUpperCase();
+  const label = formatEventDate(dateStr, { weekday: "short", day: "numeric", month: "short" });
+  return label ? label.toUpperCase() : "POR CONFIRMAR";
 }
 
-// Extracts the time portion from an ISO timestamp like "2026-05-17T21:00:00Z".
-// Returns "" if the source has no time component or fails to parse — the
-// EventTile then degrades gracefully to date-only.
+// The time of day, or "" when it isn't set yet (midnight) or fails to parse —
+// the EventTile then degrades gracefully to date-only.
 function formatTime(dateStr: string | null): string {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (Number.isNaN(d.getTime())) return "";
-  // Skip rendering for midnight (likely date-only payloads).
-  if (d.getHours() === 0 && d.getMinutes() === 0) return "";
-  return d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", hour12: false });
+  return formatEventTime(dateStr);
 }
 
 export default function EventsScreen() {

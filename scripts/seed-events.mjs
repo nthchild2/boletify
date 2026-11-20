@@ -242,6 +242,16 @@ const events = [
   },
 ];
 
+// The dates above are Mexico City clock times. `timestamp` columns hold UTC
+// (that's how the app writes and reads them), so convert before inserting:
+// Postgres would otherwise drop the "-06:00" and store 21:00 as 21:00 UTC.
+// Date-only values mean midnight Mexico City time (UTC−6 all year since 2022).
+function toUtc(value) {
+  if (!value) return null;
+  const withZone = /^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00-06:00` : value;
+  return new Date(withZone).toISOString();
+}
+
 // ─── Execute ─────────────────────────────────────────────────────────
 async function main() {
   console.log("🗑️  Clearing existing data…");
@@ -263,7 +273,7 @@ async function main() {
         ${ev.city},
         ${ev.genre_tags},
         ${ev.status},
-        ${ev.start_date},
+        ${toUtc(ev.start_date)},
         ${ev.cover_image_url}
       )
       RETURNING id
@@ -283,8 +293,8 @@ async function main() {
           ${tier.price},
           ${tier.quantity},
           0,
-          ${tier.sale_start},
-          ${tier.sale_end}
+          ${toUtc(tier.sale_start)},
+          ${toUtc(tier.sale_end)}
         )
       `;
     }

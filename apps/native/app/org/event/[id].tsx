@@ -19,6 +19,7 @@ import { Text as UIText } from "@repo/ui";
 import { ScreenShell } from "../../../components/brutal-mobile";
 import { useThemeColors } from "../../../lib/theme";
 import { apiFetch } from "../../../lib/api";
+import { formatEventDate, formatEventTime } from "@boletify/routes";
 
 type EventDetail = {
   id: number;
@@ -40,28 +41,21 @@ const STATUS_LABELS: Record<string, string> = {
   cancelled: "Cancelado",
 };
 
+// Event times are shown on a Mexico City clock, whatever the phone's time zone.
 function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "Sin fecha";
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("es-MX", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  return (
+    formatEventDate(dateStr, {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }) || "Sin fecha"
+  );
 }
 
 function formatTime(dateStr: string | null): string {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (d.getHours() === 0 && d.getMinutes() === 0) return "";
-  return (
-    d.toLocaleTimeString("es-MX", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }) + " hrs"
-  );
+  const time = formatEventTime(dateStr);
+  return time ? `${time} hrs` : "";
 }
 
 export default function OrgEventDetailScreen() {

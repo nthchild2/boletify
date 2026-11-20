@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { neon } from "@neondatabase/serverless";
+import { getSql } from "../../../lib/sql";
 import {
   Routes,
   deriveSaleStatus,
+  formatEventDate,
+  formatEventTime,
   formatMxnPrice,
   isSaleOpen,
 } from "@boletify/routes";
@@ -16,30 +18,19 @@ import {
 } from "../../../components/brutal-glass";
 import type { EventRecord } from "../../../lib/mock-data";
 
+// Event times are shown on a Mexico City clock (the server runs in UTC).
 function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "POR CONFIRMAR";
-  const d = new Date(dateStr);
-  return d
-    .toLocaleDateString("es-MX", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-    })
-    .toUpperCase();
+  const label = formatEventDate(dateStr, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+  return label ? label.toUpperCase() : "POR CONFIRMAR";
 }
 
 function formatTime(dateStr: string | null): string {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (Number.isNaN(d.getTime())) return "";
-  if (d.getHours() === 0 && d.getMinutes() === 0) return "";
-  return (
-    d.toLocaleTimeString("es-MX", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }) + " hrs"
-  );
+  const time = formatEventTime(dateStr);
+  return time ? `${time} hrs` : "";
 }
 
 function parseTags(raw: any): string[] {
@@ -55,7 +46,7 @@ function parseTags(raw: any): string[] {
 
 async function fetchEvent(id: string): Promise<EventRecord | null> {
   try {
-    const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
+    const sql = getSql();
     const isNumeric = /^\d+$/.test(id);
 
     const rows = isNumeric

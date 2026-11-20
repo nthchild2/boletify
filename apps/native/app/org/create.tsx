@@ -18,6 +18,7 @@ import { useRouter } from "expo-router";
 import { ScreenShell } from "../../components/brutal-mobile";
 import { useThemeColors } from "../../lib/theme";
 import { apiFetch } from "../../lib/api";
+import { eventInstant } from "@boletify/routes";
 
 export default function CreateEventScreen() {
   const router = useRouter();
@@ -45,9 +46,9 @@ export default function CreateEventScreen() {
     setError(null);
 
     try {
-      const dateTime = `${startDate}T${startTime || "00:00"}`;
-      const parsedDate = new Date(dateTime);
-      if (isNaN(parsedDate.getTime())) {
+      // Entered on a Mexico City clock, whatever the phone's time zone.
+      const parsedDate = eventInstant(startDate, startTime);
+      if (!parsedDate) {
         throw new Error("Fecha invalida. Usa formato YYYY-MM-DD");
       }
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { trpc } from "../../../lib/trpc";
 import { cn } from "../../../lib/utils";
+import { formatEventDate } from "@boletify/routes";
 
 const STATUS_FILTERS = [
   { value: undefined, label: "Todos" },
@@ -118,13 +119,11 @@ export default function OrgEventsPage() {
                     </div>
                   </td>
                   <td className="px-4 py-4 font-mono text-[13px] text-fg-secondary">
-                    {event.startDate
-                      ? new Date(event.startDate).toLocaleDateString("es-MX", {
-                          weekday: "short",
-                          day: "numeric",
-                          month: "short",
-                        })
-                      : "—"}
+                    {formatEventDate(event.startDate, {
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                    }) || "—"}
                   </td>
                   <td className="px-4 py-4 text-[13px] text-fg-secondary">
                     {event.venueName}

@@ -3,7 +3,15 @@ import { ActivityIndicator, Image, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as Linking from "expo-linking";
-import { Routes, deriveSaleStatus, formatMxnPrice, isSaleOpen, type SaleStatusVariant } from "@boletify/routes";
+import {
+  Routes,
+  deriveSaleStatus,
+  formatEventDate,
+  formatEventTime,
+  formatMxnPrice,
+  isSaleOpen,
+  type SaleStatusVariant,
+} from "@boletify/routes";
 import { Badge, Button, GlassCard, Text as UIText } from "@repo/ui";
 import { useThemeColors } from "../../lib/theme";
 
@@ -26,23 +34,15 @@ interface EventDetail {
   genreTags: string[];
 }
 
+// Event times are shown on a Mexico City clock, whatever the phone's time zone.
 function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "POR CONFIRMAR";
-  const d = new Date(dateStr);
-  return d
-    .toLocaleDateString("es-MX", { weekday: "short", day: "numeric", month: "short" })
-    .toUpperCase();
+  const label = formatEventDate(dateStr, { weekday: "short", day: "numeric", month: "short" });
+  return label ? label.toUpperCase() : "POR CONFIRMAR";
 }
 
 function formatTime(dateStr: string | null): string {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (Number.isNaN(d.getTime())) return "";
-  if (d.getHours() === 0 && d.getMinutes() === 0) return "";
-  return (
-    d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", hour12: false }) +
-    " hrs"
-  );
+  const time = formatEventTime(dateStr);
+  return time ? `${time} hrs` : "";
 }
 
 function mapApiEvent(e: any): EventDetail {

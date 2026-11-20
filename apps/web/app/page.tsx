@@ -12,7 +12,13 @@ import {
   Footer,
 } from "../components/brutal-glass";
 import { FeaturedSlider } from "../components/featured-slider";
-import { deriveSaleStatus, formatMxnPrice, type SaleStatusVariant } from "@boletify/routes";
+import {
+  deriveSaleStatus,
+  formatEventDate,
+  formatEventTime,
+  formatMxnPrice,
+  type SaleStatusVariant,
+} from "@boletify/routes";
 
 // Number of events to show in the featured-event slider hero.
 const FEATURED_COUNT = 5;
@@ -55,20 +61,17 @@ type EventRecord = {
   description: string;
 };
 
+// Event times are shown on a Mexico City clock, whatever the server's or
+// browser's time zone.
 function formatDate(date: Date | string | null): string {
-  if (!date) return "POR CONFIRMAR";
-  return new Date(date).toLocaleDateString("es-MX", { weekday: "short", day: "numeric", month: "short" }).toUpperCase();
+  const label = formatEventDate(date, { weekday: "short", day: "numeric", month: "short" });
+  return label ? label.toUpperCase() : "POR CONFIRMAR";
 }
 
-// Extracts the time portion from an ISO timestamp. Returns "" for date-only
-// payloads (midnight) or unparseable input — the EventCard then degrades
-// gracefully to date-only in the eyebrow.
+// The time of day, or "" when it isn't set yet (midnight) or the input is
+// unparseable — the EventCard then degrades gracefully to date-only.
 function formatTime(date: Date | string | null): string {
-  if (!date) return "";
-  const d = new Date(date);
-  if (Number.isNaN(d.getTime())) return "";
-  if (d.getHours() === 0 && d.getMinutes() === 0) return "";
-  return d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", hour12: false });
+  return formatEventTime(date);
 }
 
 export default function Home() {

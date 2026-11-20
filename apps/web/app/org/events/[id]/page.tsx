@@ -6,7 +6,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { trpc } from "../../../../lib/trpc";
 import { cn } from "../../../../lib/utils";
-import { formatMxnPrice } from "@boletify/routes";
+import {
+  formatEventDate,
+  formatEventTime,
+  formatMxnPrice,
+} from "@boletify/routes";
 import { CheckInPanel } from "./check-in/panel";
 import { SalesPanel } from "./sales-panel";
 import { PromoPanel } from "./promo-panel";
@@ -234,25 +238,20 @@ export default function OrgEventDetailPage({
             <InfoCard
               label="Fecha"
               value={
-                event.startDate
-                  ? new Date(event.startDate).toLocaleDateString("es-MX", {
-                      weekday: "long",
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })
-                  : "—"
+                formatEventDate(event.startDate, {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                }) || "—"
               }
             />
             <InfoCard
               label="Hora"
               value={
-                event.startDate
-                  ? new Date(event.startDate).toLocaleTimeString("es-MX", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }) + " hrs"
-                  : "—"
+                formatEventTime(event.startDate)
+                  ? `${formatEventTime(event.startDate)} hrs`
+                  : "Por confirmar"
               }
             />
             <InfoCard label="Venue" value={event.venueName} />

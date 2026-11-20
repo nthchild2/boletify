@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { trpc } from "../../../../lib/trpc";
 import { cn } from "../../../../lib/utils";
 import { formatMoney } from "../../org-ui";
+import { eventInstant } from "@boletify/routes";
 
 const label =
   "mb-1.5 block font-body text-[11px] font-semibold uppercase tracking-[0.06em] text-fg-muted";
@@ -66,6 +67,12 @@ export function PromoPanel({ eventId }: { eventId: number }) {
   function submit(e: FormEvent) {
     e.preventDefault();
     const amount = Number(form.amount);
+    // datetime-local ("2027-03-12T21:00") is read on a Mexico City clock,
+    // like every other event date, and sent as an absolute instant
+    const [expiryDate, expiryTime] = form.expiresAt.split("T");
+    const expiresAt = form.expiresAt
+      ? (eventInstant(expiryDate, expiryTime)?.toISOString() ?? null)
+      : null;
     create.mutate({
       eventId,
       code: form.code,
@@ -74,8 +81,7 @@ export function PromoPanel({ eventId }: { eventId: number }) {
       discountValue:
         form.discountType === "flat" ? Math.round(amount * 100) : amount,
       maxUses: form.maxUses ? Number(form.maxUses) : null,
-      // datetime-local is the organiser's local time; send it as an absolute instant
-      expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
+      expiresAt,
     });
   }
 

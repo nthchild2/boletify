@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { trpc } from "../../../../../lib/trpc";
 import { cn } from "../../../../../lib/utils";
+import { eventInstant, eventWallClock } from "@boletify/routes";
 
 export default function EditEventPage({
   params,
@@ -47,14 +48,12 @@ export default function EditEventPage({
     setCity(event.city);
     setCoverImageUrl(event.coverImageUrl || "");
     setGenreTags(event.genreTags?.join(", ") || "");
-    if (event.startDate) {
-      const d = new Date(event.startDate);
-      setStartDate(d.toISOString().split("T")[0]);
-      const hours = d.getHours().toString().padStart(2, "0");
-      const mins = d.getMinutes().toString().padStart(2, "0");
-      if (hours !== "00" || mins !== "00") {
-        setStartTime(`${hours}:${mins}`);
-      }
+    // Pre-fill with the Mexico City date and time. (The UTC date is a day
+    // ahead for evening shows, so saving untouched used to move them.)
+    const clock = eventWallClock(event.startDate);
+    if (clock) {
+      setStartDate(clock.date);
+      if (clock.time !== "00:00") setStartTime(clock.time);
     }
   }, [event]);
 
@@ -80,8 +79,8 @@ export default function EditEventPage({
   async function handleSave() {
     setError(null);
     try {
-      const startDateTime = new Date(`${startDate}T${startTime || "00:00"}`);
-      if (isNaN(startDateTime.getTime())) {
+      const startDateTime = eventInstant(startDate, startTime);
+      if (!startDateTime) {
         throw new Error("Fecha inválida");
       }
       await updateMutation.mutateAsync({

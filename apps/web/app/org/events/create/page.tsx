@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { trpc } from "../../../../lib/trpc";
 import { cn } from "../../../../lib/utils";
+import { eventInstant } from "@boletify/routes";
 
 interface TicketTierInput {
   name: string;
@@ -67,9 +68,10 @@ export default function CreateEventPage() {
     setSubmitting(true);
 
     try {
-      // Build start date
-      const startDateTime = new Date(`${startDate}T${startTime || "00:00"}`);
-      if (isNaN(startDateTime.getTime())) {
+      // Dates and times are entered on a Mexico City clock, whatever the
+      // browser's time zone. No time = midnight ("hora por confirmar").
+      const startDateTime = eventInstant(startDate, startTime);
+      if (!startDateTime) {
         throw new Error("Fecha de inicio inválida");
       }
 
@@ -81,7 +83,7 @@ export default function CreateEventPage() {
         venueAddress: venueAddress || undefined,
         city,
         startDate: startDateTime,
-        endDate: endDate ? new Date(endDate) : undefined,
+        endDate: (endDate && eventInstant(endDate)) || undefined,
         coverImageUrl: coverImageUrl || undefined,
         genreTags: genreTags
           ? genreTags.split(",").map((t) => t.trim().toLowerCase())
@@ -97,12 +99,14 @@ export default function CreateEventPage() {
             name: tier.name,
             price: Math.round(parseFloat(tier.price) * 100), // MXN → centavos
             quantity: parseInt(tier.quantity, 10),
-            saleStartDate: tier.saleStartDate
-              ? new Date(tier.saleStartDate)
-              : undefined,
-            saleEndDate: tier.saleEndDate
-              ? new Date(tier.saleEndDate)
-              : undefined,
+            // Sales open at the start of the first day and close at the
+            // end of the last day, Mexico City time.
+            saleStartDate:
+              (tier.saleStartDate && eventInstant(tier.saleStartDate)) ||
+              undefined,
+            saleEndDate:
+              (tier.saleEndDate && eventInstant(tier.saleEndDate, "23:59")) ||
+              undefined,
           },
         });
       }

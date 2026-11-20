@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { neon } from '@neondatabase/serverless';
+import { getSql } from "../../../../lib/sql";
 
 /**
  * GET /api/events/:id
@@ -14,7 +14,7 @@ export async function GET(
 ) {
   try {
   const { id } = await params;
-  const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
+  const sql = getSql();
 
   // Accept both numeric IDs ("42") and slugs ("noche-indie-rock-2026-05-17-cdmx").
   // Use separate queries to avoid nesting sql`` tagged templates (unsupported by neon).

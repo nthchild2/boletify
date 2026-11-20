@@ -19,6 +19,7 @@ import { ScreenShell } from "../../components/brutal-mobile";
 import { useThemeColors } from "../../lib/theme";
 import { useAuth } from "../../lib/auth";
 import { apiFetch } from "../../lib/api";
+import { formatEventDate } from "@boletify/routes";
 
 type OrgEvent = {
   id: number;
@@ -45,14 +46,12 @@ const STATUS_COLORS: Record<string, string> = {
   ended: "#6b7280",
 };
 
+// Event dates are shown on a Mexico City clock, whatever the phone's time zone.
 function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "Sin fecha";
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("es-MX", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return (
+    formatEventDate(dateStr, { day: "numeric", month: "short", year: "numeric" }) ||
+    "Sin fecha"
+  );
 }
 
 export default function OrgEventsScreen() {

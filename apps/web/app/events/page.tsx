@@ -1,5 +1,10 @@
-import { neon } from "@neondatabase/serverless";
-import { deriveSaleStatus, formatMxnPrice } from "@boletify/routes";
+import { getSql } from "../../lib/sql";
+import {
+  deriveSaleStatus,
+  formatEventDate,
+  formatEventTime,
+  formatMxnPrice,
+} from "@boletify/routes";
 import {
   BrutalButton,
   Container,
@@ -10,6 +15,11 @@ import {
 } from "../../components/brutal-glass";
 import { featuredEvents } from "../../lib/mock-data";
 
+// Render on every request. Without this Next prerenders the page at build
+// time, so the listing froze at whatever the database held when the site
+// was last deployed (new events, sales and changes never showed up).
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Eventos - Boletify",
   description: "Explora los próximos eventos",
@@ -19,23 +29,15 @@ export const metadata = {
 const FALLBACK_POSTER =
   "bg-[linear-gradient(180deg,#1A1A2E_0%,#0F0F1A_100%)]";
 
+// Event times are shown on a Mexico City clock (the server runs in UTC).
 function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "POR CONFIRMAR";
-  const d = new Date(dateStr);
-  return d
-    .toLocaleDateString("es-MX", { weekday: "short", day: "numeric", month: "short" })
-    .toUpperCase();
+  const label = formatEventDate(dateStr, { weekday: "short", day: "numeric", month: "short" });
+  return label ? label.toUpperCase() : "POR CONFIRMAR";
 }
 
 function formatTime(dateStr: string | null): string {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (Number.isNaN(d.getTime())) return "";
-  if (d.getHours() === 0 && d.getMinutes() === 0) return "";
-  return (
-    d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", hour12: false }) +
-    " hrs"
-  );
+  const time = formatEventTime(dateStr);
+  return time ? `${time} hrs` : "";
 }
 
 /**
@@ -85,7 +87,7 @@ function mapApiEvent(e: any) {
 
 async function fetchEvents() {
   try {
-    const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
+    const sql = getSql();
     const events = await sql`
       SELECT
         e.id, e.title, e.description, e.venue_name, e.venue_address,

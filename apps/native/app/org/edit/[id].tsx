@@ -20,6 +20,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { ScreenShell } from "../../../components/brutal-mobile";
 import { useThemeColors } from "../../../lib/theme";
 import { apiFetch } from "../../../lib/api";
+import { eventInstant, eventWallClock } from "@boletify/routes";
 
 export default function EditEventScreen() {
   const router = useRouter();
@@ -51,12 +52,12 @@ export default function EditEventScreen() {
         setCity(event.city || "CDMX");
         setCoverImageUrl(event.coverImageUrl || "");
         setGenreTags(event.genreTags?.join(", ") || "");
-        if (event.startDate) {
-          const d = new Date(event.startDate);
-          setStartDate(d.toISOString().split("T")[0]);
-          const h = d.getHours().toString().padStart(2, "0");
-          const m = d.getMinutes().toString().padStart(2, "0");
-          if (h !== "00" || m !== "00") setStartTime(`${h}:${m}`);
+        // Pre-fill with the Mexico City date and time. (The UTC date is a
+        // day ahead for evening shows, so saving untouched used to move them.)
+        const clock = eventWallClock(event.startDate);
+        if (clock) {
+          setStartDate(clock.date);
+          if (clock.time !== "00:00") setStartTime(clock.time);
         }
       } catch (err: any) {
         setError(err.message);
@@ -70,9 +71,8 @@ export default function EditEventScreen() {
     setSaving(true);
     setError(null);
     try {
-      const dateTime = `${startDate}T${startTime || "00:00"}`;
-      const parsedDate = new Date(dateTime);
-      if (isNaN(parsedDate.getTime())) {
+      const parsedDate = eventInstant(startDate, startTime);
+      if (!parsedDate) {
         throw new Error("Fecha invalida");
       }
 

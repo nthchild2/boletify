@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { neon } from '@neondatabase/serverless';
+import { getSql } from "../../../lib/sql";
 
 /**
  * GET /api/events
@@ -12,7 +12,7 @@ import { neon } from '@neondatabase/serverless';
  */
 export async function GET() {
   try {
-  const sql = neon(process.env.BOLETIFY_DATABASE_URL!);
+  const sql = getSql();
 
   const events = await sql`
     SELECT
