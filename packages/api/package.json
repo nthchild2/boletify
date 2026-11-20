@@ -24,6 +24,18 @@
       "import": "./src/lib/stripe.ts",
       "types": "./src/lib/stripe.ts"
     },
+    "./csv": {
+      "import": "./src/lib/csv.ts",
+      "types": "./src/lib/csv.ts"
+    },
+    "./organiser": {
+      "import": "./src/lib/organiser.ts",
+      "types": "./src/lib/organiser.ts"
+    },
+    "./sales": {
+      "import": "./src/lib/sales.ts",
+      "types": "./src/lib/sales.ts"
+    },
     "./checkin": {
       "import": "./src/lib/checkin.ts",
       "types": "./src/lib/checkin.ts"

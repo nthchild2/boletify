@@ -248,6 +248,12 @@ function BuyersTable({ eventId }: { eventId: number }) {
         <h2 className={sectionTitle}>
           Compradores {data ? `(${data.total} boletos)` : ""}
         </h2>
+        <a
+          href={`/api/org/export/buyers?eventId=${eventId}`}
+          className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-primary hover:underline"
+        >
+          📥 Exportar CSV
+        </a>
       </div>
       <div
         className={cn(

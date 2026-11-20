@@ -5,30 +5,15 @@
 
 import { NextResponse } from 'next/server';
 import { getOwnedEvent, staffLabel, type OwnedEvent } from '@boletify/api/checkin';
-import { auth } from '../../../../../../lib/auth';
-import { verifyToken } from '../../../../auth/token';
+import { getRequestUserId } from '../../../../../../lib/request-user';
 
 export type CheckInContext = { userId: number; event: OwnedEvent; staff: string };
-
-async function currentUserId(request: Request): Promise<number | null> {
-  const header = request.headers.get('authorization');
-  if (header?.startsWith('Bearer ')) {
-    return verifyToken(header.slice(7))?.sub ?? null;
-  }
-  try {
-    const session = await auth();
-    const id = Number(session?.user?.id);
-    return Number.isInteger(id) && id > 0 ? id : null;
-  } catch {
-    return null;
-  }
-}
 
 export async function requireEventCheckIn(
   request: Request,
   rawEventId: string,
 ): Promise<CheckInContext | NextResponse> {
-  const userId = await currentUserId(request);
+  const userId = await getRequestUserId(request);
   if (!userId) {
     return NextResponse.json({ error: 'No autenticado' }, { status: 401 });
   }

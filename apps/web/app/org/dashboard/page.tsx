@@ -78,6 +78,14 @@ export default function OrgDashboardPage() {
         <h2 className="font-body text-[13px] font-semibold uppercase tracking-[0.04em] text-fg-muted">
           Eventos
         </h2>
+        {events.length > 0 ? (
+          <a
+            href="/api/org/export/buyers"
+            className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-primary hover:underline"
+          >
+            📥 Exportar compradores (CSV)
+          </a>
+        ) : null}
       </div>
 
       {!isLoading && events.length === 0 ? (
