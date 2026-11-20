@@ -27,6 +27,7 @@ export async function GET(
           e.venue_name, e.venue_address, e.venue_map_url, e.city,
           e.genre_tags, e.status, e.start_date, e.end_date,
           e.cancelled_at, e.cover_image_url,
+            op.organiser_name, op.logo_url AS organiser_logo_url,
           MIN(t.price)                AS min_price_cents,
           COALESCE(SUM(t.quantity), 0) AS total_quantity,
           COALESCE(SUM(t.sold), 0)     AS total_sold,
@@ -34,9 +35,10 @@ export async function GET(
           MAX(t.sale_end_date)        AS sale_ends_at
         FROM events e
         LEFT JOIN ticket_tiers t ON t.event_id = e.id
+          LEFT JOIN organiser_profiles op ON op.id = e.organiser_id
         WHERE e.id = ${Number(id)}
           AND e.status IN ('published', 'cancelled', 'ended')
-        GROUP BY e.id
+        GROUP BY e.id, op.id
         LIMIT 1
       `
     : await sql`
@@ -45,6 +47,7 @@ export async function GET(
           e.venue_name, e.venue_address, e.venue_map_url, e.city,
           e.genre_tags, e.status, e.start_date, e.end_date,
           e.cancelled_at, e.cover_image_url,
+            op.organiser_name, op.logo_url AS organiser_logo_url,
           MIN(t.price)                AS min_price_cents,
           COALESCE(SUM(t.quantity), 0) AS total_quantity,
           COALESCE(SUM(t.sold), 0)     AS total_sold,
@@ -52,9 +55,10 @@ export async function GET(
           MAX(t.sale_end_date)        AS sale_ends_at
         FROM events e
         LEFT JOIN ticket_tiers t ON t.event_id = e.id
+          LEFT JOIN organiser_profiles op ON op.id = e.organiser_id
         WHERE e.slug = ${id}
           AND e.status IN ('published', 'cancelled', 'ended')
-        GROUP BY e.id
+        GROUP BY e.id, op.id
         LIMIT 1
       `;
 

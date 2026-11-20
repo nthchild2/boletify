@@ -23,6 +23,8 @@ export interface EventRecord {
   accent: "signal" | "rosa";
   lineup: string;
   description: string;
+  organiserName?: string;
+  organiserLogoUrl?: string;
 }
 
 export const featuredEvents: EventRecord[] = [
